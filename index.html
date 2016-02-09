@@ -1,40 +1,71 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="UTF-8">
-    <title>Brainstudio by davidbhowmik</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-  </head>
-  <body>
-    <section class="page-header">
-      <h1 class="project-name">Brainstudio</h1>
-      <h2 class="project-tagline">Brain Studio - A GUI tool for designing and simulating spiking neural networks</h2>
-      <a href="https://github.com/davidbhowmik/BrainStudio" class="btn">View on GitHub</a>
-      <a href="https://github.com/davidbhowmik/BrainStudio/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/davidbhowmik/BrainStudio/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+<html>
 
-    <section class="main-content">
-      <p>Brain Studio is developed by the Computational Neurodynamics Lab at Imperial College London. The aim is to automate and speed-up the process of designing and testing large-scale spiking neural networks (SNNs), through a suite of new simulation tools. In particular, this suite provides (1) a framework for the compact representation of modular SNNs, suitable for large-scale brain circuits and cognitive systems, (2) a generic and powerful simulator that allows the fast implementation, visualization and real-time adjustments of SNNs, and (3) a fast optimization technique, which could be used in order to mimic the dynamical behaviour of specific neurons in the brain, using simple phenomenological models. </p>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Brainstudio : Brain Studio - A GUI tool for designing and simulating spiking neural networks">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Brainstudio</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/davidbhowmik/BrainStudio">View on GitHub</a>
+
+          <h1 id="project_title">Brainstudio</h1>
+          <h2 id="project_tagline">Brain Studio - A GUI tool for designing and simulating spiking neural networks</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/davidbhowmik/BrainStudio/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/davidbhowmik/BrainStudio/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><img src="https://github.com/davidbhowmik/BrainStudio/raw/master/Images/brainstudio-on-white.png" width="635"><br></p>
+
+<p>Brain Studio is developed by the Computational Neurodynamics Lab at Imperial College London. The aim is to automate and speed-up the process of designing and testing large-scale spiking neural networks (SNNs), through a suite of new simulation tools. In particular, this suite provides (1) a framework for the compact representation of modular SNNs, suitable for large-scale brain circuits and cognitive systems, (2) a generic and powerful simulator that allows the fast implementation, visualization and real-time adjustments of SNNs, and (3) a fast optimization technique, which could be used in order to mimic the dynamical behaviour of specific neurons in the brain, using simple phenomenological models. </p>
+
+<p><img src="https://github.com/davidbhowmik/BrainStudio/raw/master/Images/gui2.png" width="600"></p>
 
 <p>As the computational foundation of these features, Brain Studio integrates NeMo, a high performance spiking neural network simulator that was originally developed in the Computational Neurodynamics Lab at Imperial College London by Fidjeland and Shanahan, and has the form of a C++ library. NeMo takes advantage of the large number of CUDA-based graphics processing units (GPUs) of the NVidia graphics cards to provide a remarkably high memory bandwidth, and run parallel simulations with large number of neurons and synapses in real time. In a recent commercial of-the-shelf desktop computer, this system is able to simulate up to 500.000 Izhikevich neurons in real time, connected with 10.000 synapses each, under biologically plausible conditions that correspond to almost 5 billion spike events per second. </p>
 
-<p>NeMo has programming interfaces in C/C++, Python and MATLAB. However, neurons and synapses are added one at a time through coding and so it can be quite complicated and laborious. Brain Studio allows for the design of a network topology via a GUI. The GUI model describe separate groups of neurons and connectivity patterns of synaptic pathway between groups of neurons. Created networks are stored in an XML file format. The GUI monitors and visualises the simulations that are  run in a separate simulation back end that is implemented in python. The GUI and the simulation back end communicate VIA TCP/IP.</p>
+<p>NeMo has programming interfaces in C/C++, Python and MATLAB. However, neurons and synapses are added one at a time through coding and so it can be quite complicated and laborious. Brain Studio allows for the design of a network topology via a GUI. The GUI model describe separate groups of neurons and connectivity patterns of synaptic pathway between groups of neurons. Created networks are stored in an XML file format. The GUI monitors and visualises the simulations that are  run in a separate simulation back end that is implemented in python. The GUI and the simulation back end communicate VIA TCP/IP.
+<br>
+</p>
+<img src="https://github.com/davidbhowmik/BrainStudio/raw/master/Images/BS_TCPIP.png" width="300" align="middle">
 
-<p>In line with graph representations, in Brain Studio a population of neurons whatever the type, be it Izhikevich, Rate or what ever are considered nodes. All synaptic pathways whatever the type are considered edges. This is illustrated in the figure below. This generic model is implemented in the python back end simulator architecture. All specific neuron population types are derived from a Node class. All synaptic pathways types are derived from an Edge class. The Brain Studio framework is fully extensible allowing for new types of nodes and edges to be added to the back end by deriving from the respective Node or Edge class. The front end GUI does not require any modification when adding new nodes and edges.</p>
+<br>
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/davidbhowmik/BrainStudio">Brainstudio</a> is maintained by <a href="https://github.com/davidbhowmik">davidbhowmik</a>.</span>
+<p>In line with graph representations, in Brain Studio a population of neurons whatever the type, be it Izhikevich, Rate or what ever are considered nodes. All synaptic pathways whatever the type are considered edges. This is illustrated in the figure below. This generic model is implemented in the python back end simulator architecture. All specific neuron population types are derived from a Node class. All synaptic pathways types are derived from an Edge class. The Brain Studio framework is fully extensible allowing for new types of nodes and edges to be added to the back end by deriving from the respective Node or Edge class. The front end GUI does not require any modification when adding new nodes and edges.
+<br>
+<img src="https://github.com/davidbhowmik/BrainStudio/raw/master/Images/Network.jpg" width="300">
+<img src="https://github.com/davidbhowmik/BrainStudio/raw/master/Images/NodeNetwork.jpg" width="300">
+<br>
+<a href="https://github.com/davidbhowmik/BrainStudio/raw/master/Manuals/NeMo-Manual.pdf">Click here for the Brain Studio User Manual</a>
+<br>
+<a href="https://github.com/davidbhowmik/BrainStudio/raw/master/Manuals/NeMo-Manual.pdf">Click here for the NeMo User Manual</a></p>
+      </section>
+    </div>
 
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Brainstudio maintained by <a href="https://github.com/davidbhowmik">davidbhowmik</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
+    </div>
 
-    </section>
+    
 
-  
   </body>
 </html>
