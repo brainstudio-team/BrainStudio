@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema>
+	<experiment>
+		<speed>30</speed>
+		<simulator>tcpip</simulator>
+		<timeStep>1</timeStep>
+		<simulationMethod>euler</simulationMethod>
+	</experiment>
+	<nodes>
+		<Izhikevich-NeMo id="Layer 1" x="112" y="120" w="338" h="151" c="#aa4547">
+			<version>0.001</version>
+			<neurons>1000</neurons>
+			<eval_for_each>False</eval_for_each>
+			<x>32</x><y>-104</y>
+			<width>838</width><height>551</height>
+			<colour>#aa4547</colour>
+			<a>0.02</a>
+			<b>0.2</b>
+			<c>-65+15*RANDF()**2</c>
+			<d>8*-6*RANDF()**2</d>
+			<sigma>1</sigma>
+			<v>-65</v>
+			<u>b*v</u>
+			<file></file>
+			<spatiallyEmbedded>0</spatiallyEmbedded>
+			<fileLocations></fileLocations>
+		</Izhikevich-NeMo>
+		<RateLayer-Python id="Layer 2" x="112" y="120" w="338" h="151" c="#aa4547">
+			<version>0.001</version>
+			<neurons>100</neurons>
+			<x>32</x><y>-104</y>
+			<width>838</width><height>551</height>
+			<colour>#aa4547</colour>
+			<file></file>
+			<spatiallyEmbedded>0</spatiallyEmbedded>
+			<fileLocations></fileLocations>
+		</RateLayer-Python>
+		<PoissonSource-NeMo id="Layer 3" x="112" y="120" w="338" h="151" c="#aa4547">
+			<version>0.001</version>
+			<name>Layer 2</name>
+			<neurons>100</neurons>
+			<eval_for_each>False</eval_for_each>
+			<rate>1</rate>
+			<lambda>4</lambda>
+			<x>32</x><y>-104</y>
+			<width>838</width><height>551</height>
+			<colour>#aa4547</colour>
+			<file></file>
+			<spatiallyEmbedded>0</spatiallyEmbedded>
+			<fileLocations></fileLocations>
+		</PoissonSource-NeMo>
+	</nodes>
+	<edges>
+
+		<NeMoDirectPathway-NeMo id="Pathway 1">
+			<version>0.001</version>
+			<source>Layer 3</source>
+			<target>Layer 1</target>
+			<probability>1.0</probability>
+			<weight>8</weight>
+			<delay>RANDI(1,6)</delay>
+			<plastic>0</plastic>
+			<preFirst>0</preFirst>
+			<preLast>99</preLast>
+			<postFirst>0</postFirst>
+			<postLast>99</postLast>		
+		</NeMoDirectPathway-NeMo>
+		<NeMoSynapticPathway-NeMo id="Pathway 2" >
+			<version>0.001</version>
+			<source>Layer 1</source>
+			<target>Layer 1</target>
+			<probability>1.0</probability>
+			<weight>8</weight>
+			<delay>RANDI(1,6)</delay>
+			<plastic>0</plastic>
+			<preFirst>800</preFirst>
+			<preLast>849</preLast>
+			<postFirst>900</postFirst>
+			<postLast>949</postLast>		
+		</NeMoSynapticPathway-NeMo>				
+		<SpikeToRateConverter-Python id="Pathway 3">
+			<version>0.001</version>
+			<source>Layer 1</source>
+			<target>Layer 2</target>
+			<window>50</window>
+			<weight>RANDF()</weight>
+			<preFirst>0</preFirst>
+			<preLast>99</preLast>
+			<postFirst>0</postFirst>
+			<postLast>99</postLast>		
+		</SpikeToRateConverter-Python>
+		<RateToSpikeConverter-Python id="Pathway 4">
+			<version>0.001</version>
+			<source>Layer 2</source>
+			<target>Layer1</target>
+			<weight>6</weight>
+			<preFirst>0</preFirst>
+			<preLast>99</preLast>
+			<postFirst>800</postFirst>
+			<postLast>899</postLast>		
+		</RateToSpikeConverter-Python>
+	</edges>
+	<textBlocks>
+	</textBlocks>
+	<STDP>
+		<mode>0</mode>
+		<preLength>0</preLength>
+		<postLength>0</postLength>
+		<aPlus>0</aPlus>
+		<aMinus>0</aMinus>
+		<tPlus>0</tPlus>
+		<tMinus>0</tMinus>
+		<minExWeight>0</minExWeight>
+		<maxExWeight>0</maxExWeight>
+		<minInWeight>0</minInWeight>
+		<maxInWeight>0</maxInWeight>
+	</STDP>
+</schema>

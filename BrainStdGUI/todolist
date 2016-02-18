@@ -1,0 +1,41 @@
+New:
+ - SOS: Awesome feature: Make default templates for different simulators and make
+   a function on BS where you can create or edit a module from within the front end!!
+   It will be something like a simple version of a python IDE like spider that will allow
+   you to edit the python file that contains your model!
+   In this way, people will be able to easily use their old models again in new simulations
+   even if the new simulation was made with another simulator!
+
+
+
+For Dave:
+ - Default parameters (after request) for nodes and edges. Even better, 
+   different sets of parameters with a title (e.g. excitatory parameters, etc.)
+
+For me:
+ - fix memory leak in connections (I use new Connection() but not delete)
+
+ - Trasfer mem.pot instead of spikes
+
+ - Fix LoadTab connections and 'new XXX' stuff.
+
+ - Fix actions. Actions should change any kind of parameter in a model
+
+ - When ESC press pause and then disconnect!
+
+ - SOS: Make another 'block' function that when initialization of the block has
+   finished, it synchs it with data from the backend and sets the units_field
+   as well as moves params that are normally states to states. ;)
+
+ - NewBlock and NewCOnnection should not allow blocks/connections if not all fields non-empty. 
+
+
+ - Pass the correct Simulator pointer to the stimulation widget (and update it whenever I change sim).
+
+ - Move controls widget to the architecture widget so it re-scales along with the latter.
+
+ - Implement 'save as' - use 'save as' as the default when no name has been specified.
+
+ - Fix tabs so the user can close them with the 'X' button.
+
+ - Fix style sheet of tabs so the bar above can be merged with them.

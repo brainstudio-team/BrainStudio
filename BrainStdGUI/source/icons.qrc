@@ -1,0 +1,55 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>icons/save.png</file>
+        <file>icons/Play-icon.png</file>
+        <file>icons/Target Select.ani</file>
+        <file>icons/blackWedge_move.cur</file>
+        <file>icons/blackWedge.cur</file>
+        <file>icons/blackWedge_work.ani</file>
+        <file>icons/Wedge_busy.ani</file>
+        <file>icons/add_32.png</file>
+        <file>icons/add_48.png</file>
+        <file>icons/add_128.png</file>
+        <file>icons/minus.png</file>
+        <file>icons/minus2.png</file>
+        <file>icons/minus3.png</file>
+        <file>icons/delete_32.png</file>
+        <file>icons/delete_48.png</file>
+        <file>icons/delete_64.png</file>
+        <file>icons/delete_128.png</file>
+        <file>icons/Pause-Disabled-icon.png</file>
+        <file>icons/Pause-Disabled-icon32.png</file>
+        <file>icons/Pause-Disabled-icon48.png</file>
+        <file>icons/Pause-Disabled-icon64.png</file>
+        <file>icons/addBlock.png</file>
+        <file>icons/addSynapse.png</file>
+        <file>icons/deleteBlock.png</file>
+        <file>icons/deleteSynapse.png</file>
+        <file>icons/build.png</file>
+        <file>icons/stop.png</file>
+        <file>icons/build-stop.png</file>
+        <file>icons/xml-tool-icon - gray.png</file>
+        <file>icons/xml-tool-icon.png</file>
+        <file>icons/new.png</file>
+        <file>icons/open.png</file>
+        <file>icons/paste.png</file>
+        <file>icons/cut.png</file>
+        <file>icons/copy.png</file>
+        <file>icons/left.png</file>
+        <file>icons/left-gray.png</file>
+        <file>icons/actions-list - neg.png</file>
+        <file>icons/actions-list.png</file>
+        <file>icons/BrainStd.png</file>
+        <file>icons/logo.png</file>
+        <file>icons/logo_name.png</file>
+        <file>icons/logo.svg</file>
+        <file>icons/add_con.png</file>
+        <file>icons/addPlot.png</file>
+        <file>icons/injection.png</file>
+        <file>icons/brainstudio-logo.png</file>
+        <file>icons/brainstudio-on-trans.png</file>
+        <file>icons/orange-brainstudio-on-trans.png</file>
+        <file>icons/brainstudio-on-white.png</file>
+        <file>icons/orange-brainstudio-on-white.png</file>
+    </qresource>
+</RCC>

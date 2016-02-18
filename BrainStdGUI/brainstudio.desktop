@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Name=Brain Studio
+Comment=Design and simulate spiking neural networks using brain studio
+MimeType=application/x-brainstudio;
+Icon=/home/zf509/timestorm3/BrainStd/source/icons/brainstudio-logo.png
+Terminal=false
+Categories=Application;Utility;
+Path=/home/zf509/BUILDS/BrainStd_timestorm
+Exec=/home/zf509/BUILDS/BrainStd_timestorm/BrainStd %U
+StartupNotify=false
+StartupWMClass=brainstudio
+OnlyShowIn=Unity;
+X-UnityGenerated=true

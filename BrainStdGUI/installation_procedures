@@ -1,0 +1,67 @@
+
+
+
+
+# First, create the file  ~/.local/share/mime/packages/application-x-foobar.xml:
+
+mkdir -p ~/.local/share/mime/packages
+cd ~/.local/share/mime/packages
+touch application-x-foobar.xml
+
+
+# Then edit ~/.local/share/mime/packages/application-x-foobar.xml and add this text:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+    <mime-type type="application/x-foobar">
+        <comment>foo file</comment>
+        <icon name="application-x-foobar"/>
+        <glob-deleteall/>
+        <glob pattern="*.foo"/>
+    </mime-type>
+</mime-info>
+
+# Note that you can use any icon, including one for another application
+
+
+# Next, edit or create the file  ~/.local/share/applications/foobar.desktop to contain something like:
+
+[Desktop Entry]
+Name=Foobar
+Exec=/usr/bin/foobar
+MimeType=application/x-foobar
+Icon=foobar
+Terminal=false
+Type=Application
+Categories=AudioVideo;Player;Video;
+Comment=
+
+# Note that Categories should be set appropriately for the application type (in this example, a multimedia app).
+
+# Now update the applications and mime database with:
+
+update-desktop-database ~/.local/share/applications
+update-mime-database    ~/.local/share/mime
+
+# Programs that use mime types, such as file managers, should now open *.foo files with foobar. 
+
+# Restart file manager 
+
+nautilus -q
+
+nautilus
+
+
+
+# Adding an Icon
+# Now we need to associate an icon with the MIME type. Get an SVG icon and name it "text-extension.svg", or whatever your modified MIME type is named; this will be the icon to represent all instances of the MIME type on your system. For our python example, this is a good choice. Rename the .svg file so that the it matches "text-x-python.svg" (or "insertYourMIMEtype.svg") so that the slashes are replaced with "-" and there are no capital letters.
+# Then simply run the following commands, with 'text-x-python' replaced with your MIME type.
+
+sudo cp application-x-brainstudio.svg /usr/share/icons/gnome/scalable/mimetypes
+sudo gtk-update-icon-cache /usr/share/icons/gnome/ -f
+
+
+
+# Create the desktop file and run:
+
+desktop-file-install --dir=/home/zf509/.local/share/applications brainstudio.desktop

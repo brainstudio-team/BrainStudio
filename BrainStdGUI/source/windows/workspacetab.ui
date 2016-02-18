@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WorkspaceTab</class>
+ <widget class="QMainWindow" name="WorkspaceTab">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>711</width>
+    <height>440</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#statusBar {
+background: black;
+color: white;
+}
+
+#WorkspaceTab{
+border: none;
+background: #7f7f7f;
+}
+
+#xmlOutFrame {
+border: none;
+background: #dfdfdf;
+}
+</string>
+  </property>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

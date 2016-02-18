@@ -1,0 +1,45 @@
+__version__ = 0.001
+__abstract__ = True
+
+from Edge import Edge as Edge
+from BSException import BSException as BSException 
+import random as random
+from abc import abstractmethod
+
+class WeightedPathway(Edge) :
+    
+    def __init__(self) :
+        super(WeightedPathway,self).__init__()
+        self.fields.append(['probability', 'Connection probability','float', '0', '1'])
+        self.pathway_parameters = ['weight']
+   
+    def get_version(self):
+        return __version__
+        
+    def initialize(self, cortex, node, args):        
+        super(WeightedPathway,self).initialize(cortex, node, args)
+
+        probability = self.safely_get(node, 'probability', 'float')
+        
+        self.get_connection_ranges(node)
+
+        target_size = self.postLast-self.postFirst
+        
+        formulas = self.construct_formulas(node) 
+        sources =range(self.preFirst, self.preLast+1)
+        for n in sources:
+            synapse_args =[]
+            targets = random.sample(range(self.postFirst, self.postLast), int(probability*target_size))   
+            for t in targets :           
+                sa = self.evaluate_formulas(formulas, node, self.attributes,dict(), dict())  
+                synapse_args.append(sa)
+                        
+            
+            self.add_synapses(cortex, int(n), targets, synapse_args)
+            
+    @abstractmethod 
+    def add_synapses(self, cortex, source, targets, synapse_args):
+        pass
+        
+        
+ 

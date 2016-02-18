@@ -1,0 +1,69 @@
+__version__ = 0.001
+__abstract__ = False
+
+from BrainStdBECore.Edge import Edge as Edge
+from BrainStdBECore.BSException import BSException as BSException
+import exceptions
+
+class BrainStdBEClass(Edge) :
+    
+    def __init__(self) :
+        super(BrainStdBEClass,self).__init__()
+        self.configurations['NeMoDirectPathway'] = (['weight', 'delay', 'plastic'], [])
+        self.size = 0
+        
+        self.architecture = 'NeMo'
+        self.input_model = 'spike'
+        self.output_model = 'spike'
+        self.synapses = []
+   
+    def get_version(self):
+        return __version__
+        
+    def initialize(self, brain, node, args):
+        super(BrainStdBEClass,self).initialize(brain, node, args)
+        
+        self.brain = brain
+        where = self.get_where()  
+    
+        self.get_connection_ranges(node)  
+        if self.preLast-self.preFirst != self.postLast-self.postFirst:
+            what = 'Error input and output sizes differ'
+            raise BSException(where, what)
+        
+        formulas = self.construct_formulas(node)
+        self.size = self.preLast-self.preFirst+1
+        weights = []
+        delays = []
+        plastic =[]
+        for n in range(self.preFirst, self.preLast+1):
+            sa = self.evaluate_formulas(formulas, node, self.attributes, dict(), dict())
+            paras=sa[0]
+            delays.append(paras['delay'])
+            weights.append(paras['weight'])
+            plastic.append(paras['plastic'])        
+        try: 
+            s = brain.add_nemo_synapse(range(self.preFirst++self.source.get_start_neuron(), \
+            self.preLast+1++self.source.get_start_neuron()),\
+            range(self.postFirst+self.target.get_start_neuron(), self.postLast+1+self.target.get_start_neuron()), delays, weights, plastic)
+            self.synapses.append((s, len(s)))
+        except exceptions.BaseException as e:
+            where = self.get_where()
+            what = 'Error in NeMo adding synapses: ' + e.args[0]
+            raise BSException(where, what)
+     
+    def get_all_data(self):
+        weights=list()        
+        for s in self.synapse:
+            indexes = range(s[1],s[1]+s[2])
+            weights.append(self.brain.get_nemo_synapse_weight(indexes))
+        return weights 
+        
+    def get_data(self, args):
+        return
+
+
+    
+        
+        
+ 

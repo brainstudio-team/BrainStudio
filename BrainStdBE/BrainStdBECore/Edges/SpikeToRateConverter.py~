@@ -1,0 +1,64 @@
+__version__ = 0.001
+__abstract__ = False
+
+from BrainStdBECore.Edge import Edge as Edge
+from BrainStdBECore.BSException import BSException as BSException 
+import numpy as np
+
+class BrainStdBEClass(Edge) :
+    
+    def __init__(self) :
+        super(BrainStdBEClass,self).__init__()
+        self.configurations['SpikeToRateConverter'] = (['weight'], [])
+        self.fields.append(['window', 'Window size','integer', '1', ''])
+        
+        self.input_model = 'spike'
+        self.output_model = 'rate'
+   
+    def get_version(self):
+        return __version__
+        
+    def initialize(self, brain, node, args):        
+        super(BrainStdBEClass,self).initialize(brain, node, args)
+
+        self.window = self.safely_get(node, 'window', 'int')
+        
+        where = self.get_where()
+        
+        self.get_connection_ranges(node)
+         
+        if self.preLast-self.preFirst != self.postLast-self.postFirst:
+            what = 'Error input and output sizes differ'
+            raise BSException(where, what)
+        
+        formulas = self.construct_formulas(node)
+        self.size = self.preLast-self.preFirst+1
+        self.weights = np.zeros(self.size)
+        count = 0
+        for n in range(self.preFirst, self.preLast+1):
+            sa = self.evaluate_formulas(formulas, node, self.attributes, dict(), dict())  
+            paras = sa[0]
+            self.weights[count] = paras['weight']
+            count += 1
+        
+        self.buffer = np.zeros((self.size,self.window))
+        self.index = 0
+            
+    def get_all_data(self):
+        return list(self.weights)
+            
+    def get_data(self, args): 
+        args = {'first_neuron' :  self.preFirst, 'last' : self.preLast }
+        self.buffer[:, self.index] = self.source.get_data(args)
+        if self.index == self.window:
+            self.index = 0
+            
+        inputs = np.sum(self.buffer, axis=1)/self.window
+        outputs = np.multiply(inputs, self.weights)
+        args = {'inputs' : outputs, 'first_neuron' :  self.postFirst, 'last' : self.postLast }
+        self.target.set_data(args)
+        
+
+        
+        
+ 

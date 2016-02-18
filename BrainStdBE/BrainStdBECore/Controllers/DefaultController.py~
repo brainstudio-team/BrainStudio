@@ -1,0 +1,338 @@
+__version__ = 0.001
+__abstract__ = False;
+
+
+import socket
+
+from sys import stderr
+
+# Import the brainself
+from BrainStdBECore.ControllerBase import Controller as Controller
+from BrainStdBECore.Simulation import Brain as brain
+from BrainStdBECore.BSException import BSException as BSException 
+
+import json
+from time import sleep
+
+FILENAME = "simulation.brn"
+
+help ="\nHOW TO USE BRAINSTUDIO DEFAULT CONTROLLER:\n"
+help+="\nTo use this controller type:\n"
+help+="\tpython BrainStdBE.py -controller Default\n"
+help+="\nWith GUI:\n"
+help+="\tFor default behaviour, the simulator just waits for a\n"
+help+="\tconnection from BrainStd.\n"
+help+="\tWhen a new simulation is requested by BrainStd, the .brn file\n"
+help+="\tof this simulation will be downloaded automatically and saved\n"
+help+="\tlocally as '"+FILENAME+"'.\n\n"
+help+="Without GUI:\n"
+help+="\tTo run "+FILENAME+" or any other 'brn' file, use the option:\n"
+help+="\t\t -nogui -file XXX\n"
+help+="\n\twhere XXX is the 'brn' file.\n"
+help+="\nOther options:\n"
+help+="\t-port XXX: used to specify the port of the TCP/IP connection.\n"
+
+
+class BrainStdBEClass(Controller) :
+
+
+    def __init__(self) :
+        self.no_sockets = False
+        self.filename = "simulation.brn"
+        self.port = 10000
+
+    def __enter__(self) :
+         return self
+
+    def __exit__(self, type, value, tracebselfack) :
+        #del self.net
+        print "Default controler waves goodbye!"
+       
+    @staticmethod
+    def print_help() :
+        print help
+        
+    def execute(self, argv) :
+        i = 1
+        while len(argv) > i :
+            if argv[i] == "-help" :
+                # skip handled is BrainStdBE.py 
+                i=i+1
+                continue
+            elif argv[i] == "-controller" and len(argv) > i+1 :
+                # skip handled is BrainStdBE.py
+                i+=2
+                continue
+            elif argv[i] == "-nogui" :
+                self.no_sockets = True
+                print('NOGUI......')
+            elif argv[i] == "-file" and len(argv) > i+1 :
+                i+=1
+                self.filename = argv[i]
+            elif argv[i] == "-port" and len(argv) > i+1 :
+                i+=1
+                self.port = int(argv[i])
+            else :
+                print "Argument '" + argv[i] + "' not recognized. Please type python",\
+                "BrainStdBE.py -help."
+                exit()
+            
+            i+=1
+
+        if self.no_sockets :
+            print "Starting simulation without GUI.."
+            
+	
+            self.sim = brain()
+            self.spikes = []
+            try:
+                self.sim.load_from_brn('./brn/' + self.filename)
+                while True :
+                    self.spikes = self.sim.run()
+            except BSException as e:
+                errorin = 'Error in ' + e.get_where()
+                print errorin
+                print e.get_what()
+                exit()
+             
+        else:
+            self.start_server()
+            self.listen()
+            
+    def start_server(self) :
+        # Create a TCP/IP socket
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        #ZAF: sock.settimeout(5) ???
+
+        # Bind the socket to the port
+        self.server_address = ('localhost', self.port)
+        print >>stderr, 'starting up on %s port %s' % self.server_address
+        self.sock.bind(self.server_address)
+
+
+
+    def listen(self) :
+        # -- Backend ---------------------------------------------------------------
+        spikes = []
+        # --------------------------------------------------------------------------
+
+        # Listen for incoming connections
+        self.sock.listen(5)
+
+        paused = True
+        recieving_file = False
+        timestep = 0.0
+
+        while True:
+            # Wait for a connection
+            print >>stderr, 'waiting for a connection'
+            connection, client_address = self.sock.accept()
+    
+    
+            try:
+                print >>stderr, 'New connection from', client_address
+
+                connection.sendall("OK!!")
+    
+
+                # Start a new nemo simulation
+                with brain() as sim :
+                    # Receive the data in small chunks and retransmit it
+                    while True:
+
+                        #print "ZAF:",connection
+                        data = connection.recv(4096) # It was 16
+
+                        if data:
+                            print 'Client:', data
+        
+                            # -- RECIEVING FILE ------------------------------------                            
+                            if recieving_file :
+                                if data == "end" :
+                                    recieving_file = False
+                                    print "File ended. Saving.."
+                                    # Saving file..
+                                    self.brn_file.close()
+                                    print "Loading file.."
+                                    # Loading file..
+                                    
+                                    try:
+                                        sim.load_from_brn('./brn/' + self.filename)
+                                    except BSException as e:
+                                        errorin = 'Error in ' + e.get_where()
+                                        print errorin
+                                        print e.get_what()
+                                        exit()
+                                        
+                                    connection.sendall("file loaded "+\
+                                        str(sim.net.neuron_count()))
+                                else :
+                                    #print "Adding to file:\t", data
+                                    self.brn_file.write(data)
+                                    connection.sendall("give me") # more..
+                            # ------------------------------------------------------
+
+                            # Format: step <number> spikes <indeces> speed <int_in_ms> stim <indeces> <current>
+                            if data[:4] == "step" and not paused:
+                                try:
+                                    command = data.split()
+                                    timestep = float(command[1])
+                                    I_stim = []
+                                    speed = 0
+                                
+                                    if len(command) >= 7 :
+                                        speed = int(command[5])
+                                        stim_a = int(command[7].split('-')[0])
+                                        stim_b = int(command[7].split('-')[1])
+                                        stim_current = float(command[8])
+
+                                        for indx in range(stim_a,stim_b) :
+                                            I_stim.append( (indx, stim_current) )
+
+                                    print "Timestep:", timestep
+                                    # Simulation here ..........
+                                    try:
+                                        spikes = sim.run(I_stim=I_stim)
+                                    except BSException as e:
+                                        errorin = 'Error in ' + e.get_where()
+                                        print errorin
+                                        print e.get_what()
+                                        exit()
+                                    # ..........................
+
+                                    if speed > 0 :
+                                        sleep(speed/1000.0)
+
+                                    timestep += 1.0
+
+                                    if len(command) <= 2 :
+                                        connection.sendall("done "+str(timestep))
+
+                                    elif len(command) >= 7 :
+                                        if command[3] == "all" :
+                                            # Delete first and last element, i.e.'[' and ']'
+                                            str_spikes = ','.join(str(x) for x in spikes)
+                                            connection.sendall("done "+str(timestep) + \
+                                                               " spikes " + str_spikes)
+
+                                except ValueError:
+                                    print "Step not a float!"
+                                        
+                            elif data == "pause" :
+                                print "Pausing.."
+                                paused = True
+
+                            elif data == "play" :
+                                print "Starting.."
+                                paused = False
+                                connection.sendall("done "+str(timestep))
+                                
+                            elif data == "get nodes" :
+                                print "Sending nodes.."
+				my_nodes = sim.get_instantiatable_nodes()
+				reply = dict()
+                                for node in my_nodes :
+                                    params, states = my_nodes[node][1]
+				    fields = my_nodes[node][2]
+                                    version = my_nodes[node][3]
+                                    model = my_nodes[node][5]
+                                    inputfield = my_nodes[node][6]
+                                    outputfield = my_nodes[node][7]
+                                    unitsfield = my_nodes[node][8]
+                                    reply[node] = dict()
+			            reply[node]['fields'] = fields
+                                    reply[node]['params'] = params
+                                    reply[node]['states'] = states
+                                    reply[node]['model'] = model
+                                    reply[node]['inputfield'] = inputfield
+                                    reply[node]['outputfield'] = outputfield
+                                    reply[node]['unitsfield'] = unitsfield
+                                    reply[node]['version'] = version
+                                connection.sendall("nodes " + json.dumps(reply) )	
+
+                            elif data == "get edges" :
+                                print "Sending edges.."
+				my_edges = sim.get_instantiatable_edges()
+				reply = dict()
+                                for edge in my_edges :
+                                    params, states = my_edges[edge][1]
+                                    fields = my_edges[edge][2]
+                                    version = my_edges[edge][3]
+                                    inputmodel = my_edges[edge][5]
+                                    outputmodel = my_edges[edge][6]
+                                    reply[edge] = dict()
+                                    reply[edge]['fields'] = fields
+                                    reply[edge]['params'] = params
+                                    reply[edge]['states'] = states
+                                    reply[edge]['inputmodel'] = outputmodel
+                                    reply[edge]['outputmodel'] = outputmodel
+                                    reply[edge]['version'] = version
+                                connection.sendall("edges " + json.dumps(reply) )
+
+                            elif data[:4] == "node" :
+                                index = int(data[4:-1])
+                                data = sim.get_node_data(index)
+                                if sim.get_model_type(index == 'spike'):
+                                    str_spikes = ','.join(str(x) for x in data)
+                                    connection.sendall("spikes " + str_spikes + " done" )
+                                elif sim.get_model_type(index == 'rate'):
+                                    all_rates = ''
+                                    for d in data:
+                                        str_rates = '['
+                                        str_rates += ','.join(str(x) for x in d)
+                                        str_rates += ']'
+                                    all_rates+=str_rates    
+                                    connection.sendall("rates " + all_rates + " done"  )
+                                else :
+                                    connection.sendall("done")
+                                
+                            elif data[:4] == "edge" :
+                                data = sim.get_edge_data(int(data[4:-1]))
+                                all_weights = ''
+                                for d in data:
+                                    str_weights= '['
+                                    str_weights += ','.join(str(x) for x in d)
+                                    str_weights += ']'
+                                all_weights+=str_weights    
+                                connection.sendall("weights " + all_weights + " done" )
+
+                            elif data == "sending file" and paused :
+                                print "Start recieving brn file.."
+
+                                # In case of having already a simulation running, one  
+                                # option would be to resume simulation, and then I would
+                                # just need to return the following msg:
+                                #if sim.neurons > 0 :# Already have a simulation running
+                                #    connection.sendall("already running "+\
+                                #                       str(sim.net.neuron_count()))
+                                #else :
+                                #    recieving_file = True
+                                #    brn_file = open('simulation.brn', 'w')
+                                #    connection.sendall("give me")
+    
+                                # However here I will just reinitialize the network:
+                                if sim.neurons > 0 : # Already have a simulation running
+                                    print "Error: Sim neurons:", sim.neurons
+                                    exit()
+                
+                                recieving_file = True
+                                self.brn_file = open('./brn/' + 'simulation.brn', 'w')
+                                connection.sendall("give me")
+                        else:
+                            print "Connection with", client_address, "terminated"
+                            break
+                            """                
+                            print >>stderr, 'received "%s"' % data
+                            if data:
+                                print >>stderr, 'sending data back to the client'
+                                connection.sendall(data)
+                            else:
+                                print >>stderr, 'no more data from', client_address
+                                break
+                            """
+
+            finally:
+                #Clean up the connection
+                paused = True
+                connection.close()

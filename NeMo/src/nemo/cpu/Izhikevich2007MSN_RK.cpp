@@ -1,0 +1,146 @@
+#include <cassert>
+#include <nemo/fixedpoint.hpp>
+#include <nemo/plugins/Izhikevich2007.h>
+
+#include "neuron_model.h"
+
+const unsigned SUBSTEPS = 4;
+const float SUBSTEP_MULT = 0.25f;
+
+
+extern "C"
+NEMO_PLUGIN_DLL_PUBLIC
+void
+cpu_update_neurons(
+		unsigned start, unsigned end,
+		unsigned cycle,
+		float* paramBase, size_t paramStride,
+		float* stateBase, size_t stateHistoryStride, size_t stateVarStride,
+		unsigned fbits,
+		unsigned fstim[],
+		RNG rng[],
+		float currentEPSP[],
+		float currentIPSP[],
+		float currentExternal[],
+		uint64_t recentFiring[],
+		unsigned fired[],
+		void* /* rcm */)
+{
+	const float* a = paramBase + PARAM_2007A * paramStride;
+	const float* b = paramBase + PARAM_2007B * paramStride;
+	const float* c = paramBase + PARAM_2007C * paramStride;
+	const float* d = paramBase + PARAM_2007D * paramStride;
+	const float* vpeak = paramBase + PARAM_2007VPEAK * paramStride;
+	const float* Vr = paramBase + PARAM_2007VR * paramStride;
+	const float* Vt = paramBase + PARAM_2007VT * paramStride;
+	const float* k = paramBase + PARAM_2007K * paramStride;
+	const float* C = paramBase + PARAM_2007CCAP * paramStride;
+	const float* sigma = paramBase + PARAM_2007SIGMA * paramStride;
+	const float* d1 = paramBase + PARAM_2007D1 * paramStride;
+	const float* d2 = paramBase + PARAM_2007D2 * paramStride;
+
+	const size_t historyLength = 1;
+
+	/* Current state */
+	size_t b0 = cycle % historyLength;
+    const float* u0 = stateBase + b0 * stateHistoryStride + STATE_2007U * stateVarStride;
+    const float* v0 = stateBase + b0 * stateHistoryStride + STATE_2007V * stateVarStride;
+
+	/* Next state */
+	size_t b1 = (cycle+1) % historyLength;
+    float* u1 = stateBase + b1 * stateHistoryStride + STATE_2007U * stateVarStride;
+    float* v1 = stateBase + b1 * stateHistoryStride + STATE_2007V * stateVarStride;
+
+	/* Each neuron has two indices: a local index (within the group containing
+	 * neurons of the same type) and a global index. */
+
+	int nn = end-start;
+	assert(nn >= 0);
+
+#pragma omp parallel for default(shared)
+	for(int nl=0; nl < nn; nl++) {
+
+		unsigned ng = start + nl;
+
+		float I = (1.0f + MSN_BETA1 * d1[nl]) * (1.0f - MSN_BETA2 * d2[nl]) * currentEPSP[ng] + currentIPSP[ng] + currentExternal[ng];
+
+		/* no need to clear current?PSP. */
+
+		//! \todo clear this outside kernel
+		currentExternal[ng] = 0.0f;
+
+		if(sigma[nl] != 0.0f) {
+			I += sigma[nl] * nrand(&rng[nl]);
+		}
+
+		fired[ng] = 0;
+
+		float u = u0[nl];
+		float v = v0[nl];
+
+		float oneOverC = 1.0f/C[nl];
+		float k1, k2, k3, k4, temp;
+		float msn_Vr, msn_d, msn_k;
+
+		for(unsigned t=0; t<SUBSTEPS; ++t) {
+			if(!fired[ng]) {
+				// Initial
+				//v += SUBSTEP_MULT * ((0.04* v + 5.0) * v + 140.0- u + I);
+				//u += SUBSTEP_MULT * (a[nl] * (b[nl] * v - u));
+
+				// Euler method
+				//v += SUBSTEP_MULT * oneOverC * (k[nl] * (v - Vr[nl]) * (v - Vt[nl])  - u + I);
+				//u += SUBSTEP_MULT * (a[nl] * (b[nl] * (v - Vr[nl]) - u));
+
+				// Effects of dopamine in MSN neurons
+				// D1:
+				msn_Vr = Vr[nl] * (1 + MSN_K * d1[nl]);
+				msn_d = d[nl] * (1 - MSN_L * d1[nl]);
+				// D2:
+				msn_k = k[nl] * (1 - MSN_ALPHA * d2[nl]);
+
+
+				// classical Runge-Kutta (4th deg) method
+				k1 = (msn_k*(v - msn_Vr)*(v - Vt[nl]) - u + I)*oneOverC; 
+				temp = v + 0.5*SUBSTEP_MULT*k1;
+				k2 = (msn_k*(temp - msn_Vr)*(temp - Vt[nl]) - u + I)*oneOverC; 
+				temp = v + 0.5*SUBSTEP_MULT*k2;
+				k3 = (msn_k*(temp - msn_Vr)*(temp - Vt[nl]) - u + I)*oneOverC; 
+				temp = v + SUBSTEP_MULT*k3;
+				k4 = (msn_k*(temp - msn_Vr)*(temp - Vt[nl]) - u + I)*oneOverC; 
+				v += SUBSTEP_MULT*(k1 + 2.0*k2 + 2.0*k3 + k4)/6.0;
+
+				k1 = a[nl]*(b[nl]*(v-msn_Vr) - u);
+				temp = u + 0.5*SUBSTEP_MULT*k1;
+				k2 = a[nl]*(b[nl]*(v-msn_Vr) - temp);
+				temp = u + 0.5*SUBSTEP_MULT*k2;
+				k3 = a[nl]*(b[nl]*(v-msn_Vr) - temp);
+				temp = u +     SUBSTEP_MULT*k3;
+				k4 = a[nl]*(b[nl]*(v-msn_Vr) - temp);
+				u += SUBSTEP_MULT*(k1 + 2.0*k2 + 2.0*k3 + k4)/6.0;
+
+				fired[ng] = v >= vpeak[nl];
+			}
+		}
+
+		fired[ng] |= fstim[ng];
+		fstim[ng] = 0;
+		recentFiring[ng] = (recentFiring[ng] << 1) | (uint64_t) fired[ng];
+
+		if(fired[ng]) {
+			v = c[nl];
+			u += msn_d;
+			// LOG("c%lu: n%u fired\n", elapsedSimulation(), m_mapper.globalIdx(n));
+		}
+
+		u1[nl] = u;
+		v1[nl] = v;
+	}
+}
+
+
+cpu_update_neurons_t* test = &cpu_update_neurons;
+
+
+#include "default_init.c"
+
