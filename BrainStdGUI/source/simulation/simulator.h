@@ -129,10 +129,6 @@ public:
 
 
     virtual bool save(QString filename){ (void)filename; std::cout << "Not in this simulation\n"; }
-    virtual void setStimulus(int neuronIndex, float value) = 0;
-    virtual void setStimulus(int firstNeur, int lastNeur, float value) = 0;
-    virtual void clearStimulus() = 0;
-    virtual void clearStimulus(const int &firstNeuron, const int &lastNeuron){ (void)firstNeuron; (void)lastNeuron; }
 
     virtual void addForcedSpikesPatternA(QVector<unsigned int> data){ (void)data; std::cout << "Not in this simulation\n"; }
     virtual void clearForcedSpikesA(int patternIndex){ (void)patternIndex; std::cout << "Not in this simulation\n"; }
@@ -155,6 +151,12 @@ public:
     virtual void setD2(const int &idx, const double &value){std::cout << idx << "," << value << " No dopamine in this simulation\n"; }
     virtual void setSynapticModel(const int &type){ synapticModel = type; }
 
+    // -- STIMULATION ----------------------------------------------------------
+public slots :
+    virtual void setStimulus(int neuronIndex, float value) = 0;
+    virtual void setStimulus(int firstNeur, int lastNeur, float value) = 0;
+    virtual void clearStimulus() = 0;
+    virtual void clearStimulus(const int &firstNeuron, const int &lastNeuron){ (void)firstNeuron; (void)lastNeuron; }
     // OSCILLATIONS:
     virtual void setOscillation(const int &firstNeuron, const int &lastNeuron, const double &maxStimulus, const double &_freq, const int &_delay, const double &_phase){
         stopOscillation(firstNeuron, lastNeuron);
