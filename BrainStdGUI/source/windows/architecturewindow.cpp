@@ -9,6 +9,8 @@ ArchitectureWindow::ArchitectureWindow(Simulator *_A, QWidget *parent):
 
     //this->setCursor(QCursor(Qt::CrossCursor));
     stimWidget = NULL;
+    // SOS TO CHECK: I think that the only place I use this pointer here is
+    // when I create the stimulation window (26/02/2016)
     A = _A;
 
     x1 = y1 = x2 = y2 = xA = yA = xB = yB = 0;
@@ -301,11 +303,24 @@ void ArchitectureWindow::turnOnStimulation(){
 
     // Turn on stimulation:
     if(blocks.contains(highlighted)){
-        stimWidget = new StimulationWidget(blocks[highlighted], A, this);
+        stimWidget = new StimulationWidget(blocks[highlighted], this);
         stimWidget->show();
         stimWidget->move(blocks[highlighted]->x() +
                          blocks[highlighted]->width()+10,
                          blocks[highlighted]->y());
+
+        connect(A,  SIGNAL(setOscillation(const int, const int,const double, const double,const int, const double)),
+                stimWidget, SLOT(setOscillation(const int, const int,const double, const double,const int, const double)));
+
+        connect(A, SIGNAL(stopOscillation(const int, const int)),
+                stimWidget, SLOT(stopOscillation(const int, const int)));
+        connect(A, SIGNAL(setStimulus(int, float)),
+                stimWidget, SLOT(setStimulus(int, float)));
+        connect(A, SIGNAL(setStimulus(int, int, float)),
+                stimWidget, SLOT(setStimulus(int, int, float)));
+        connect(A, SIGNAL(clearStimulus()), stimWidget, SLOT(clearStimulus()));
+        connect(A, SIGNAL(clearStimulus(const int &, const int &)),
+                stimWidget, SLOT(clearStimulus(const int &, const int &)));
     }
 }
 

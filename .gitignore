@@ -1,0 +1,10 @@
+*.pyc
+*~
+*.so
+*.swp
+*.swo
+
+brainstd.pro.*
+
+NeMo/build/
+NeMo/install/
