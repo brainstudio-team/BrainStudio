@@ -25,7 +25,7 @@ WorkspaceTab::WorkspaceTab(QString filename, QWidget *parent):
 
     loading_failed = false;
 
-    schema = new ArchitectureWindow(snn, this);
+    schema = new ArchitectureWindow(this);
     setCentralWidget(schema);
 
     this->createDockWindows();
@@ -98,6 +98,7 @@ void WorkspaceTab::setBackend(){
     else                    path = UserData::workspace_path+"/"+FILENAME;
 
     snn = new TCPIP_Sim(this, path);
+    schema->updateSimulationPointer(snn);
     QObject::connect(snn,  SIGNAL(simulation_loaded(Simulator*,int*,int*,int)),
                      this, SLOT(networkLoaded(Simulator*,int*,int*,int)),
                      Qt::QueuedConnection);

@@ -168,8 +168,12 @@
         bool checkValues(int _model, int _type, float *A);
 
     public:
-        explicit ArchitectureWindow(Simulator *_A, QWidget *parent = 0);
+        explicit ArchitectureWindow(QWidget *parent = 0);
         ~ArchitectureWindow();
+
+        void updateSimulationPointer(Simulator *_A){
+            A = _A;
+        }
 
         // Widget stuff
         void setModeStatesPixels(){mode = Block::modeStatesPixels; setBlockMode(Block::modeStatesPixels); update();}

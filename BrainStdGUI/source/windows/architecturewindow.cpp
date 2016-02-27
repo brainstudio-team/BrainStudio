@@ -1,17 +1,14 @@
 #include "architecturewindow.h"
 #include "ui_architecturewindow.h"
 
-ArchitectureWindow::ArchitectureWindow(Simulator *_A, QWidget *parent):
-                                       QWidget(parent),
+ArchitectureWindow::ArchitectureWindow(QWidget *parent): QWidget(parent),
                                        ui(new Ui::ArchitectureWindow){
     this->setAutoFillBackground(true);
     this->setBackgroundRole(QPalette::Light);
 
     //this->setCursor(QCursor(Qt::CrossCursor));
     stimWidget = NULL;
-    // SOS TO CHECK: I think that the only place I use this pointer here is
-    // when I create the stimulation window (26/02/2016)
-    A = _A;
+    A = NULL;
 
     x1 = y1 = x2 = y2 = xA = yA = xB = yB = 0;
     menuPos.setX(0);    menuPos.setY(0);
@@ -309,18 +306,18 @@ void ArchitectureWindow::turnOnStimulation(){
                          blocks[highlighted]->width()+10,
                          blocks[highlighted]->y());
 
-        connect(A,  SIGNAL(setOscillation(const int, const int,const double, const double,const int, const double)),
-                stimWidget, SLOT(setOscillation(const int, const int,const double, const double,const int, const double)));
+        connect(stimWidget,  SIGNAL(setOscillation(const int, const int,const double, const double,const int, const double)),
+                A, SLOT(setOscillation(const int, const int,const double, const double,const int, const double)));
 
-        connect(A, SIGNAL(stopOscillation(const int, const int)),
-                stimWidget, SLOT(stopOscillation(const int, const int)));
-        connect(A, SIGNAL(setStimulus(int, float)),
-                stimWidget, SLOT(setStimulus(int, float)));
-        connect(A, SIGNAL(setStimulus(int, int, float)),
-                stimWidget, SLOT(setStimulus(int, int, float)));
-        connect(A, SIGNAL(clearStimulus()), stimWidget, SLOT(clearStimulus()));
-        connect(A, SIGNAL(clearStimulus(const int &, const int &)),
-                stimWidget, SLOT(clearStimulus(const int &, const int &)));
+        connect(stimWidget, SIGNAL(stopOscillation(const int, const int)),
+                A, SLOT(stopOscillation(const int, const int)));
+        connect(stimWidget, SIGNAL(setStimulus(int, float)),
+                A, SLOT(setStimulus(int, float)));
+        connect(stimWidget, SIGNAL(setStimulus(int, int, float)),
+                A, SLOT(setStimulus(int, int, float)));
+        connect(stimWidget, SIGNAL(clearStimulus()), A, SLOT(clearStimulus()));
+        connect(stimWidget, SIGNAL(clearStimulus(const int &, const int &)),
+                A, SLOT(clearStimulus(const int &, const int &)));
     }
 }
 
