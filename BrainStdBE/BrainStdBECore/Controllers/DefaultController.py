@@ -188,13 +188,16 @@ class BrainStdBEClass(Controller) :
                                     connection.sendall("give me") # more..
                             # ------------------------------------------------------
 
-                            # Format: step <number> spikes <indeces> speed <int_in_ms> stim <indeces> <current>
+                            # Format: step <number> spikes <indices> speed <int_in_ms> stim <indices> <current>
                             if data[:4] == "step" and not paused:
                                 command = data.split()
+
+                                # TODO: Now we rely on the assumption that the messages always follow the order
+                                # mentioned above. It would be safer to check every part of the string
+
                                 try:
                                     
                                     timestep = float(command[1])
-                                    I_stim = []
                                     speed = 0
                                    
                                     if len(command) >= 7 :                                    
@@ -215,8 +218,7 @@ class BrainStdBEClass(Controller) :
                                         
                                         stim_current = float(command[8])
 
-                                        for indx in range(stim_a,stim_b) :
-                                            I_stim.append( (indx, stim_current) )
+                                        I_stim = [ (indx, stim_current) for indx in range(stim_a, stim_b) ]
 
                                     print "Timestep:", timestep
 
