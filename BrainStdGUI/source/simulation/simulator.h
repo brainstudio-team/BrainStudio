@@ -10,9 +10,11 @@ an embedded backend.
 
 #include "source/helper/helperClasses.h"
 #include "source/helper/userdata.h"
+#include "source/helper/stimulus.h"
 
 #include <iostream>
 #include <QWidget>
+#include <QMap>
 
 enum {SYN_DEFAULT, SYN_SIMPLE_CHEMICHAL};
 
@@ -54,9 +56,8 @@ protected:
     int synapticModel;
 
 
-    // OSCILLATIONS
-    int osc, s; // helper variables
-    QVector<OscillationSet> oscillation;
+    // STIMULATION
+    QMap<QString,Stimulus> stimuli;
 
 public:
     explicit Simulator(double _dt = 1.0, QObject *parent = 0):
@@ -71,7 +72,7 @@ public:
         // SOS: I think that nemo deletes this!!
         // if(spikesArray != NULL) delete [] spikesArray;
         spikesArray = NULL;
-        oscillation.clear();
+        stimuli.clear();
         initialized = false;
         return false;
     }
@@ -153,11 +154,54 @@ public:
 
     // -- STIMULATION ----------------------------------------------------------
 public slots :
-    virtual void setStimulus(int neuronIndex, float value) = 0;
-    virtual void setStimulus(int firstNeur, int lastNeur, float value) = 0;
-    virtual void clearStimulus() = 0;
-    virtual void clearStimulus(const int &firstNeuron, const int &lastNeuron){ (void)firstNeuron; (void)lastNeuron; }
+    virtual void setStimulus(QString blockName, int neuronIndex, float value) {
+        if (stimuli.contains(blockName)) {
+            stimuli[blockName].value = value;
+            stimuli[blockName].firstNeuron = neuronIndex;
+            stimuli[blockName].lastNeuron = neuronIndex;
+        } else {
+            // stimuli[blockName] = Stimulus(neuronIndex, neuronIndex, value);
+            stimuli.insert(blockName, Stimulus(neuronIndex, neuronIndex, value));
+        }
+    }
+
+    virtual void setStimulus(QString blockName, int firstNeuron, int lastNeuron, float value) {
+        if (stimuli.contains(blockName)) {
+            stimuli[blockName].value = value;
+            stimuli[blockName].firstNeuron = firstNeuron;
+            stimuli[blockName].lastNeuron = lastNeuron;
+        } else {
+            // stimuli[blockName] = Stimulus(firstNeuron, lastNeuron, value);
+            stimuli.insert(blockName, Stimulus(firstNeuron, lastNeuron, value));
+        }
+    }
+
+    virtual void setStimulus(QString blockName, int firstNeuron, int lastNeuron,
+                             double baseline, double amplitude, double frequency, double phase) {
+        if (stimuli.contains(blockName)) {
+            stimuli[blockName].firstNeuron = firstNeuron;
+            stimuli[blockName].lastNeuron = lastNeuron;
+            stimuli[blockName].baseline = baseline;
+            stimuli[blockName].amplitude = amplitude;
+            stimuli[blockName].frequency = frequency;
+            stimuli[blockName].phase = phase;
+        } else {
+            // stimuli[blockName] = Stimulus(firstNeuron, lastNeuron, baseline, amplitude, frequency, phase);
+            stimuli.insert(blockName, Stimulus(firstNeuron, lastNeuron, baseline, amplitude, frequency, phase));
+        }
+
+    }
+
+    virtual void clearAllStimuli() {
+        stimuli.clear();
+    }
+
+    virtual void clearStimulus(QString blockName) {
+        stimuli.remove(blockName);
+    }
+
     // OSCILLATIONS:
+    /*
     virtual void setOscillation(const int &firstNeuron, const int &lastNeuron, const double &maxStimulus, const double &_freq, const int &_delay, const double &_phase){
         stopOscillation(firstNeuron, lastNeuron);
         setStimulus(firstNeuron, lastNeuron, 0.0f); // To make sure that ids exist and are continues (needed for update oscillations) ZAF: To check!
@@ -166,52 +210,35 @@ public slots :
     }
 
     virtual void stopOscillation(const int &firstNeuron, const int &lastNeuron){
-        // Find if we already have set oscillations for these neurons  - Zaf: good one :) -
-        for(int i=0; i<oscillation.size(); i++){
+        // Find if we already have set oscillations for these neurons
+        for(int i = 0; i < oscillation.size(); i++){
             // If the new set covers another one
             if(firstNeuron <= oscillation[i].firstNeuron &&
                     lastNeuron >= oscillation[i].lastNeuron){
-                //clearStimulus(firstNeuron, lastNeuron);
-                //setStimulus(firstNeuron, lastNeuron, 0.0f);
                 oscillation.remove(i);
             }
             // If ..
             else if(firstNeuron > oscillation[i].firstNeuron &&
                     firstNeuron < oscillation[i].lastNeuron &&
                     lastNeuron > oscillation[i].lastNeuron){
-                //clearStimulus(firstNeuron, lastNeuron);
-                //setStimulus(firstNeuron, lastNeuron, 0.0f);
                 oscillation[i].lastNeuron = firstNeuron;
             }
             // If ..
             else if(firstNeuron < oscillation[i].firstNeuron &&
                     lastNeuron > oscillation[i].firstNeuron &&
                     lastNeuron < oscillation[i].lastNeuron){
-                //clearStimulus(firstNeuron, lastNeuron);
-                //setStimulus(firstNeuron, lastNeuron, 0.0f);
                 oscillation[i].firstNeuron = lastNeuron;
             }
             // If the new set is inside another one
             else if(firstNeuron > oscillation[i].firstNeuron &&
                     firstNeuron < oscillation[i].lastNeuron &&
                     lastNeuron < oscillation[i].lastNeuron){
-                //clearStimulus(firstNeuron, lastNeuron);
-                //setStimulus(firstNeuron, lastNeuron, 0.0f);
                 oscillation.remove(i);
             }
         }
     }
-    virtual void stopAllOscillations(){ oscillation.clear(); }                  // ZAF: not correct because the stimulusIds remain there!
-    virtual double getStimWeight(){ if(!oscillation.isEmpty())                  // ZAF: for debugging I guess..!
-                                       return oscillation[0].stimWeight;
-                                    else return -1;
-                                  }
-    virtual void updateOscillations(){
-        for(osc=0; osc<oscillation.size(); osc++){
-          for(s=oscillation[osc].firstNeuron; s<oscillation[osc].lastNeuron; s++)
-             setStimulus(s, oscillation[osc].setStimWeight(timeStep));
-       }
-     }
+    */
+
 };
 
 #endif // SIMULATOR_H

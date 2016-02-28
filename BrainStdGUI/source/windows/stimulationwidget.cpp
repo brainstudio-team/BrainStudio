@@ -49,36 +49,41 @@ void StimulationWidget::setStimulus(const int &value){
     int firstN = block->getFirstNeuronIdx(), lastN = block->getLastNeuronIdx();
 
     // Stop previous stimulation
-    emit setStimulus(firstN, lastN, 0.0f);
+    // TODO: maybe change this for clearStimulus(block->old_id)
+    emit setStimulus(block->getId(), firstN, lastN, 0.0f);
 
     if(ui->stimulusSomeButton->isChecked()){
         // Update simulator
         firstN += ui->startSpinBox->value();
         lastN = firstN + ui->sizeSpinBox->value();
-        emit setStimulus(firstN, lastN, (float)value);
+        emit setStimulus(block->getId(), firstN, lastN, (float)value);
 
         // Update schema
-        int first=firstN + block->getFirstNeuronIdx();
-        int last =lastN  + block->getFirstNeuronIdx();
+        int first = firstN + block->getFirstNeuronIdx();
+        int last = lastN  + block->getFirstNeuronIdx();
         block->setStimulus(value, first, last);
     }
     else{ // Single value
         // Update simulator
-        emit setStimulus(firstN, lastN, (float)value);
+        emit setStimulus(block->getId(), firstN, lastN, (float) value);
         // Update schema
         block->setStimulus(value);
     }
 
     // OSCILLATIONS
-    if(ui->oscCheckBox->isChecked()){
+    if (ui->oscCheckBox->isChecked()){
         // Update simulator
-        emit setOscillation(firstN, lastN, value,
-                          ui->oscFrequencySlider->value(),
-                          ui->oscPhaseSpinBox->value(), 0.0);
+        double baseline = value;
+        double amplitude = value;
+        double frequency = ui->oscFrequencySlider->value();
+        double phase = ui->oscPhaseSpinBox->value();
+
+        emit setStimulus(block->getId(), firstN, lastN, baseline, amplitude, frequency, phase);
+
     }
-    else{
+    else {
         // Update simulator
-        emit stopOscillation(firstN, lastN);
+        emit clearStimulus(block->getId());
     }
     // Update schema
     block->setOscillationFrequency(ui->oscFrequencySlider->value());

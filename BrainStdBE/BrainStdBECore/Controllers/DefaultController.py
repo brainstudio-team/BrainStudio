@@ -87,7 +87,7 @@ class BrainStdBEClass(Controller) :
         if self.no_sockets :
             print "Starting simulation without GUI.."
             
-	
+
             self.sim = brain()
             self.spikes = []
             try:
@@ -198,10 +198,14 @@ class BrainStdBEClass(Controller) :
                                 try:
                                     
                                     timestep = float(command[1])
+                                    I_stim = []
                                     speed = 0
                                    
-                                    if len(command) >= 7 :                                    
+
+                                    if len(command) >= 6 :                                    
                                         speed = int(command[5])
+
+                                    if len(command) >= 8 :                                    
                                         if command[7][0] == '-':
                                             what = "Stim neuron is negative: "+ command[7]
                                             errorin = 'Error in DefaultController' 
@@ -253,7 +257,7 @@ class BrainStdBEClass(Controller) :
                                     if len(command) <= 2 :
                                         connection.sendall("done "+str(timestep))
 
-                                    elif len(command) >= 7 :
+                                    elif len(command) >= 6 :
                                         if command[3] == "all" :
                                             # Delete first and last element, i.e.'[' and ']'
                                             str_spikes = ','.join(str(x) for x in spikes)

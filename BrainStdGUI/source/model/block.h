@@ -175,7 +175,6 @@ public:
     int     getNeuronConnectionWeight(int i) const { return neuronConnectionWeights[i]; }
     int     getNeuronConnectionNo() const { return neuronConnections.size(); }
 
-
     // MODIFIERS:
     void setParam(const QString &p_name, const QString &value){
         if(p_name == param_for_neurons) this->sizeChanged(value);
