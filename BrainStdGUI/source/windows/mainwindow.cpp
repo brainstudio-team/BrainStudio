@@ -89,6 +89,8 @@ void MainWindow::init(QString givenfilewithpath=""){
     this->setFocus();
 
     this->tabWidget->setTabsClosable(true);
+    this->connect(tabWidget, SIGNAL(tabCloseRequested(int)),
+                  this,      SLOT(removeTab(int)));
     this->saveButton->setEnabled(false);
     this->playButton->setEnabled(false);
     //this->learningCheckBox->setVisible(false);

@@ -96,11 +96,7 @@ bool MainWindow::loadNewTab(const QString &filename){
     FILENAME = filename;
 
     // CREATE NEW TAB
-    if(workTab.contains(filename)){
-        disconnectTabSignals(filename);
-        delete workTab[filename];
-        workTab.remove(filename);
-    }
+    this->removeTab(filename);
 
     workTab[filename] = new WorkspaceTab(FILENAME, this);
     if(workTab[filename]->failed()){
@@ -115,8 +111,13 @@ bool MainWindow::loadNewTab(const QString &filename){
     return true;
 }
 
-
-
+void MainWindow::removeTab(const QString &filename){
+    if(workTab.contains(filename)){
+        disconnectTabSignals(filename);
+        delete workTab[filename];
+        workTab.remove(filename);
+    }
+}
 
 
 

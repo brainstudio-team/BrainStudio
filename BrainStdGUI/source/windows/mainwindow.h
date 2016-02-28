@@ -75,6 +75,20 @@ public:
 signals:
     void createNetFromFileSignal(QString _filename, bool _updateSchemaCheckBox);
 
+
+public slots:
+    // I don't know why but this has to be here in the header file otherwise
+    // it is not recognized and connected.
+    void removeTab(int index){
+        // Find the key
+        QMap<QString, WorkspaceTab*>::iterator it;
+        for(it = workTab.begin(); it != workTab.end(); it++){
+            if(tabWidget->indexOf(it.value()) == index){
+                this->removeTab(it.key());
+            }
+        }
+    }
+
 private slots:
     void init(QString givenfilewithpath);
     //void newFile(){}
@@ -90,6 +104,7 @@ private slots:
     bool onSetGrid(const bool &on);
     bool selectTabWithKey(const unsigned &number);
     bool loadNewTab(const QString &filename);
+    void removeTab(const QString &filename);
     void about(){}
     void onXmlToggle();
     void onActionsListToggle();
