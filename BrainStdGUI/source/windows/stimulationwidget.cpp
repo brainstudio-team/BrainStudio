@@ -46,48 +46,50 @@ void StimulationWidget::setStimulus(const int &value){
     if(!initialized)
         return;
 
-    int firstN = block->getFirstNeuronIdx(), lastN = block->getLastNeuronIdx();
+    emit clearStimulus(block->getId());
 
-    // Stop previous stimulation
-    // TODO: maybe change this for clearStimulus(block->old_id)
-    emit setStimulus(block->getId(), firstN, lastN, 0.0f);
+    bool isOscillation = ui->oscCheckBox->isChecked();
+    bool isBaseline = (ui->stimulusSlider->value() != 0);
 
-    if(ui->stimulusSomeButton->isChecked()){
-        // Update simulator
-        firstN += ui->startSpinBox->value();
-        lastN = firstN + ui->sizeSpinBox->value();
-        emit setStimulus(block->getId(), firstN, lastN, (float)value);
+    int blockFirst = block->getFirstNeuronIdx();
+    int stimFirst = blockFirst + ui->startSpinBox->value();
+    int stimLast = stimFirst + ui->sizeSpinBox->value();
 
-        // Update schema
-        int first = firstN + block->getFirstNeuronIdx();
-        int last = lastN  + block->getFirstNeuronIdx();
-        block->setStimulus(value, first, last);
-    }
-    else{ // Single value
-        // Update simulator
-        emit setStimulus(block->getId(), firstN, lastN, (float) value);
-        // Update schema
-        block->setStimulus(value);
-    }
+    if (!isOscillation && !isBaseline) {
+        emit clearStimulus(block->getId());
+        block->setStimulus(0);
 
-    // OSCILLATIONS
-    if (ui->oscCheckBox->isChecked()){
-        // Update simulator
+    } else if (!isOscillation && isBaseline) {
+        emit setStimulus(block->getId(), stimFirst, stimLast, (float) value);
+        block->setStimulus(value, stimFirst, stimLast);
+
+    } else if (isOscillation && isBaseline) {
+
         double baseline = value;
         double amplitude = value;
         double frequency = ui->oscFrequencySlider->value();
         double phase = ui->oscPhaseSpinBox->value();
 
-        emit setStimulus(block->getId(), firstN, lastN, baseline, amplitude, frequency, phase);
+        emit setStimulus(block->getId(), stimFirst, stimLast, baseline, amplitude, frequency, phase);
+
+        block->setStimulus(value, stimFirst, stimLast);
+        block->setOscillationFrequency(ui->oscFrequencySlider->value());
+        block->setOscillationPhase(ui->oscPhaseSpinBox->value());
+
+    } else if (isOscillation && !isBaseline) {
+
+        double baseline = value;
+        double amplitude = value;
+        double frequency = ui->oscFrequencySlider->value();
+        double phase = ui->oscPhaseSpinBox->value();
+
+        emit setStimulus(block->getId(), stimFirst, stimLast, baseline, amplitude, frequency, phase);
+
+        block->setOscillationFrequency(ui->oscFrequencySlider->value());
+        block->setOscillationPhase(ui->oscPhaseSpinBox->value());
 
     }
-    else {
-        // Update simulator
-        emit clearStimulus(block->getId());
-    }
-    // Update schema
-    block->setOscillationFrequency(ui->oscFrequencySlider->value());
-    block->setOscillationPhase(ui->oscPhaseSpinBox->value());
+
 }
 
 void StimulationWidget::setStimulus(){
@@ -100,6 +102,22 @@ void StimulationWidget::setStimulus(){
 // -------------------------------------------------------------------------- //
 //                            GUI methods                                     //
 // -------------------------------------------------------------------------- //
+
+void StimulationWidget::on_stimulusFullButton_clicked() {
+    // If the "single value" option is checked, apply stimulus to all neurons
+    if (ui->stimulusFullButton->isChecked()) {
+        // Start in the first neuron
+        ui->startSpinBox->setMaximum(block->getNeuronsSize());
+        ui->startSpinBox->setMinimum(0);
+        ui->startSpinBox->setValue(0);
+
+        // Size of the stimulus is the whole block
+        ui->sizeSpinBox->setMaximum(block->getNeuronsSize());
+        ui->sizeSpinBox->setMinimum(0);
+        ui->sizeSpinBox->setValue(block->getNeuronsSize());
+    }
+    this->setStimulus();
+}
 
 void StimulationWidget::on_stimulusSlider_valueChanged(int value){
     // Show value to GUI
@@ -142,8 +160,8 @@ void StimulationWidget::on_stimulusSomeSlider_valueChanged(int value){
 
 void StimulationWidget::on_startSpinBox_valueChanged(){
     // Custom stimulus
-   ui->sizeSpinBox->setMaximum(block->getNeuronsSize()
-                               -ui->startSpinBox->value());
+    ui->sizeSpinBox->setMaximum(block->getNeuronsSize()
+                               - ui->startSpinBox->value());
     ui->stimulusSomeSlider->setValue(ui->startSpinBox->value());
     ui->stimulusSomeButton->setText("From " +
                                 QString::number(ui->startSpinBox->value()) +
@@ -153,8 +171,7 @@ void StimulationWidget::on_startSpinBox_valueChanged(){
     if(ui->startSpinBox->value() == 0 && ui->startSpinBox->value() +
             ui->sizeSpinBox->value() == block->getNeuronsSize()){
         ui->stimulusFullButton->setChecked(true);
-    }
-    else{
+    } else {
         ui->stimulusSomeButton->setChecked(true);
     }
     this->setStimulus();

@@ -31,7 +31,7 @@ public:
 private slots:
     // Stimulus
     void on_stimulusSlider_valueChanged(int value);
-    void on_stimulusFullButton_clicked(){ this->setStimulus(); }
+    void on_stimulusFullButton_clicked();
     void on_stimulusSomeButton_clicked(bool checked);
     void on_stimulusSomeSlider_valueChanged(int value);
     void on_startSpinBox_valueChanged();

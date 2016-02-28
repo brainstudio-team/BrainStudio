@@ -306,18 +306,16 @@ void ArchitectureWindow::turnOnStimulation(){
                          blocks[highlighted]->width()+10,
                          blocks[highlighted]->y());
 
-        connect(stimWidget,  SIGNAL(setOscillation(const int, const int,const double, const double,const int, const double)),
-                A, SLOT(setOscillation(const int, const int,const double, const double,const int, const double)));
 
-        connect(stimWidget, SIGNAL(stopOscillation(const int, const int)),
-                A, SLOT(stopOscillation(const int, const int)));
-        connect(stimWidget, SIGNAL(setStimulus(int, float)),
-                A, SLOT(setStimulus(int, float)));
-        connect(stimWidget, SIGNAL(setStimulus(int, int, float)),
-                A, SLOT(setStimulus(int, int, float)));
-        connect(stimWidget, SIGNAL(clearStimulus()), A, SLOT(clearStimulus()));
-        connect(stimWidget, SIGNAL(clearStimulus(const int &, const int &)),
-                A, SLOT(clearStimulus(const int &, const int &)));
+        connect(stimWidget, SIGNAL(setStimulus(QString, int, float)),
+                A, SLOT(setStimulus(QString, int, float)));
+        connect(stimWidget, SIGNAL(setStimulus(QString, int, int, float)),
+                A, SLOT(setStimulus(QString, int, int, float)));
+        connect(stimWidget, SIGNAL(setStimulus(QString,int,int,double,double,int,double)),
+                A, SLOT(setStimulus(QString,int,int,double,double,double,double)));
+        connect(stimWidget, SIGNAL(clearAllStimuli()), A, SLOT(clearAllStimuli()));
+        connect(stimWidget, SIGNAL(clearStimulus(QString)),
+                A, SLOT(clearStimulus(QString)));
     }
 }
 

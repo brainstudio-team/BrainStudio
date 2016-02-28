@@ -43,6 +43,7 @@ public:
             lastNeuron = other.lastNeuron;
             value = other.value;
             stim_type = STIMULATION_RANGE;
+            break;
 
         case OSCILLATION:
             firstNeuron = other.firstNeuron;
