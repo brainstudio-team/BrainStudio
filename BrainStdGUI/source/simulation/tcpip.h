@@ -28,10 +28,6 @@ private:
     QString brn_path;
     unsigned all_neurons;
 
-    // Stimulation
-    int stim_firstNeuron, stim_lastNeuron;
-    float stim_value;
-
 public:
     void step(const int &speed);
     void startInitializing();
@@ -46,14 +42,6 @@ public:
     int   getSynapses(){return 0;}
 
     float getNeuronState(unsigned int index){ return neuronsState[index]; }
-
-    void setStimulus(int neuronIndex, float value){
-        stim_firstNeuron = stim_lastNeuron = neuronIndex; stim_value = value;
-    }
-    void setStimulus(int firstNeur, int lastNeur, float value){
-        stim_firstNeuron=firstNeur; stim_lastNeuron=lastNeur; stim_value =value;
-    }
-    void clearStimulus(){}
 
 };
 

@@ -12,8 +12,7 @@ TCPIP_Sim::TCPIP_Sim(QObject *parent, QString simulation_file):
     tcpSocket = new QTcpSocket(this);
     brn_file = NULL;
     spikesArray = NULL;
-    stim_firstNeuron = stim_lastNeuron = 0;
-    stim_value = 0.0f;
+    stimuli.clear();
 
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(handleMessage()));
     connect(tcpSocket, SIGNAL(connected()), this, SLOT(connected()));
@@ -171,12 +170,17 @@ void TCPIP_Sim::stop(){
 
 void TCPIP_Sim::step(const int &speed){
     QString msg = "step " + QString::number(timeStep) + " spikes all ";
-    msg += "speed " + QString::number(speed) + " stim "
-            + QString::number(stim_firstNeuron) + "-"
-            + QString::number(stim_lastNeuron) + " "
-            + QString::number(stim_value)+' ';
+    msg += "speed " + QString::number(speed);
+
+    QMap<QString, Stimulus>::const_iterator it;
+    for(it=stimuli.begin(); it != stimuli.end(); it++){
+        msg += it.value().toString(timeStep);
+
+    }
+
     tcpSocket->write(msg.toUtf8());
 }
+
 void TCPIP_Sim::play(){
     qDebug() << "Starting..";
     tcpSocket->write("play ");
@@ -204,52 +208,6 @@ void TCPIP_Sim::loadXML(){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void TCPIP_Sim::displayError(QAbstractSocket::SocketError socketError)
 {
     /*switch (socketError) {
@@ -273,17 +231,3 @@ void TCPIP_Sim::displayError(QAbstractSocket::SocketError socketError)
                                  .arg(tcpSocket->errorString()));
     }*/
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

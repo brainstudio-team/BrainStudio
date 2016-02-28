@@ -87,7 +87,7 @@ class BrainStdBEClass(Controller) :
         if self.no_sockets :
             print "Starting simulation without GUI.."
             
-	
+
             self.sim = brain()
             self.spikes = []
             try:
@@ -188,17 +188,24 @@ class BrainStdBEClass(Controller) :
                                     connection.sendall("give me") # more..
                             # ------------------------------------------------------
 
-                            # Format: step <number> spikes <indeces> speed <int_in_ms> stim <indeces> <current>
+                            # Format: step <number> spikes <indices> speed <int_in_ms> stim <indices> <current>
                             if data[:4] == "step" and not paused:
                                 command = data.split()
+
+                                # TODO: Now we rely on the assumption that the messages always follow the order
+                                # mentioned above. It would be safer to check every part of the string
+
                                 try:
                                     
                                     timestep = float(command[1])
                                     I_stim = []
                                     speed = 0
                                    
-                                    if len(command) >= 7 :                                    
+
+                                    if len(command) >= 6 :                                    
                                         speed = int(command[5])
+
+                                    if len(command) >= 8 :                                    
                                         if command[7][0] == '-':
                                             what = "Stim neuron is negative: "+ command[7]
                                             errorin = 'Error in DefaultController' 
@@ -215,8 +222,7 @@ class BrainStdBEClass(Controller) :
                                         
                                         stim_current = float(command[8])
 
-                                        for indx in range(stim_a,stim_b) :
-                                            I_stim.append( (indx, stim_current) )
+                                        I_stim = [ (indx, stim_current) for indx in range(stim_a, stim_b) ]
 
                                     print "Timestep:", timestep
 
@@ -251,7 +257,7 @@ class BrainStdBEClass(Controller) :
                                     if len(command) <= 2 :
                                         connection.sendall("done "+str(timestep))
 
-                                    elif len(command) >= 7 :
+                                    elif len(command) >= 6 :
                                         if command[3] == "all" :
                                             # Delete first and last element, i.e.'[' and ']'
                                             str_spikes = ','.join(str(x) for x in spikes)

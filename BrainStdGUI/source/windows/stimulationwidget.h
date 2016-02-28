@@ -45,15 +45,15 @@ private slots:
     void on_oscPhaseSpinBox_valueChanged();
 
 signals:
-    void setOscillation(const int &firstNeuron, const int &lastNeuron,
+    void setStimulus(QString blockName, const int &firstNeuron, const int &lastNeuron,
                         const double &maxStimulus, const double &_freq,
                         const int &_delay, const double &_phase);
-    void stopOscillation(const int &firstNeuron, const int &lastNeuron);
+    // void stopOscillation(const int &firstNeuron, const int &lastNeuron);
 
-    void setStimulus(int neuronIndex, float value);
-    void setStimulus(int firstNeur, int lastNeur, float value);
-    void clearStimulus();
-    void clearStimulus(const int &firstNeuron, const int &lastNeuron);
+    void setStimulus(QString blockName, int neuronIndex, float value);
+    void setStimulus(QString blockName, int firstNeur, int lastNeur, float value);
+    void clearStimulus(QString blockName);
+    void clearAllStimuli();
 };
 
 #endif // STIMULATIONWIDGET_H

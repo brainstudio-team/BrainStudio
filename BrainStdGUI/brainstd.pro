@@ -42,7 +42,8 @@ HEADERS += \
     source/helper/backendData.h \
     source/graphs/plot2D.h \
     source/windows/stimulationwidget.h \
-    source/windows/backendterminal.h
+    source/windows/backendterminal.h \
+    source/helper/stimulus.h
 
 SOURCES += \
     source/main.cpp \

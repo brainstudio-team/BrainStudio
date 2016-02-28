@@ -6,5 +6,8 @@
 
 brainstd.pro.*
 
+*.brn
+
 NeMo/build/
 NeMo/install/
+build*
