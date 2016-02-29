@@ -36,6 +36,8 @@ class BrainStdBEClass(Node) :
         
         print 'configuring NeMo neuron types'
 
+        # PEDRO: TODO: if we want to support Windows we need to change the
+        # definition of paths (e.g. change the file separator)
         ini_path = nemo.__nemo_path__ + '/lib/nemo/plugins/'
     
         for file in os.listdir(ini_path):
