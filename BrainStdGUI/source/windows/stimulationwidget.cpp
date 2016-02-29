@@ -79,8 +79,8 @@ void StimulationWidget::setStimulus(const int &value){
 
     } else if (isOscillation && isBaseline) {
 
-        double baseline = value;
-        double amplitude = value;
+        double baseline = ui->stimulusSomeSlider->value();
+        double amplitude = ui->oscAmpSlider->value();
         double frequency = ui->oscFrequencySlider->value();
         double phase = ui->oscPhaseSpinBox->value();
 
@@ -89,18 +89,7 @@ void StimulationWidget::setStimulus(const int &value){
         block->setStimulus(value, stimFirst, stimLast);
         block->setOscillationFrequency(ui->oscFrequencySlider->value());
         block->setOscillationPhase(ui->oscPhaseSpinBox->value());
-
-    } else if (isOscillation && !isBaseline) {
-
-        double baseline = value;
-        double amplitude = value;
-        double frequency = ui->oscFrequencySlider->value();
-        double phase = ui->oscPhaseSpinBox->value();
-
-        emit setStimulus(block->getId(), stimFirst, stimLast, baseline, amplitude, frequency, phase);
-
-        block->setOscillationFrequency(ui->oscFrequencySlider->value());
-        block->setOscillationPhase(ui->oscPhaseSpinBox->value());
+        block->setOscillationAmplitude(ui->oscAmpSlider->value());
 
     }
 
@@ -110,7 +99,38 @@ void StimulationWidget::setStimulus(){
     this->setStimulus(ui->stimulusSlider->value());
 }
 
+void StimulationWidget::update_plot(){
+    QVector<double> x, y;
+    double plot_range = 1.0;
 
+    ui->plot->graph(0)->clearData();
+
+
+    if(ui->oscFrequencySlider->value() > 0){
+        plot_range = 5.0*1.0/ui->oscFrequencySlider->value();
+
+        for(QMap<QString,QPoint>::iterator it=fbands.begin();
+                                                      it != fbands.end(); it++){
+            if(it.value().x() < ui->oscFrequencySlider->value() &&
+                    ui->oscFrequencySlider->value() < it.value().y()){
+                plot_range = 5.0*1.0/it.value().x();
+            }
+        }
+    }
+    ui->plot->xAxis->setRange(0, plot_range);
+
+    ui->plot->yAxis->setRange(0, ui->stimulusSlider->value() +
+                                 ui->oscAmpSlider->value());
+
+    for(double i=0; i<plot_range; i+=plot_range/200.0){
+        x.append(i);
+        y.append(ui->stimulusSlider->value() + ui->oscAmpSlider->value()*
+                 sin(2.0*M_PI*ui->oscFrequencySlider->value()*i - ui->oscPhaseSpinBox->value()));
+    }
+
+    ui->plot->graph(0)->setData(x,y);
+    ui->plot->replot();
+}
 
 
 // -------------------------------------------------------------------------- //
@@ -180,13 +200,13 @@ void StimulationWidget::on_oscFrequencySlider_valueChanged(int value){
                                                                   " Hz" + band);
         if(!ui->oscCheckBox->isChecked()){
             ui->oscCheckBox->setChecked(true);
-            ui->sizeSpinBox->setEnabled(true);
+            on_oscCheckBox_clicked(true);
         }
     }
     else{
         ui->oscCheckBox->setText("Oscillation (No freq)");
         ui->oscCheckBox->setChecked(false);
-        ui->sizeSpinBox->setEnabled(false);
+        on_oscCheckBox_clicked(false);
     }
 
     this->update_plot();
@@ -280,6 +300,7 @@ void StimulationWidget::on_maxSpinBox_valueChanged(int arg1){
 }
 
 void StimulationWidget::on_oscPhaseSpinBox_valueChanged(){
+    this->update_plot();
     this->setStimulus();
 }
 
@@ -307,69 +328,15 @@ void StimulationWidget::on_oscCheckBox_clicked(bool checked){
         this->setMinimumHeight(height_without);
     }
     this->resize(this->width(), this->maximumHeight());
-}
-
-void StimulationWidget::update_plot(){
-    QVector<double> x, y;
-    double plot_range = 1.0;
-
-    ui->plot->graph(0)->clearData();
-
-
-    if(ui->oscFrequencySlider->value() > 0){
-        plot_range = 5.0*1.0/ui->oscFrequencySlider->value();
-
-        for(QMap<QString,QPoint>::iterator it=fbands.begin();
-                                                      it != fbands.end(); it++){
-            if(it.value().x() < ui->oscFrequencySlider->value() &&
-                    ui->oscFrequencySlider->value() < it.value().y()){
-                plot_range = 5.0*1.0/it.value().x();
-            }
-        }
-    }
-    ui->plot->xAxis->setRange(0, plot_range);
-
-    ui->plot->yAxis->setRange(0, ui->stimulusSlider->value() +
-                                 ui->oscAmpSlider->value());
-
-    for(double i=0; i<plot_range; i+=plot_range/200.0){
-        x.append(i);
-        y.append(ui->stimulusSlider->value() + ui->oscAmpSlider->value()*
-                 sin(2.0*M_PI*ui->oscFrequencySlider->value()*i));
-    }
-
-    ui->plot->graph(0)->setData(x,y);
-    ui->plot->replot();
+    this->setStimulus();
 }
 
 void StimulationWidget::on_oscAmpSlider_valueChanged(int value){
     if(ui->oscAmpSlider->value() > ui->stimulusSlider->value()){
         ui->stimulusSlider->setValue(value);
     }
+    ui->oscCheckBox->setChecked(true);
+    on_oscCheckBox_clicked(true);
     this->update_plot();
+    this->setStimulus();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

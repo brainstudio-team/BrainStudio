@@ -60,6 +60,7 @@ signals:
 
     void setStimulus(QString blockName, int neuronIndex, float value);
     void setStimulus(QString blockName, int firstNeur, int lastNeur, float value);
+    void setStimulus(QString blockName, int firstNeur, int lastNeur, double baseline, double amplitude, double frequency, double phase);
     void clearStimulus(QString blockName);
     void clearAllStimuli();
 };

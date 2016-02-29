@@ -349,6 +349,9 @@ background: rgba(210,210,210,220);
              <property name="maximum">
               <double>6.283200000000000</double>
              </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
+             </property>
             </widget>
            </item>
            <item row="3" column="1">
@@ -413,8 +416,6 @@ background: rgba(210,210,210,220);
           </widget>
          </item>
         </layout>
-        <zorder>plot</zorder>
-        <zorder>plot</zorder>
        </widget>
       </item>
       <item>

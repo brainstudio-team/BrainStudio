@@ -311,7 +311,7 @@ void ArchitectureWindow::turnOnStimulation(){
                 A, SLOT(setStimulus(QString, int, float)));
         connect(stimWidget, SIGNAL(setStimulus(QString, int, int, float)),
                 A, SLOT(setStimulus(QString, int, int, float)));
-        connect(stimWidget, SIGNAL(setStimulus(QString,int,int,double,double,int,double)),
+        connect(stimWidget, SIGNAL(setStimulus(QString,int,int,double,double,double,double)),
                 A, SLOT(setStimulus(QString,int,int,double,double,double,double)));
         connect(stimWidget, SIGNAL(clearAllStimuli()), A, SLOT(clearAllStimuli()));
         connect(stimWidget, SIGNAL(clearStimulus(QString)),
