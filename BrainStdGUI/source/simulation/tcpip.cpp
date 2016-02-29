@@ -172,10 +172,11 @@ void TCPIP_Sim::step(const int &speed){
     QString msg = "step " + QString::number(timeStep) + " spikes all ";
     msg += "speed " + QString::number(speed);
 
-    QMap<QString, Stimulus>::const_iterator it;
-    for(it=stimuli.begin(); it != stimuli.end(); it++){
-        msg += it.value().toString(timeStep);
-
+    if (!stimuli.isEmpty()) {
+        QMap<QString, Stimulus>::const_iterator it;
+        for(it=stimuli.constBegin(); it != stimuli.constEnd(); it++){
+            msg += it.value().toString(timeStep);
+        }
     }
 
     tcpSocket->write(msg.toUtf8());
