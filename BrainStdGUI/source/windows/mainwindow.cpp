@@ -91,6 +91,9 @@ void MainWindow::init(QString givenfilewithpath=""){
     this->tabWidget->setTabsClosable(true);
     this->connect(tabWidget, SIGNAL(tabCloseRequested(int)),
                   this,      SLOT(removeTab(int)));
+
+    this->mainFrame->layout()->removeWidget(this->topFrame);
+
     this->saveButton->setEnabled(false);
     this->playButton->setEnabled(false);
     //this->learningCheckBox->setVisible(false);
@@ -115,7 +118,7 @@ void MainWindow::init(QString givenfilewithpath=""){
 
 
     QFileInfo givenFile(givenfilewithpath);
-    QFileInfo defaultFile(FOLDERNAME+"/schema1.brn");
+    QFileInfo defaultFile(FOLDERNAME+"/network1.brn");
 
     // If file is given try to load this file:
     if(givenFile.exists() && givenFile.isFile()){
@@ -123,7 +126,7 @@ void MainWindow::init(QString givenfilewithpath=""){
     }
     // Else, try to load the default file
     else if(defaultFile.exists() && defaultFile.isFile()){
-        this->loadNewTab("schema1.brn");
+        this->loadNewTab("network1.brn");
     }
     // If not show a new file
     else{
@@ -163,6 +166,11 @@ void MainWindow::keyPressEvent(QKeyEvent * event){
     else if(event->key()==Qt::Key_Down) { if(!noTabYet()) tab()->keyDOWN(); }
     else if(event->key()==Qt::Key_Left) { if(!noTabYet()) tab()->keyLEFT(); }
     else if(event->key()==Qt::Key_Right){ if(!noTabYet()) tab()->keyRIGHT(); }
+}
+
+void MainWindow::resizeEvent(QResizeEvent * event){
+    this->topFrame->resize(this->width(), 41);
+    this->topFrame->move(0, 0);
 }
 
 
@@ -233,20 +241,23 @@ void MainWindow::workTabGetInfo(QList<float> data){
 void MainWindow::on_action_create_network_triggered(){
     this->onCreateNetwork();
 }
-void MainWindow::on_action_new_schema_triggered(){
+void MainWindow::on_action_new_triggered(){
     this->onNew();
 }
-void MainWindow::on_action_load_schema_triggered(){
+void MainWindow::on_action_load_triggered(){
     this->onOpen();
 }
-void MainWindow::on_action_save_schema_triggered(){
-    this->onSaveSchema();
+void MainWindow::on_action_save_triggered(){
+    this->onSave();
 }
-void MainWindow::on_action_save_network_triggered(){
-    this->onSaveNetwork();
+void MainWindow::on_action_save_as_triggered(){
+    this->onSaveAs();
 }
-void MainWindow::on_action_backup_schema_triggered(){
-    this->onBackupSchema();
+void MainWindow::on_action_export_network_triggered(){
+    this->onExportNetwork();
+}
+void MainWindow::on_action_backup_triggered(){
+    this->onBackup();
 }
 void MainWindow::on_action_exit_triggered(){
     this->onExit();
@@ -305,7 +316,7 @@ void MainWindow::on_CreateNetworkButton_clicked(){
     this->onCreateNetwork();
 }
 void MainWindow::on_saveButton_clicked(){
-    this->onSaveSchema();
+    this->onSave();
 }
 void MainWindow::on_openFolderButton_clicked(){
     this->onOpenFolder();
@@ -374,23 +385,43 @@ void MainWindow::onOpen(){
     }
 }
 
-bool MainWindow::onSaveSchema(){
-    if(!noTabYet() && tab()->saveSchema() && tab()->loadXML()){
-        this->saveButton->setEnabled(false);
+bool MainWindow::onSave(){
+    if(!noTabYet()){
+        if(!tab()->save()){
+            return this->onSaveAs();
+        }
+        if(tab()->loadXML()){
+            this->saveButton->setEnabled(false);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool MainWindow::onSaveAs(){
+    if(!noTabYet()){
+        QString path = QFileDialog::getSaveFileName(this, "Save brn network",
+                                             UserData::workspace_path, "*.brn");
+        if(path.right(4) != ".brn"){
+            path += ".brn";
+        }
+        if(tab()->save(path) && tab()->loadXML()){
+            this->saveButton->setEnabled(false);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool MainWindow::onExportNetwork(){
+    if(!noTabYet() && tab()->exportNetwork()){
         return true;
     }
     return false;
 }
 
-bool MainWindow::onSaveNetwork(){
-    if(!noTabYet() && tab()->saveNetwork()){
-        return true;
-    }
-    return false;
-}
-
-bool MainWindow::onBackupSchema(){
-    if(!noTabYet() && tab()->backupSchema()){
+bool MainWindow::onBackup(){
+    if(!noTabYet() && tab()->backup()){
         return true;
     }
     return false;
@@ -424,6 +455,7 @@ bool MainWindow::onOpenFolder(){
 
 
 bool MainWindow::onCreateNetwork(){
+    this->onSave();
     if(!noTabYet()){
         if(!tab()->network_is_running())
             return tab()->create_network();

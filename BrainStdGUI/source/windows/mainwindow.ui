@@ -80,7 +80,7 @@ background: #dfdfdf;
         <number>0</number>
        </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>10</number>
        </property>
        <property name="rightMargin">
         <number>0</number>
@@ -349,6 +349,12 @@ color: white;
               <height>0</height>
              </size>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>130</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -387,30 +393,20 @@ color: white;
            <widget class="QLabel" name="tcpipLabel">
             <property name="minimumSize">
              <size>
-              <width>100</width>
+              <width>200</width>
               <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>200</width>
+              <height>16777215</height>
              </size>
             </property>
             <property name="text">
              <string>  Connecting..</string>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>203</width>
-              <height>38</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </widget>
@@ -442,19 +438,22 @@ color: white;
           <item>
            <widget class="QTabWidget" name="tabWidget">
             <property name="styleSheet">
-             <string notr="true">tabWidget::tab-bar {
-
-}
-
-tabBar::tab {
+             <string notr="true">QTabBar::tab {
   background: gray;
   color: white;
-  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  height: 30px;
 }
 
-tabBar::tab:selected {
+QTabBar::tab:selected {
   background: lightgray;
-}</string>
+	color: black;
+ }
+
+/*QTabWidget::pane { border: 0; } */
+
+</string>
             </property>
             <property name="currentIndex">
              <number>-1</number>
@@ -465,6 +464,10 @@ tabBar::tab:selected {
         </widget>
        </item>
       </layout>
+      <zorder>topFrame</zorder>
+      <zorder>frameToBeNamed</zorder>
+      <zorder>tabWidget</zorder>
+      <zorder>tabWidget</zorder>
      </widget>
     </item>
    </layout>
@@ -475,17 +478,18 @@ tabBar::tab:selected {
      <x>0</x>
      <y>0</y>
      <width>1337</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="action_new_schema"/>
-    <addaction name="action_load_schema"/>
-    <addaction name="action_save_schema"/>
-    <addaction name="action_save_network"/>
+    <addaction name="action_new"/>
+    <addaction name="action_load"/>
+    <addaction name="action_save"/>
+    <addaction name="action_save_as"/>
+    <addaction name="action_export_network"/>
     <addaction name="separator"/>
     <addaction name="action_backup_schema"/>
     <addaction name="separator"/>
@@ -565,20 +569,20 @@ tabBar::tab:selected {
    <addaction name="menuPlugins"/>
    <addaction name="menuAbout"/>
   </widget>
-  <action name="action_load_schema">
+  <action name="action_load">
    <property name="text">
-    <string>Load schema</string>
+    <string>Load an existing network</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
    </property>
   </action>
-  <action name="action_save_network">
+  <action name="action_export_network">
    <property name="text">
-    <string>Save neurons and connections</string>
+    <string>Export network</string>
    </property>
    <property name="toolTip">
-    <string>Save the network</string>
+    <string>Save neurons and connections in...</string>
    </property>
   </action>
   <action name="action_exit">
@@ -642,9 +646,9 @@ tabBar::tab:selected {
     <string>Show learning window</string>
    </property>
   </action>
-  <action name="action_save_schema">
+  <action name="action_save">
    <property name="text">
-    <string>Save schema</string>
+    <string>Save the network in a brn file</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -726,7 +730,7 @@ tabBar::tab:selected {
   </action>
   <action name="action_backup_schema">
    <property name="text">
-    <string>Backup schema</string>
+    <string>Backup network</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+B</string>
@@ -737,9 +741,9 @@ tabBar::tab:selected {
     <string>TCP/IP</string>
    </property>
   </action>
-  <action name="action_new_schema">
+  <action name="action_new">
    <property name="text">
-    <string>New schema</string>
+    <string>New</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -763,6 +767,14 @@ tabBar::tab:selected {
   <action name="actionText_blocks">
    <property name="text">
     <string>Text blocks</string>
+   </property>
+  </action>
+  <action name="action_save_as">
+   <property name="text">
+    <string>Save as</string>
+   </property>
+   <property name="toolTip">
+    <string>Save the network in a new file</string>
    </property>
   </action>
  </widget>

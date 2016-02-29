@@ -80,33 +80,38 @@ void MainWindow::on_tabWidget_currentChanged(int index){
 
 bool MainWindow::loadNewTab(const QString &filename){
 
-    QString test_file = filename;
-    if(test_file.size() > 0 && test_file[0] != '/')
-        test_file = UserData::workspace_path + "/" + test_file;
-    if(!QFile::exists(test_file)){
-        qDebug() << "MainWindow::loadTab: File" << filename
-                 << "does not exist!";
+    QString path = filename;
+    if(!path.contains('\\') && !path.contains('/'))
+        path = UserData::workspace_path + "/" + path;
+    path = QDir::toNativeSeparators(path);
+
+    if(!QFile::exists(path)){
+        QString error = "File " + path + " does not exist!";
+        qDebug() << "MainWindow::loadNewTab:" << error;
+        QMessageBox::critical(this, "Error in loading", error, QMessageBox::Ok);
         return false;
     }
 
     if(!noTabYet())
         tab()->disableControls();
 
-    qDebug() << "MainWindow::loadTab: Creating a new tab:" << filename;
-    FILENAME = filename;
+
+    qDebug() << "MainWindow::loadTab: Creating a new tab:" << filename <<
+                "path:" << path;
+    FILENAME = QDir::toNativeSeparators(filename);
 
     // CREATE NEW TAB
-    this->removeTab(filename);
+    this->removeTab(FILENAME);
 
-    workTab[filename] = new WorkspaceTab(FILENAME, this);
-    if(workTab[filename]->failed()){
+    workTab[FILENAME] = new WorkspaceTab(FILENAME, this);
+    if(workTab[FILENAME]->failed()){
         qDebug() << "MainWindow::loadTab: Creating a new tab:" << filename;
         return false;
     }
 
-    tabWidget->addTab(workTab[filename], filename);
-    tabWidget->setCurrentWidget(workTab[filename]);
-    connectTabSignals(filename);
+    tabWidget->addTab(workTab[FILENAME], FILENAME);
+    tabWidget->setCurrentWidget(workTab[FILENAME]);
+    connectTabSignals(FILENAME);
 
     return true;
 }

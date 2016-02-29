@@ -94,8 +94,8 @@ void WorkspaceTab::setBackend(){
     //client->sendmsg("connected!!!!! oleee!");
 
     QString path;
-    if(FILENAME[0] == '/')  path = FILENAME;
-    else                    path = UserData::workspace_path+"/"+FILENAME;
+    if(FILENAME.contains('\\') || FILENAME.contains('/')) path = FILENAME;
+    else path = QDir::toNativeSeparators(UserData::workspace_path+"/"+FILENAME);
 
     snn = new TCPIP_Sim(this, path);
     schema->updateSimulationPointer(snn);
@@ -157,10 +157,9 @@ void WorkspaceTab::closeEvent(QCloseEvent * event){
 }
 
 bool WorkspaceTab::loadAll(){
-
     QString path;
-    if(FILENAME[0] == '/')  path = FILENAME;
-    else                    path = UserData::workspace_path+"/"+FILENAME;
+    if(FILENAME.contains('\\') || FILENAME.contains('/')) path = FILENAME;
+    else path = QDir::toNativeSeparators(UserData::workspace_path+"/"+FILENAME);
 
     // LOAD SCHEMA
     if(!schema->load_brn(path)){
@@ -192,8 +191,8 @@ bool WorkspaceTab::loadXML(){
         return false;
     }
     QString path;
-    if(FILENAME[0] == '/')  path = FILENAME;
-    else                    path = UserData::workspace_path+"/"+FILENAME;
+    if(FILENAME.contains('\\') || FILENAME.contains('/')) path = FILENAME;
+    else path = QDir::toNativeSeparators(UserData::workspace_path+"/"+FILENAME);
 
     if(!xmlWindow->loadFile(path)){
         qDebug() <<"WorkspaceTab::loadXML: Error: Could not load the xml file!";
@@ -501,7 +500,27 @@ bool WorkspaceTab::network_is_running(){
     return false;
 }
 
-bool WorkspaceTab::saveNetwork(){
+bool WorkspaceTab::save(){
+    return this->save("");
+}
+
+bool WorkspaceTab::save(QString path = ""){
+    if(path == ""){
+        // If the user has not specified a name yet, return false which triggers
+        // save_as
+        if(FILENAME.left(7) == "unsaved")
+            return false;
+        if(FILENAME.contains('\\') || FILENAME.contains('/')) path = FILENAME;
+        else path = QDir::toNativeSeparators(UserData::workspace_path+"/"+FILENAME);
+    }
+    else{
+        // Change the filename
+        FILENAME = path.split("/", QString::SkipEmptyParts).last();
+    }
+    return schema->save_brn(path);
+}
+
+bool WorkspaceTab::exportNetwork(){
     if(snn == NULL){
         qDebug() << "WorkspaceTab::saveNetwork: Error: snn is null!";
         return false;
@@ -512,16 +531,16 @@ bool WorkspaceTab::saveNetwork(){
     }
 
     QString path;
-    if(FILENAME[0] == '/')  path = FILENAME;
-    else                    path = UserData::workspace_path+"/"+FILENAME;
-    if(snn->save(path)){
-        ui->statusBar->showMessage("Network (neurons + synapses) was saved!");
+    if(FILENAME.contains('\\') || FILENAME.contains('/')) path = FILENAME;
+    else path = QDir::toNativeSeparators(UserData::workspace_path+"/"+FILENAME);
+    if(snn->exportNetwork(path)){
+        ui->statusBar->showMessage("Network (neurons + synapses) was exported!");
         return true;
     }
     return false;
 }
 
-bool WorkspaceTab::backupSchema(){
+bool WorkspaceTab::backup(){
     if(schema->backup(UserData::workspace_path)){
         ui->statusBar->showMessage("Back up was successful!");
         return true;

@@ -120,13 +120,10 @@ public:
     // PUBLIC METHODS
     bool create_network();
     bool network_is_running();
-    bool saveSchema(){
-        QString path;
-        if(FILENAME[0] == '/')  path = FILENAME;
-        else                    path = UserData::workspace_path+"/"+FILENAME;
-        return schema->save_brn(path); }
-    bool saveNetwork();
-    bool backupSchema();
+    bool save();
+    bool save(QString path);
+    bool exportNetwork();
+    bool backup();
     bool loadXML();
     bool saveXML(){ return false; }
     bool play();

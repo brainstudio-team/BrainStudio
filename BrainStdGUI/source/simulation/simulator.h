@@ -129,7 +129,7 @@ public:
     virtual unsigned char getRealSynapseLearning(const unsigned int &index){ (void)index; return ' ';}
 
 
-    virtual bool save(QString filename){ (void)filename; std::cout << "Not in this simulation\n"; }
+    virtual bool exportNetwork(QString filename){ (void)filename; std::cout << "Not in this simulation\n"; }
 
     virtual void addForcedSpikesPatternA(QVector<unsigned int> data){ (void)data; std::cout << "Not in this simulation\n"; }
     virtual void clearForcedSpikesA(int patternIndex){ (void)patternIndex; std::cout << "Not in this simulation\n"; }

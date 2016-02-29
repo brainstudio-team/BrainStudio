@@ -64,6 +64,7 @@ protected:
 
 
     void keyPressEvent(QKeyEvent * event);
+    void resizeEvent(QResizeEvent * event);
 
 public:
     explicit MainWindow(QString filename="", QWidget *parent = 0);
@@ -94,10 +95,10 @@ private slots:
     //void newFile(){}
     void onNew();
     void onOpen();
-    bool onSaveSchema();
-    bool onSaveNetwork();
-    void onSaveAs(){}
-    bool onBackupSchema();
+    bool onSave();
+    bool onSaveAs();
+    bool onExportNetwork();
+    bool onBackup();
     bool onOpenFolder();
     bool onCreateNetwork();
     void onPlay();
@@ -118,12 +119,13 @@ private slots:
 
     friend class NewBlockWindow;
 
-    void on_action_new_schema_triggered();
-    void on_action_save_schema_triggered();
-    void on_action_load_schema_triggered();
+    void on_action_new_triggered();
+    void on_action_save_triggered();
+    void on_action_save_as_triggered();
+    void on_action_load_triggered();
     void on_action_exit_triggered();
-    void on_action_save_network_triggered();
-    void on_action_backup_schema_triggered();
+    void on_action_export_network_triggered();
+    void on_action_backup_triggered();
     void on_action_about_triggered();
     void on_action_create_network_triggered();
     void on_action_grid_toggled(bool arg1);
