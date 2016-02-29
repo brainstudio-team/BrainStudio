@@ -21,6 +21,9 @@ protected:
     bool initialized;
     int prev_stim_value;
 
+    QMap<QString, QPoint > fbands;
+    QString band;
+
     void refreshWidgetValues();
     void setStimulus(const int &value);
     void setStimulus();
