@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = BrainStd
 
-QT += core widgets gui network xml #opengl
+QT += core widgets gui network xml printsupport #opengl
 
 HEADERS += \
     source/windows/mainwindow.h \
@@ -43,7 +43,8 @@ HEADERS += \
     source/graphs/plot2D.h \
     source/windows/stimulationwidget.h \
     source/windows/backendterminal.h \
-    source/helper/stimulus.h
+    source/helper/stimulus.h \
+    source/qcustomplot/qcustomplot.h
 
 SOURCES += \
     source/main.cpp \
@@ -78,7 +79,8 @@ SOURCES += \
     source/helper/tcpip_initialization.cpp \
     source/graphs/plot2D.cpp \
     source/windows/stimulationwidget.cpp \
-    source/windows/backendterminal.cpp
+    source/windows/backendterminal.cpp \
+    source/qcustomplot/qcustomplot.cpp
 
 FORMS += \
     source/windows/mainwindow.ui \

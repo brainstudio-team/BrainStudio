@@ -5,6 +5,7 @@ StimulationWidget::StimulationWidget(Block *_block, QWidget *parent):
                                  QWidget(parent), ui(new Ui::StimulationWidget){
     block = _block;
     initialized = false;
+    prev_stim_value = 0;
 
     ui->setupUi(this);
     this->move(0,0);
@@ -19,6 +20,10 @@ StimulationWidget::StimulationWidget(Block *_block, QWidget *parent):
     this->refreshWidgetValues();
 
     initialized = true;
+
+    ui->plot->addGraph();
+    ui->plot->graph(0)->removeFromLegend();
+
 }
 
 StimulationWidget::~StimulationWidget(){
@@ -38,8 +43,11 @@ void StimulationWidget::refreshWidgetValues(){
     ui->stimulusSomeSlider->setMaximum(ui->startSpinBox->maximum());
 
     ui->oscFrequencySlider->setValue(block->getOscillationFrequency());
-    if(ui->oscCheckBox->isChecked())
+    if(ui->oscCheckBox->isChecked()){
+        // TODO: Understand why???
         ui->sizeSpinBox->setEnabled(true);
+    }
+    this->on_oscCheckBox_clicked(ui->oscCheckBox->isChecked());
 }
 
 void StimulationWidget::setStimulus(const int &value){
@@ -121,10 +129,34 @@ void StimulationWidget::on_stimulusFullButton_clicked() {
 
 void StimulationWidget::on_stimulusSlider_valueChanged(int value){
     // Show value to GUI
-    if(value) ui->stimLabel->setText("Current injection " +
-                                                  QString::number(value)+" pA");
-    else      ui->stimLabel->setText("Current injection (I=0)");
+    QString name;
+    if(ui->oscCheckBox->isChecked()){
+        name = "Av. current injection ";
+    }
+    else{
+        name = "Current injection ";
+    }
 
+
+    if(value){
+        ui->stimLabel->setText(name + QString::number(value)+" pA");
+    }
+    else{
+        ui->stimLabel->setText(name + "(I=0)");
+    }
+
+    // Oscillatory stuff
+    if(ui->oscCheckBox->isChecked()){
+        if(ui->oscAmpSlider->value() == prev_stim_value){
+            ui->oscAmpSlider->setValue(value);
+        }
+        else if(ui->oscAmpSlider->value() > value){
+            ui->oscAmpSlider->setValue(value);
+        }
+        this->update_plot();
+    }
+
+    prev_stim_value = value;
     this->setStimulus(value);
 }
 
@@ -143,6 +175,7 @@ void StimulationWidget::on_oscFrequencySlider_valueChanged(int value){
         ui->sizeSpinBox->setEnabled(false);
     }
 
+    this->update_plot();
     this->setStimulus();
 }
 
@@ -218,10 +251,14 @@ void StimulationWidget::on_negativeCheckBox_clicked(bool checked){
 void StimulationWidget::on_maxSpinBox_valueChanged(int arg1){
     if(arg1 > 0){
         ui->stimulusSlider->setMaximum(arg1);
-        if(ui->negativeCheckBox->isChecked())
+        ui->oscAmpSlider->setMaximum(arg1);
+        if(ui->negativeCheckBox->isChecked()){
             ui->stimulusSlider->setMinimum(-arg1);
+            ui->oscAmpSlider->setMinimum(-arg1);
+        }
         else
             ui->stimulusSlider->setMinimum(0);
+        ui->oscAmpSlider->setMinimum(0);
     }
     else{
         ui->maxSpinBox->setValue(1);
@@ -235,10 +272,34 @@ void StimulationWidget::on_oscPhaseSpinBox_valueChanged(){
 
 void StimulationWidget::on_oscCheckBox_clicked(bool checked){
     ui->oscPhaseSpinBox->setEnabled(checked);
+    if(checked){
+        this->setMaximumHeight(445);
+        this->setMinimumHeight(445);
+        ui->cFrame->setVisible(checked);
+    }
+    else{
+        ui->cFrame->setVisible(checked);
+        this->setMaximumHeight(292);
+        this->setMinimumHeight(292);
+    }
+    this->resize(this->width(), this->maximumHeight());
 }
 
+void StimulationWidget::update_plot(){
+    QVector<double> x, y;
+    ui->plot->graph(0)->clearData();
+    for(double i=0; i<5.0; i+=0.01){
+        x.append(i);
+        y.append(ui->stimulusSlider->value() + ui->oscAmpSlider->value()*
+                 sin(2.0*M_PI*ui->oscFrequencySlider->value()*i));
+    }
+    ui->plot->graph(0)->setData(x,y);
+    ui->plot->replot();
+}
 
-
+void StimulationWidget::on_oscAmpSlider_valueChanged(int value){
+    this->update_plot();
+}
 
 
 

@@ -19,10 +19,13 @@ protected:
     Block *block;
     Simulator *A;
     bool initialized;
+    int prev_stim_value;
 
     void refreshWidgetValues();
     void setStimulus(const int &value);
     void setStimulus();
+
+    void update_plot();
 
 public:
     explicit StimulationWidget(Block *_block, QWidget *parent=0);
@@ -43,6 +46,8 @@ private slots:
     void on_oscCheckBox_clicked(bool checked);
     void on_oscFrequencySlider_valueChanged(int value);
     void on_oscPhaseSpinBox_valueChanged();
+
+    void on_oscAmpSlider_valueChanged(int value);
 
 signals:
     void setStimulus(QString blockName, const int &firstNeuron, const int &lastNeuron,
