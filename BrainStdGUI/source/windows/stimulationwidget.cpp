@@ -7,6 +7,12 @@ StimulationWidget::StimulationWidget(Block *_block, QWidget *parent):
     initialized = false;
     prev_stim_value = 0;
 
+    fbands["delta"] = QPoint(0.1, 3.0);
+    fbands["theta"] = QPoint(4.0, 7.0);
+    fbands["alpha"] = QPoint(8.0, 15.0);
+    fbands["beta"] = QPoint(15.0, 30.0);
+    fbands["gamma"] = QPoint(30.0, 100.0);
+
     ui->setupUi(this);
     this->move(0,0);
 
@@ -162,8 +168,16 @@ void StimulationWidget::on_stimulusSlider_valueChanged(int value){
 
 void StimulationWidget::on_oscFrequencySlider_valueChanged(int value){
     if(value > 0){
-        ui->oscCheckBox->setText(
-                                "Oscillation F: "+QString::number(value)+" Hz");
+        QString band = "";
+        for(QMap<QString,QPoint>::iterator it=fbands.begin();
+                                                      it != fbands.end(); it++){
+            if(it.value().x() < value && value < it.value().y()){
+                band += " (" + it.key() + " band)";
+            }
+        }
+
+        ui->oscCheckBox->setText("Oscillation F: " + QString::number(value) +
+                                                                  " Hz" + band);
         if(!ui->oscCheckBox->isChecked()){
             ui->oscCheckBox->setChecked(true);
             ui->sizeSpinBox->setEnabled(true);
@@ -272,32 +286,66 @@ void StimulationWidget::on_oscPhaseSpinBox_valueChanged(){
 
 void StimulationWidget::on_oscCheckBox_clicked(bool checked){
     ui->oscPhaseSpinBox->setEnabled(checked);
+    int height_with, height_without;
+
+#ifdef WIN32
+    height_with = 445;
+    height_without = 292;
+#elif linux
+    height_with = 460;
+    height_without = 307;
+#endif
+
     if(checked){
-        this->setMaximumHeight(445);
-        this->setMinimumHeight(445);
+        this->setMaximumHeight(height_with);
+        this->setMinimumHeight(height_with);
         ui->cFrame->setVisible(checked);
     }
     else{
         ui->cFrame->setVisible(checked);
-        this->setMaximumHeight(292);
-        this->setMinimumHeight(292);
+        this->setMaximumHeight(height_without);
+        this->setMinimumHeight(height_without);
     }
     this->resize(this->width(), this->maximumHeight());
 }
 
 void StimulationWidget::update_plot(){
     QVector<double> x, y;
+    double plot_range = 1.0;
+
     ui->plot->graph(0)->clearData();
-    for(double i=0; i<5.0; i+=0.01){
+
+
+    if(ui->oscFrequencySlider->value() > 0){
+        plot_range = 5.0*1.0/ui->oscFrequencySlider->value();
+
+        for(QMap<QString,QPoint>::iterator it=fbands.begin();
+                                                      it != fbands.end(); it++){
+            if(it.value().x() < ui->oscFrequencySlider->value() &&
+                    ui->oscFrequencySlider->value() < it.value().y()){
+                plot_range = 5.0*1.0/it.value().x();
+            }
+        }
+    }
+    ui->plot->xAxis->setRange(0, plot_range);
+
+    ui->plot->yAxis->setRange(0, ui->stimulusSlider->value() +
+                                 ui->oscAmpSlider->value());
+
+    for(double i=0; i<plot_range; i+=plot_range/200.0){
         x.append(i);
         y.append(ui->stimulusSlider->value() + ui->oscAmpSlider->value()*
                  sin(2.0*M_PI*ui->oscFrequencySlider->value()*i));
     }
+
     ui->plot->graph(0)->setData(x,y);
     ui->plot->replot();
 }
 
 void StimulationWidget::on_oscAmpSlider_valueChanged(int value){
+    if(ui->oscAmpSlider->value() > ui->stimulusSlider->value()){
+        ui->stimulusSlider->setValue(value);
+    }
     this->update_plot();
 }
 
