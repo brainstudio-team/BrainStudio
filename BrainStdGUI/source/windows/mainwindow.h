@@ -84,12 +84,15 @@ public slots:
     // it is not recognized and connected.
     void removeTab(int index){
         // Find the key
-        QMap<QString, WorkspaceTab*>::iterator it;
-        for(it = workTab.begin(); it != workTab.end(); it++){
-            if(tabWidget->indexOf(it.value()) == index){
-                this->removeTab(it.key());
+        QString keyToRemove;
+        QMap<QString, WorkspaceTab*>::const_iterator it;
+        for(it = workTab.constBegin(); it != workTab.constEnd(); it++) {
+            if (tabWidget->indexOf(it.value()) == index) {
+                keyToRemove = it.key();
+                break;
             }
         }
+        this->removeTab(keyToRemove);
     }
 
 private slots:
