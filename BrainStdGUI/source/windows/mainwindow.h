@@ -56,6 +56,8 @@ protected:
     QString FOLDERNAME;
     QString FILENAME;
 
+    int top_frame_separator;
+
     bool saveCustomConnections(QString foldername);
 
     void connectTabSignals(const QString &key);

@@ -5,6 +5,7 @@ MainWindow::MainWindow(QString filename, QWidget *parent) : QMainWindow(parent){
 
     this->setWindowIcon(QIcon(":/new/prefix1/icons/brainstudio-logo.png"));
 
+    top_frame_separator = 800;
     welcomeWindow = NULL;
     aboutWindow = NULL;
     if(UserData::workspace_path == "empty" && filename==""){
@@ -91,8 +92,10 @@ void MainWindow::init(QString givenfilewithpath=""){
     this->tabWidget->setTabsClosable(true);
     this->connect(tabWidget, SIGNAL(tabCloseRequested(int)),
                   this,      SLOT(removeTab(int)));
+    this->tabWidget->tabBar()->setMaximumWidth(top_frame_separator);
 
     this->mainFrame->layout()->removeWidget(this->topFrame);
+    this->mainFrame->layout()->removeWidget(this->topFrameBackground);
 
     this->saveButton->setEnabled(false);
     this->playButton->setEnabled(false);
@@ -169,8 +172,10 @@ void MainWindow::keyPressEvent(QKeyEvent * event){
 }
 
 void MainWindow::resizeEvent(QResizeEvent * event){
-    this->topFrame->resize(this->width(), 41);
-    this->topFrame->move(0, 0);
+    this->topFrame->resize(this->width()-top_frame_separator, 41);
+    this->topFrame->move(top_frame_separator, 0);
+    this->topFrameBackground->resize(top_frame_separator, 41);
+    this->topFrameBackground->move(0, 0);
 }
 
 
