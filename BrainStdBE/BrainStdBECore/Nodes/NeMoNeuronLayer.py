@@ -101,7 +101,6 @@ class BrainStdBEClass(Node) :
         return __version__
         
     def get_model_type(self, architecture = ''):
-        # PEDRO @DAVE: Do you know why is this here?
         if architecture == 'Kuramoto-NeMo':
             return 'rate'
         else:

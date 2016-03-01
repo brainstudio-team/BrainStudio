@@ -59,6 +59,9 @@ void ControlsWidget::on_firingRateSlider_valueChanged(){
    ui->firingRateLabel->setText("FR depth: "+
                                 QString::number(ui->firingRateSlider->value()));
    //schemaPtr()->setFiringRateDepth(firingRateSlider->value());
+    if (schema != NULL) {
+        schema->setFiringRateDepth(ui->firingRateSlider->value());
+    }
 }
 
 void ControlsWidget::on_experimentCheckBox_clicked(bool checked){
