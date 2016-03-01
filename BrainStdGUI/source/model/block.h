@@ -246,6 +246,7 @@ public:
     QColor getNeuronColour(int indx);
     QColor getFiringRateNeuronColour(int indx);
     QColor getFiringRateBlockColour(const int &targetBlock);
+    QList<float> getWindowedFiringRate();
     void addConnection(const QString &indx, const float &weight){
             //std::cout << "ADD BLOCK(" << indx << ")" << std::endl;
             if(!blockConnections.contains(indx)){

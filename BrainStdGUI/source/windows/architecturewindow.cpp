@@ -9,6 +9,7 @@ ArchitectureWindow::ArchitectureWindow(QWidget *parent): QWidget(parent),
     //this->setCursor(QCursor(Qt::CrossCursor));
     stimWidget = NULL;
     A = NULL;
+    mi = NULL;
 
     x1 = y1 = x2 = y2 = xA = yA = xB = yB = 0;
     menuPos.setX(0);    menuPos.setY(0);
@@ -20,7 +21,6 @@ ArchitectureWindow::ArchitectureWindow(QWidget *parent): QWidget(parent),
     details = true;
     show_connections = true;
     _showActions = true;
-    initialized = false;
     under_modification = false;
     connecting = false;
     highlighted = "";
@@ -367,8 +367,6 @@ void ArchitectureWindow::deleteBlockSlot(const QString &id){
         return;
     }
 
-    this->setInitialized(false);
-
     this->deleteRedundantConnections();
 
     // Remove block
@@ -714,6 +712,26 @@ void ArchitectureWindow::restartActions(){
         actionsDone.pop_back();
     }
 }
+
+
+
+void ArchitectureWindow::setNetworkMode(const int &mode){
+    controls.network = mode;
+    if(mode == Controls::NET_NONE){
+        if(mi != NULL){
+            delete mi;
+            mi = NULL;
+        }
+    }
+    else if(mode == Controls::NET_MI && mi == NULL){
+        mi = new MutualInformation();
+    }
+    update();
+}
+
+
+
+
 
 
 

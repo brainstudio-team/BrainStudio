@@ -336,6 +336,9 @@ QColor Block::getFiringRateBlockColour(const int &targetBlock){
         return QColor(0,0,t,t);
 }
 
+QList<float> Block::getWindowedFiringRate(){
+    return firingRateBlock.getLastValues();
+}
 
 void Block::setMode(int value){
     if(value == mode){

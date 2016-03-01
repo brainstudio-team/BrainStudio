@@ -9,7 +9,7 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
         return;
 
     // If 'firing rates' or 'raster plots' mode - Firing rate connections:
-    if(initialized && (mode == Block::modeC || mode == Block::modeRasters) ){
+    if(false && (mode == Block::modeC || mode == Block::modeRasters)){
         //painter.setPen(QPen(Qt::gray, LINE_THICKNESS, Qt::SolidLine));
         for(BlockIter bl = blocks.begin(); bl != blocks.end(); bl++){
             for(int j=0; j<bl.value()->getConnectionNo(); j++){
@@ -26,6 +26,32 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
                     painter.drawEllipse(QPoint(bl.value()->x()+15,
                                         bl.value()->y()+15), radius, radius);
                 }
+            }
+        }
+    }
+    else if(controls.network == Controls::NET_MI){
+        //painter.setPen(QPen(Qt::gray, LINE_THICKNESS, Qt::SolidLine));
+        for(BlockIter bx = blocks.begin(); bx != blocks.end(); bx++){
+            for(BlockIter by = blocks.begin(); by != blocks.end(); by++){
+
+                int value = (int)(255*mi->calculate(
+                                      bx.value()->getWindowedFiringRate(),
+                                      by.value()->getWindowedFiringRate()));
+
+                painter.setPen(QPen(QColor(0,0,0,value),
+                                    LINE_THICKNESS,Qt::SolidLine));
+                if(bx.key() != by.key())
+                    drawConnection(painter, bx.key(), by.key());
+                else{
+                    radius = bx.value()->width();
+                    if(radius>bx.value()->height())
+                        radius = bx.value()->height();
+                    radius = (float)radius/4.0;
+                    painter.drawEllipse(QPoint(bx.value()->x()+15,
+                                        bx.value()->y()+15), radius, radius);
+                }
+
+
             }
         }
     }
