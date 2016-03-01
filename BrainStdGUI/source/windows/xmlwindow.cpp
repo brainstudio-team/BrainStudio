@@ -136,7 +136,7 @@ void XmlWindow::build_xml(){
         textEdit->document()->setModified(false);
         setWindowModified(false);
 
-        saveFile(UserData::workspace_path+"/temp.brn"); //TEMP_FILE
+        saveFile(UserData::only_path+"/temp.brn"); //TEMP_FILE
         //statusBar()->showMessage(tr("File saved and built"), 2000);
 
         during_update_of_schema = true;

@@ -25,64 +25,6 @@ MainWindow::~MainWindow() {
 void MainWindow::init(QString givenfilewithpath=""){
     qDebug() << "MainWindow::init: workspace_path:" << UserData::workspace_path;
 
-    /*if(welcomeWindow != NULL){
-        delete welcomeWindow;
-        welcomeWindow = NULL;
-    }*/
-
-    // Set the config.ini file -------------------------------------------------
-    QString line, simulator = "tcpip";
-    QFile file(UserData::workspace_path + "/config.ini");
-
-    // Find the folder name and the timestepsize -------------------------------
-    QRegExp *regExpSimulator = new QRegExp("\\{Simulator (.+)\\}");
-    QRegExp *regExpTimeStepStize = new QRegExp("\\{timeStepSize (.+)\\}");
-    int found = 0;
-    dt = 0.25;
-    std::cout << "FILE:" << QString(UserData::workspace_path + "/config.ini").toStdString() << std::endl;
-
-    if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        QTextStream inSim(&file);
-
-        line = inSim.readLine();
-        while(!line.isNull() && found < 2){
-            if(regExpSimulator->indexIn(line) != -1){
-                simulator = regExpSimulator->cap(1);
-                found++;
-            }
-            if(regExpTimeStepStize->indexIn(line) != -1){
-                dt = regExpTimeStepStize->cap(1).toDouble();
-                found++;
-            }
-            line = inSim.readLine();
-        }
-        file.close();
-    }
-    delete regExpSimulator;
-    delete regExpTimeStepStize;
-    std::cout << "SIMULATOR:" << simulator.toStdString() << std::endl;
-
-    // Find the folder name ----------------------------------------------------
-    QRegExp *regExp = new QRegExp("\\{FolderName (.+)\\}");
-    found = false;
-
-    if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        QTextStream in(&file);
-
-        line = in.readLine();
-        while(!line.isNull() && !found){
-            if(regExp->indexIn(line) != -1){
-                FOLDERNAME = UserData::workspace_path + "/" + regExp->cap(1);
-                found = true;
-            }
-            line = in.readLine();
-        }
-        file.close();
-    }
-    if(!found)
-        FOLDERNAME = UserData::workspace_path;
-    delete regExp;
-
     // -- GUI ------------------------------------------------------------------
     this->resize(1460, 980);
     this->move(0,0);
@@ -121,7 +63,7 @@ void MainWindow::init(QString givenfilewithpath=""){
 
 
     QFileInfo givenFile(givenfilewithpath);
-    QFileInfo defaultFile(FOLDERNAME+"/network1.brn");
+    QFileInfo defaultFile(UserData::workspace_path+"/network1.brn");
 
     // If file is given try to load this file:
     if(givenFile.exists() && givenFile.isFile()){
@@ -336,9 +278,10 @@ void MainWindow::onExit(){
     this->close(); // So it can call the destructors!
 }
 void MainWindow::onNew(){
-    QString filename = "unsaved"+QString::number(tabWidget->count()+1)+".brn";
+    QString untitled_path = UserData::only_path + "/" + "untitled" +
+                            QString::number(tabWidget->count()+1)+".brn";
 
-    QFile data(FOLDERNAME+"/"+filename);
+    QFile data(untitled_path);
     if (data.open(QFile::WriteOnly | QFile::Truncate)) {
     QTextStream out(&data);
         out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
@@ -353,7 +296,7 @@ void MainWindow::onNew(){
                "\t</textBlocks>\n"
                "</schema>\n";
     }
-    loadNewTab(filename);
+    loadNewTab(untitled_path);
 }
 
 void MainWindow::onOpen(){
@@ -361,7 +304,7 @@ void MainWindow::onOpen(){
                  QFileDialog::getOpenFileName(this,"Open a network",
                                               UserData::workspace_path,"*.brn");
     QStringList list1 = path.split("/", QString::SkipEmptyParts);
-    QString filename;
+    QString filename, FOLDERNAME;
 
     if(list1.size()>2){
         FOLDERNAME = path.left(path.size()-list1.last().size());

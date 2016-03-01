@@ -19,26 +19,35 @@ class UserData{
 public:
     static QString workspace_path;
     static QString backend_path;
-    static QString path;            // The application settings path.
+    static QString only_path;       // The application settings path.
+    static QString file;            // The application settings file.
 
     static QString tcpip_hostname;
     static int tcpip_port;
 
     static void init(){
-        path= QStandardPaths::writableLocation(QStandardPaths::DataLocation)
+        file = QStandardPaths::writableLocation(QStandardPaths::DataLocation)
                                                          + "/" + UserDataFolder;
-        QDir dir(path);
+        only_path = file;
+        QDir dir(file);
         if(!dir.exists())
             dir.mkpath(".");
 
-        path = path + "/" + UserDataName;
+        file = file + "/" + UserDataName;
 
-        if(!QFile::exists(path)){
+        if(!QFile::exists(file)){
             qDebug() << "Creating file for user data.";
             save();
         }
         else{
             qDebug() << "Loading user data.";
+
+
+
+
+
+
+
             reload();
         }
     }
@@ -47,9 +56,9 @@ public:
         //#ifdef DEBUGGING_DIR
         //return;
         //#endif
-        QFile userfile(path);
+        QFile userfile(file);
         if (!userfile.open(QIODevice::ReadWrite | QIODevice::Text)){
-            qDebug() << "UserData:: Could not open " << path << " to save..";
+            qDebug() << "UserData:: Could not open " << file << " to save..";
             return;
         }
 
@@ -68,9 +77,9 @@ public:
     }
 
     static void reload(){
-        QFile userfile(path);
+        QFile userfile(file);
         if (!userfile.open(QIODevice::ReadOnly | QIODevice::Text)){
-            qDebug() << "UserData:: Could not open " << path<<" file to load..";
+            qDebug() << "UserData:: Could not open " << file<<" file to load..";
             return;
         }
         //while(!file.atEnd()) {

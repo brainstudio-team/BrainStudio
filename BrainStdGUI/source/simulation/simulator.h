@@ -78,7 +78,7 @@ public:
     }
 
     // LOCAL FIELD POTENTIAL
-    virtual double getLocalFieldPotential(const int &first, const int &last){return 0.0;}
+    virtual double getLocalFieldPotential(const int &first, const int &last){ (void)first; (void)last; return 0.0;}
 
     // SIMULATION
     virtual void initializeFromFile(QString filename){ (void)filename; std::cout << "Not in this simulation\n"; }
@@ -99,7 +99,7 @@ public:
     virtual int   getSynapses() = 0;
     virtual int   getSynapses(int indx){ (void)indx; return 0; }
     virtual int   getSynapse(int neuron, int synapseIndx){ (void)neuron; (void)synapseIndx; return 0; }
-    virtual float getSynapseWeight(const unsigned &neuron, const unsigned &synapseIndx){return 0.0f;}
+    virtual float getSynapseWeight(const unsigned &neuron, const unsigned &synapseIndx){ (void)neuron; (void)synapseIndx; return 0.0f;}
 
 
     virtual float getNeuronState(unsigned int index) = 0; // This is used by the gui
@@ -117,8 +117,8 @@ public:
 
     // GET REAL NEURON PARAMETERS
     virtual float getRealParameter(const unsigned &index, const unsigned &param){(void)index; (void)param; return 0.0f; }
-    virtual float getRealNeuronStateU(const unsigned &index){return 0.0f;}
-    virtual float getRealNeuronStateV(const unsigned &index){return 0.0f;}
+    virtual float getRealNeuronStateU(const unsigned &index){ (void)index; return 0.0f;}
+    virtual float getRealNeuronStateV(const unsigned &index){ (void)index; return 0.0f;}
     virtual float getRealNeuronState(const unsigned &index, const unsigned &param){ (void)index; (void)param; return 0.0f; }
 
     // GET REAL SYNAPSE PARAMETERS
@@ -129,7 +129,7 @@ public:
     virtual unsigned char getRealSynapseLearning(const unsigned int &index){ (void)index; return ' ';}
 
 
-    virtual bool exportNetwork(QString filename){ (void)filename; std::cout << "Not in this simulation\n"; }
+    virtual bool exportNetwork(QString filename){ (void)filename; std::cout << "Not in this simulation\n"; return false; }
 
     virtual void addForcedSpikesPatternA(QVector<unsigned int> data){ (void)data; std::cout << "Not in this simulation\n"; }
     virtual void clearForcedSpikesA(int patternIndex){ (void)patternIndex; std::cout << "Not in this simulation\n"; }
@@ -199,45 +199,6 @@ public slots :
     virtual void clearStimulus(QString blockName) {
         stimuli.remove(blockName);
     }
-
-    // OSCILLATIONS:
-    /*
-    virtual void setOscillation(const int &firstNeuron, const int &lastNeuron, const double &maxStimulus, const double &_freq, const int &_delay, const double &_phase){
-        stopOscillation(firstNeuron, lastNeuron);
-        setStimulus(firstNeuron, lastNeuron, 0.0f); // To make sure that ids exist and are continues (needed for update oscillations) ZAF: To check!
-        oscillation.append(OscillationSet());
-        oscillation[oscillation.size()-1].initialize(firstNeuron, lastNeuron, _freq, _delay, maxStimulus, _phase);
-    }
-
-    virtual void stopOscillation(const int &firstNeuron, const int &lastNeuron){
-        // Find if we already have set oscillations for these neurons
-        for(int i = 0; i < oscillation.size(); i++){
-            // If the new set covers another one
-            if(firstNeuron <= oscillation[i].firstNeuron &&
-                    lastNeuron >= oscillation[i].lastNeuron){
-                oscillation.remove(i);
-            }
-            // If ..
-            else if(firstNeuron > oscillation[i].firstNeuron &&
-                    firstNeuron < oscillation[i].lastNeuron &&
-                    lastNeuron > oscillation[i].lastNeuron){
-                oscillation[i].lastNeuron = firstNeuron;
-            }
-            // If ..
-            else if(firstNeuron < oscillation[i].firstNeuron &&
-                    lastNeuron > oscillation[i].firstNeuron &&
-                    lastNeuron < oscillation[i].lastNeuron){
-                oscillation[i].firstNeuron = lastNeuron;
-            }
-            // If the new set is inside another one
-            else if(firstNeuron > oscillation[i].firstNeuron &&
-                    firstNeuron < oscillation[i].lastNeuron &&
-                    lastNeuron < oscillation[i].lastNeuron){
-                oscillation.remove(i);
-            }
-        }
-    }
-    */
 
 };
 

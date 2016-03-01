@@ -49,11 +49,10 @@ protected:
     QPointer<QVBoxLayout> _layout;
 
     bool run;
-    double dt;
 
     QMap<QString, WorkspaceTab*> workTab;
 
-    QString FOLDERNAME;
+    //QString FOLDERNAME;
     QString FILENAME;
 
     int top_frame_separator;
@@ -72,7 +71,7 @@ public:
     explicit MainWindow(QString filename="", QWidget *parent = 0);
     ~MainWindow();
 
-    QString getFolderName(){ return FOLDERNAME; }
+    //QString getFolderName(){ return FOLDERNAME; }
     QString getFileName(){ return FILENAME; }
 
 signals:
