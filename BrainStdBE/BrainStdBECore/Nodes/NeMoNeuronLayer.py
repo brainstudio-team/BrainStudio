@@ -7,6 +7,8 @@ import numpy as np
 import nemo
 import exceptions
 import os
+import sys
+import regex as re
 
 class BrainStdBEClass(Node) :
     
@@ -47,35 +49,49 @@ class BrainStdBEClass(Node) :
                 text = handle.readlines()
                 handle.close()
             
-                parameter = False
-                state = False
-                parameters=[]
-                states=[]
-                default_parameters=[]
-                default_states=[]
+                isParameter = False
+                isStateName = False
+                parameters = []
+                states = []
+                default_parameters = dict()
+                default_states = []
+                paramRegex = re.compile('\[params:(?P<name>[A-Za-z]+)\]')
+                paramSetName = ''
                 for l in text: 
                     
                     l = l.rstrip("\r")                        
                     l = l.rstrip("\n")
                     
-                    if l == '':
-                        continue                             
-                    if l == '[parameter_names]':
-                        parameter = True
-                        state = False
+                    # First check if the line is empty, commented or has a
+                    # section title (i.e. square brackets)
+                    if l == '' or l[0] == '#':
+                        continue
+                    elif paramRegex.match(l):
+                        m = paramRegex.match(l)
+                        paramSetName = m.group('name')
+                        if len(paramSetName) == 0:
+                            sys.exit("Error while reading", file, ".ini file."\
+                                   + "Parameter set name cant be empty. ABORT")
+                        if not default_parameters.has_key(paramSetName):
+                            default_parameters[paramSetName] = []
+                        isParameter= True
+                        isStateName = False
                     elif l == '[state_names]':
-                        state = True
-                        parameter = False
+                        isStateName = True
+                        isParameter = False
+
+                    # If it isn't, then parse as normal text
                     else:
                         left = l[0:l.rfind('=')]
-                        left=left.strip()
-			right =  l[l.rfind('=')+1:len(l)]
-                        right=right.strip()
+                        left = left.strip()
+                        right =  l[l.rfind('=')+1:len(l)]
+                        right = right.strip()
                         
-                        if parameter:
-                            parameters.append(left)
-                            default_parameters.append(right)
-                        elif state:
+                        if isParameter:
+                            default_parameters[paramSetName].append(right)
+                            if left not in parameters:
+                                parameters.append(left)
+                        elif isStateName:
                             states.append(left)   
                             default_states.append(right)           
 
@@ -85,6 +101,7 @@ class BrainStdBEClass(Node) :
         return __version__
         
     def get_model_type(self, architecture = ''):
+        # PEDRO @DAVE: Do you know why is this here?
         if architecture == 'Kuramoto-NeMo':
             return 'rate'
         else:

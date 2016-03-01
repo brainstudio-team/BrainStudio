@@ -31,7 +31,9 @@ public:
     // Parameter/state names
     static QMap<QString, my_list > node_params;
     static QMap<QString, my_list > node_states;
-    static QMap<QString, my_list > node_params_default;
+    // Outmost map lists over different models, inner map over different
+    // parameter sets for the same model
+    static QMap<QString, QMap<QString, my_list> > node_params_default;
     static QMap<QString, my_list > node_states_default;
     // Fields: Parameters for the node as a whole
     static QMap<QString, my_2d_list > node_fields;
@@ -103,9 +105,13 @@ public:
                 node_states[it.key()].append(value.toString());
             }
 
-            foreach (const QJsonValue & value,
-                     configs["default_params"].toArray()) {
-                node_params_default[it.key()].append(value.toString());
+            // Get all default parameter sets, including names and values
+            foreach (QString k, configs["default_params"].toObject().keys()) {
+                qDebug() << "New obj = " << k;
+                QJsonArray parameterSet = configs["default_params"].toObject()[k].toArray();
+                foreach (QJsonValue s, parameterSet) {
+                    node_params_default[it.key()][k].append(s.toString());
+                }
             }
 
             foreach (const QJsonValue & value,
@@ -241,8 +247,9 @@ public:
         BackendData::load_edges(rawData);
     }
 
-    static void clear_nodes(){
+    static void clear_nodes() {
         QMap<QString, my_list>::iterator i;
+        QMap<QString, QMap<QString, my_list> >::iterator j;
 
         nodes.clear();
 
@@ -250,8 +257,14 @@ public:
         for(i = node_params.begin(); i != node_params.end(); i++)
             i.value().clear();
         node_params.clear();
-        for(i = node_params_default.begin(); i != node_params_default.end(); i++)
-            i.value().clear();
+
+        // Clear default parameter values
+        for(j = node_params_default.begin(); j != node_params_default.end(); j++) {
+            for (i = j.value().begin(); i != j.value().end(); i++) {
+                i.value().clear();
+            }
+            j.value().clear();
+        }
         node_params_default.clear();
 
         // Clear states

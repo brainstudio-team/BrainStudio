@@ -15,7 +15,7 @@ QString  BackendData::path = "";
 BackendData::my_list BackendData::nodes;
 QMap<QString, BackendData::my_list > BackendData::node_params;
 QMap<QString, BackendData::my_list > BackendData::node_states;
-QMap<QString, BackendData::my_list > BackendData::node_params_default;
+QMap< QString, QMap<QString, BackendData::my_list > > BackendData::node_params_default;
 QMap<QString, BackendData::my_list > BackendData::node_states_default;
 QMap<QString, BackendData::my_2d_list > BackendData::node_fields;
 QMap<QString, QString > BackendData::node_units_field;

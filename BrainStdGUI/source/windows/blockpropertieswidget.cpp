@@ -196,20 +196,18 @@ void BlockPropertiesWidget::changeToDefault(QString model){
     parsLineEdit.clear();
 
     QList<QString> params = BackendData::node_params[model];
-    QList<QString> params_default = BackendData::node_params_default[model];
+    QMap<QString, QList<QString> > params_default = BackendData::node_params_default[model];
 
-    for(int i=0;i<params.size();i++){
-        parsLabel.append(new QLabel(params[i],ui->parsGroupBox));
+    for (int i = 0; i < params.size(); i++){
+        parsLabel.append(new QLabel(params[i], ui->parsGroupBox));
         paramsLayout->addWidget(parsLabel.last(),parsLabel.size()-1,0);
         parsLabel.last()->setMinimumWidth(100);
 
         parsLineEdit.append(new QLineEdit(ui->parsGroupBox));
         paramsLayout->addWidget(parsLineEdit.last(),parsLineEdit.size()-1,1);
-        if(params_default[i] == "true" || params_default[i] == "false") // This means empty!
-            parsLineEdit.last()->setText("");
-        else
-            parsLineEdit.last()->setText(params_default[i]);
+        parsLineEdit[i]->setText(block->getParam(params[i]));
     }
+
     if(parsLabel.size() > 0){
         ui->parsGroupBox->setVisible(true);
         ui->parsGroupBox->setWindowTitle("Unit parameter values");
@@ -255,36 +253,6 @@ void BlockPropertiesWidget::changeToDefault(QString model){
     this->setMinimumHeight(target_height);
     this->setMaximumHeight(target_height);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -385,31 +353,3 @@ void BlockPropertiesWidget::parametersChanged(){
 
     block->update();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
