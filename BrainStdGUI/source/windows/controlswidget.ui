@@ -138,21 +138,25 @@ background: transparent;
          </item>
         </widget>
        </item>
-       <item row="10" column="0">
-        <widget class="QRadioButton" name="modeNetworkRadioButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>connections</string>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="0">
         <widget class="QRadioButton" name="modeCRadioButton">
          <property name="text">
           <string>firing rates</string>
          </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QComboBox" name="rOrientation">
+         <item>
+          <property name="text">
+           <string>Horizontal</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Vertical</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item row="2" column="0">
@@ -175,20 +179,6 @@ background: transparent;
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
-        <widget class="QComboBox" name="rOrientation">
-         <item>
-          <property name="text">
-           <string>Horizontal</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Vertical</string>
-          </property>
-         </item>
-        </widget>
-       </item>
        <item row="5" column="2">
         <widget class="QCheckBox" name="rAxes">
          <property name="text">
@@ -197,6 +187,27 @@ background: transparent;
          <property name="checked">
           <bool>true</bool>
          </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QCheckBox" name="netAnalysischeckBox">
+         <property name="text">
+          <string>Net analysis</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QComboBox" name="networkMode">
+         <item>
+          <property name="text">
+           <string>Mutual information</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Transfer entropy</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>

@@ -137,54 +137,6 @@ public:
     void setLocalFactor(double value){ _L = value; }
 };
 
-/* --------------------------------------------------------------------------
- * DESCRIPTION OF CLASS: OscillationSet
- *
- * Variables: first/last neurons, A, phase,
- *
- * This class includes a method (setStimWeight) which calculates the weight of
- * a stimulus according to the following oscillatory function:
- *
- *                    / A*sin(2*pi*frequency*((time+delay)/1000.0)-phase);
- *          weight = <
- *                    \ 0   if the above is < 0
- *
- *
- * -------------------------------------------------------------------------- */
-class OscillationSet{
-public:
-    OscillationSet():firstNeuron(0),lastNeuron(0),frequency(0.0),delay(0),
-        A(0.0),phase(0.0){}
-
-    void initialize(const int &first, const int &last, const double &freq,
-                    const double &_delay, const double _A = 1.0,
-                    const double _phase = 0.0){
-                firstNeuron = first;
-                lastNeuron = last;
-                frequency = freq;
-                delay = _delay;
-                A = _A;
-                phase = _phase;
-                stimWeight = 1.0;
-    }
-    int firstNeuron, lastNeuron;
-    double A;  // The amplitude (max displacement from the equilibrium position)
-    double phase;       // The phase of the oscillation
-    double frequency;   // The frequency of the oscillation
-    double delay;       // The delay of the oscillation
-    double stimWeight;  // The output value
-
-    // Methods
-    double setStimWeight(double time){
-        // Set the stimulus weight
-        stimWeight = A*sin(2.0*M_PI*frequency*((time+delay)/1000.0)-phase);
-        //Could also be:(A*sin(2.0*M_PI*frequency*(timeStep/1000.0)-phase)+A)/2.0f;
-        if(stimWeight < 0)
-            stimWeight = 0;
-        return stimWeight;
-    }
-};
-
 /* -------------------------------------------------------------------------- *\
  * DESCRIPTION OF CLASS: PostNeuron
  *

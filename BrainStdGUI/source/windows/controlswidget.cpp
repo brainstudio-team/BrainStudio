@@ -47,8 +47,6 @@ bool ControlsWidget::modeC()            const { return ui->modeCRadioButton->isC
 bool ControlsWidget::modeRasters()      const { return ui->modeRasterRadioButton->isChecked(); }
 bool ControlsWidget::modeStatesPlots()  const { return (ui->modeStatesRadioButton->isChecked() &&
                                                         ui->statesType->currentText() == "2D plots"); }
-bool ControlsWidget::modeNetwork()      const { return ui->modeNetworkRadioButton->isChecked(); }
-
 
 
 // -----------------------------------------------------------------------------
@@ -59,6 +57,9 @@ void ControlsWidget::on_firingRateSlider_valueChanged(){
    ui->firingRateLabel->setText("FR depth: "+
                                 QString::number(ui->firingRateSlider->value()));
    //schemaPtr()->setFiringRateDepth(firingRateSlider->value());
+    if (schema != NULL) {
+        schema->setFiringRateDepth(ui->firingRateSlider->value());
+    }
 }
 
 void ControlsWidget::on_experimentCheckBox_clicked(bool checked){
@@ -180,9 +181,26 @@ void ControlsWidget::on_pushButton_clicked(){
     }
 }
 
+void ControlsWidget::on_netAnalysischeckBox_clicked(bool checked){
+    if(schema == NULL){
+        qDebug() << "ControlsWidget::on_nacb_clicked: Error: schema is NULL!";
+        return;
+    }
+    if(checked && ui->networkMode->currentText() == "Mutual information"){
+        schema->setNetworkMode(Controls::NET_MI);
+    }
+    else if(checked && ui->networkMode->currentText() == "Transfer entropy"){
+        schema->setNetworkMode(Controls::NET_TE);
+    }
+    else{
+        schema->setNetworkMode(Controls::NET_NONE);
+    }
+}
 
-
-
+void ControlsWidget::on_networkMode_activated(const QString &arg1){
+    (void)arg1;
+    this->on_netAnalysischeckBox_clicked(ui->netAnalysischeckBox->isChecked());
+}
 
 
 

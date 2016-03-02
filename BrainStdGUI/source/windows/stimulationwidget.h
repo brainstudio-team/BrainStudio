@@ -21,6 +21,9 @@ protected:
     bool initialized;
     int prev_stim_value;
 
+    QMap<QString, QPoint > fbands;
+    QString band;
+
     void refreshWidgetValues();
     void setStimulus(const int &value);
     void setStimulus();
@@ -57,6 +60,7 @@ signals:
 
     void setStimulus(QString blockName, int neuronIndex, float value);
     void setStimulus(QString blockName, int firstNeur, int lastNeur, float value);
+    void setStimulus(QString blockName, int firstNeur, int lastNeur, double baseline, double amplitude, double frequency, double phase);
     void clearStimulus(QString blockName);
     void clearAllStimuli();
 };

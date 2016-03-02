@@ -63,6 +63,8 @@ private slots:
     void on_modeRasterRadioButton_clicked();
     void on_modeNetworkRadioButton_clicked();
     void on_pushButton_clicked();
+    void on_netAnalysischeckBox_clicked(bool checked);
+    void on_networkMode_activated(const QString &arg1);
 };
 
 #endif // CONTROLSWIDGET_H

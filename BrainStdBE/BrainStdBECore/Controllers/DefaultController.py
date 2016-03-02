@@ -205,8 +205,10 @@ class BrainStdBEClass(Controller) :
                                     if len(command) >= 6 :                                    
                                         speed = int(command[5])
 
-                                    if len(command) >= 8 :                                    
-                                        if command[7][0] == '-':
+                                    idx = 6
+
+                                    while len(command) >= (idx+2) and command[idx] == 'stim':
+                                        if command[idx+1][0] == '-':
                                             what = "Stim neuron is negative: "+ command[7]
                                             errorin = 'Error in DefaultController' 
                                             print errorin
@@ -217,12 +219,15 @@ class BrainStdBEClass(Controller) :
                                             connection.sendall("error " + json.dumps(reply) )
                                             break
                                         
-                                        stim_a = int(command[7].split('-')[0])
-                                        stim_b = int(command[7].split('-')[1])
+                                        stim_a = int(command[idx+1].split('-')[0])
+                                        stim_b = int(command[idx+1].split('-')[1])
                                         
-                                        stim_current = float(command[8])
+                                        stim_current = float(command[idx+2])
 
-                                        I_stim = [ (indx, stim_current) for indx in range(stim_a, stim_b) ]
+                                        I_stim += [ (indx, stim_current) for indx in range(stim_a, stim_b) ]
+
+                                        idx += 3
+
 
                                     print "Timestep:", timestep
 

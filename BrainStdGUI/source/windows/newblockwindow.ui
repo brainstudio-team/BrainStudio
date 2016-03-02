@@ -382,23 +382,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="parameterSetComboBox">
-           <item>
-            <property name="text">
-             <string>Custom neurons</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Excitatory neurons</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Inhibitory neurons</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="parameterSetComboBox"/>
          </item>
         </layout>
        </item>
@@ -412,8 +396,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>360</width>
-            <height>330</height>
+            <width>368</width>
+            <height>356</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">

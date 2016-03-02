@@ -6,7 +6,8 @@
 
 QString UserData::workspace_path = "empty";
 QString UserData::backend_path = "empty";
-QString UserData::path = "";
+QString UserData::file = "";
+QString UserData::only_path = "";
 QString UserData::tcpip_hostname = "localhost";
 int     UserData::tcpip_port = 10000;
 
@@ -15,7 +16,7 @@ QString  BackendData::path = "";
 BackendData::my_list BackendData::nodes;
 QMap<QString, BackendData::my_list > BackendData::node_params;
 QMap<QString, BackendData::my_list > BackendData::node_states;
-QMap<QString, BackendData::my_list > BackendData::node_params_default;
+QMap< QString, QMap<QString, BackendData::my_list > > BackendData::node_params_default;
 QMap<QString, BackendData::my_list > BackendData::node_states_default;
 QMap<QString, BackendData::my_2d_list > BackendData::node_fields;
 QMap<QString, QString > BackendData::node_units_field;

@@ -85,6 +85,7 @@ private slots:
 
 
     void on_neuronModelComboBox_currentTextChanged(const QString &arg1);
+    void on_parameterSetComboBox_currentTextChanged(const QString &paramSetName);
     void on_nameLineEdit_textChanged(const QString &arg1);
 };
 

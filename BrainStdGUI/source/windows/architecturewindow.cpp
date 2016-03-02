@@ -9,6 +9,8 @@ ArchitectureWindow::ArchitectureWindow(QWidget *parent): QWidget(parent),
     //this->setCursor(QCursor(Qt::CrossCursor));
     stimWidget = NULL;
     A = NULL;
+    mi = NULL;
+
     selection_box.setRect(-1,-1,0,0);
 
     x1 = y1 = x2 = y2 = xA = yA = xB = yB = 0;
@@ -21,7 +23,6 @@ ArchitectureWindow::ArchitectureWindow(QWidget *parent): QWidget(parent),
     details = true;
     show_connections = true;
     _showActions = true;
-    initialized = false;
     under_modification = false;
     connecting = false;
     highlighted = "";
@@ -313,7 +314,7 @@ void ArchitectureWindow::turnOnStimulation(){
                 A, SLOT(setStimulus(QString, int, float)));
         connect(stimWidget, SIGNAL(setStimulus(QString, int, int, float)),
                 A, SLOT(setStimulus(QString, int, int, float)));
-        connect(stimWidget, SIGNAL(setStimulus(QString,int,int,double,double,int,double)),
+        connect(stimWidget, SIGNAL(setStimulus(QString,int,int,double,double,double,double)),
                 A, SLOT(setStimulus(QString,int,int,double,double,double,double)));
         connect(stimWidget, SIGNAL(clearAllStimuli()), A, SLOT(clearAllStimuli()));
         connect(stimWidget, SIGNAL(clearStimulus(QString)),
@@ -368,8 +369,6 @@ void ArchitectureWindow::deleteBlockSlot(const QString &id){
         qDebug() << "Architecture::deleteBlockSlot: Index out of range!";
         return;
     }
-
-    this->setInitialized(false);
 
     this->deleteRedundantConnections();
 
@@ -763,6 +762,26 @@ void ArchitectureWindow::restartActions(){
         actionsDone.pop_back();
     }
 }
+
+
+
+void ArchitectureWindow::setNetworkMode(const int &mode){
+    controls.network = mode;
+    if(mode == Controls::NET_NONE){
+        if(mi != NULL){
+            delete mi;
+            mi = NULL;
+        }
+    }
+    else if(mode == Controls::NET_MI && mi == NULL){
+        mi = new MutualInformation();
+    }
+    update();
+}
+
+
+
+
 
 
 

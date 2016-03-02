@@ -188,7 +188,7 @@ void NewBlockWindow::changeParameters(QString model){
     }
 
     // -- PARAMETERS -----------------------------------------------------------
-    for(int i=0;i<parsLabel.size();i++){
+    for(int i = 0; i < parsLabel.size(); i++){
         parsLayout->removeWidget(parsLabel[i]);
         parsLayout->removeWidget(parsLineEdit[i]);
         delete parsLabel[i];
@@ -198,19 +198,23 @@ void NewBlockWindow::changeParameters(QString model){
     parsLineEdit.clear();
 
     QList<QString> params = BackendData::node_params[model];
-    QList<QString> params_default = BackendData::node_params_default[model];
+    QMap<QString, QList<QString> > params_default = BackendData::node_params_default[model];
 
-    for(int i=0;i<params.size();i++){
+    for(int i = 0; i < params.size(); i++){
         parsLabel.append(new QLabel(params[i],ui->parsGroupBox));
         parsLayout->addWidget(parsLabel.last(),parsLabel.size()-1,0);
         parsLabel.last()->setMinimumWidth(100);
 
         parsLineEdit.append(new QLineEdit(ui->parsGroupBox));
         parsLayout->addWidget(parsLineEdit.last(),parsLineEdit.size()-1,1);
-        if(params_default[i] == "true" || params_default[i] == "false") // This means empty!
+
+        // By default, start with the first parameter set (which will be the
+        // same that is shown in the parameterSetComboBox
+        QString paramSetName = params_default.keys()[0];
+        if(params_default[paramSetName][i] == "true" || params_default[paramSetName][i] == "false") // This means empty!
             parsLineEdit.last()->setText("");
         else
-            parsLineEdit.last()->setText(params_default[i]);
+            parsLineEdit.last()->setText(params_default[paramSetName][i]);
     }
     if(parsLabel.size() > 0){
         ui->parsGroupBox->setVisible(true);
@@ -219,8 +223,9 @@ void NewBlockWindow::changeParameters(QString model){
         ui->parsGroupBox->setVisible(false);
     }
 
+
     // -- STATES ---------------------------------------------------------------
-    for(int i=0;i<statesLabel.size();i++){
+    for(int i = 0; i < statesLabel.size(); i++){
         statesLayout->removeWidget(statesLabel[i]);
         statesLayout->removeWidget(statesLineEdit[i]);
         delete statesLabel[i];
@@ -251,6 +256,22 @@ void NewBlockWindow::changeParameters(QString model){
     }
 }
 
+void NewBlockWindow::on_parameterSetComboBox_currentTextChanged(const QString &paramSetName) {
+
+    if (!paramSetName.isEmpty()) {
+        QString model = ui->neuronModelComboBox->currentText();
+        QList<QString> params = BackendData::node_params[model];
+        QMap<QString, QList<QString> > params_default = BackendData::node_params_default[model];
+
+        for (int i = 0; i < params.size(); i++) {
+            if(params_default[paramSetName][i] == "true" || params_default[paramSetName][i] == "false") // This means empty!
+                parsLineEdit[i]->setText("");
+            else
+                parsLineEdit[i]->setText(params_default[paramSetName][i]);
+        }
+    }
+}
+
 int NewBlockWindow::getNeurons(){
     QString model = ui->neuronModelComboBox->currentText();
     if(!BackendData::node_units_field.contains(model)){
@@ -277,8 +298,20 @@ int NewBlockWindow::getNeurons(){
 }
 
 
-void NewBlockWindow::on_neuronModelComboBox_currentTextChanged(const QString &arg1){
-    this->changeParameters(arg1);
+void NewBlockWindow::on_neuronModelComboBox_currentTextChanged(const QString &model){
+
+    if (!model.isEmpty()) {
+        QMap<QString, QList<QString> > params_default = BackendData::node_params_default[model];
+
+        this->changeParameters(model);
+
+        // Once we know which model has been selected, we can clear the parameter
+        // combo box and populate it with the default values for this model.
+        ui->parameterSetComboBox->clear();
+        ui->parameterSetComboBox->insertItems(0, params_default.keys());
+
+    }
+
 }
 
 
@@ -293,7 +326,7 @@ void NewBlockWindow::on_addButton_clicked(){
     this->close();
 }
 
-void NewBlockWindow::on_neuronModelComboBox_currentIndexChanged(int index){
+void NewBlockWindow::on_neuronModelComboBox_currentIndexChanged(int index) {
    /* Here I need to load it from the backend!
     ui->parameterSetComboBox->clear();
     switch(index){

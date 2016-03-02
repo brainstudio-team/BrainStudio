@@ -14,7 +14,7 @@
    <string>BrainStd</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#topFrame {
+   <string notr="true">#topFrame , #topFrameBackground{
 border: none;
 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
 stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
@@ -88,6 +88,22 @@ background: #dfdfdf;
        <property name="bottomMargin">
         <number>0</number>
        </property>
+       <item>
+        <widget class="QFrame" name="topFrameBackground">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>41</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QFrame" name="topFrame">
          <property name="minimumSize">
@@ -444,6 +460,7 @@ color: white;
   padding-left: 20px;
   padding-right: 20px;
   height: 30px;
+  min-width: 30px;
 }
 
 QTabBar::tab:selected {
@@ -451,7 +468,7 @@ QTabBar::tab:selected {
 	color: black;
  }
 
-/*QTabWidget::pane { border: 0; } */
+#tabWidget::pane { border: 0; } 
 
 </string>
             </property>
@@ -464,10 +481,9 @@ QTabBar::tab:selected {
         </widget>
        </item>
       </layout>
-      <zorder>topFrame</zorder>
+      <zorder>topFrameBackground</zorder>
       <zorder>frameToBeNamed</zorder>
-      <zorder>tabWidget</zorder>
-      <zorder>tabWidget</zorder>
+      <zorder>topFrame</zorder>
      </widget>
     </item>
    </layout>
@@ -478,7 +494,7 @@ QTabBar::tab:selected {
      <x>0</x>
      <y>0</y>
      <width>1337</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

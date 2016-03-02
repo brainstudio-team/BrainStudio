@@ -22,6 +22,7 @@ public:
     //ACCESSORS:
     float getFR() const { return result;}
     int getDepth() const { return depth; }
+    QList<float> getLastValues() const { return lastValues; }
 
     //METHODS:
     void nextFR(float newValue){

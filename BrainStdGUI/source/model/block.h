@@ -52,7 +52,7 @@ protected:
 
     int stimulusFirst, stimulusLast;
     float stimulusAmount;
-    float oscillationPhase, oscillationFrequency;
+    float oscillationPhase, oscillationFrequency, oscillationAmplitude;
 
     // This is used in arch.window in order to change the QMap when id changes
     QString old_id;
@@ -207,12 +207,14 @@ public:
     void setStimulusAmount(const float &value){ stimulusAmount = value; }
     void setOscillationPhase(const float &value){ oscillationPhase = value; }
     void setOscillationFrequency(const float &value){ oscillationFrequency = value; }
+    void setOscillationAmplitude(const float &value){ oscillationAmplitude = value; }
 
     int getStimulusFirst(){ return stimulusFirst; }
     int getStimulusLast(){ return stimulusLast; }
     float getStimulusAmount(){ return stimulusAmount; }
     float getOscillationPhase(){ return oscillationPhase; }
     float getOscillationFrequency(){ return oscillationFrequency; }
+    float getOscillationAmplitude(){ return oscillationAmplitude; }
     // -------------------------------------------------------------------------
 
 
@@ -244,6 +246,7 @@ public:
     QColor getNeuronColour(int indx);
     QColor getFiringRateNeuronColour(int indx);
     QColor getFiringRateBlockColour(const int &targetBlock);
+    QList<float> getWindowedFiringRate();
     void addConnection(const QString &indx, const float &weight){
             //std::cout << "ADD BLOCK(" << indx << ")" << std::endl;
             if(!blockConnections.contains(indx)){
