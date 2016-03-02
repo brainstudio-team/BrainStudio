@@ -16,10 +16,7 @@ class ProcessUnit(BrainStudioObject) :
         
     def get_update_time(self):
         return self.update_time
-        
-    def update(self):     
-        args = dict()
-        for s in self.sources:
-            s.get_data(args)      
+                
+     
         
  

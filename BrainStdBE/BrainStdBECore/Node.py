@@ -48,8 +48,17 @@ class Node(ProcessUnit) :
         pass
     
     @abstractmethod
+    def get_data(self, args):
+        pass
+    
+    @abstractmethod
     def set_data(self, args):
         pass
+    
+    def update(self):     
+        args = dict()
+        for s in self.sources:
+            s.transfer_data(args)  
     
     def get_start_neuron(self):
         return 0

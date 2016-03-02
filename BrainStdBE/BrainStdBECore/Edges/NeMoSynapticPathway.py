@@ -54,7 +54,7 @@ class BrainStdBEClass(WeightedPathway) :
             weights.append(self.brain.get_nemo_synapse_weight(indexes))
         return weights      
         
-    def get_data(self, args):
+    def transfer_data(self, args):
         return
 
 

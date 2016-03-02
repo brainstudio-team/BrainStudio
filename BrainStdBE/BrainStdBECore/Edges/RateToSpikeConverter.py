@@ -36,7 +36,7 @@ class BrainStdBEClass(WeightedPathway) :
     def get_all_data(self):
         return list(self.weights)
         
-    def get_data(self, args):       
+    def transfer_data(self, args):       
         args = {'first_neuron' :  self.preFirst, 'last' : self.preLast }
         inputs = self.source.get_data(args)      
         

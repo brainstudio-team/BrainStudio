@@ -3,6 +3,7 @@ __abstract__ = True
 
 from BrainStudioObject import BrainStudioObject as BrainStudioObject
 from BSException import BSException as BSException 
+from abc import abstractmethod
 
 class Edge(BrainStudioObject) :
     
@@ -24,6 +25,10 @@ class Edge(BrainStudioObject) :
     
     def get_output_model(self):
         return self.output_model
+        
+    @abstractmethod
+    def transfer_data(self, args):
+        pass
     
     def initialize(self, brain, node, args):
         super(Edge,self).initialize(brain, node, args)
@@ -67,4 +72,6 @@ class Edge(BrainStudioObject) :
             postrange = self.postFirst , self.postLast, self.target.get_input_size()
             what = 'Error ouput out of range: ' + str(postrange)
             raise BSException(where, what)
+            
+
             
