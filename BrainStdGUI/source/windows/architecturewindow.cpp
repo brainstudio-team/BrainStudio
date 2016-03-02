@@ -9,6 +9,7 @@ ArchitectureWindow::ArchitectureWindow(QWidget *parent): QWidget(parent),
     //this->setCursor(QCursor(Qt::CrossCursor));
     stimWidget = NULL;
     A = NULL;
+    selection_box.setRect(-1,-1,0,0);
 
     x1 = y1 = x2 = y2 = xA = yA = xB = yB = 0;
     menuPos.setX(0);    menuPos.setY(0);
@@ -174,8 +175,9 @@ void ArchitectureWindow::paintEvent(QPaintEvent * event){
         }
     }
 
-    painter.setPen(QPen(Qt::black, 1, Qt::SolidLine));
-
+    // SELECTION BOX
+    painter.setPen(QPen(QColor("#d4d4d4"), 3, Qt::DashLine));
+    painter.drawRect(selection_box);
 
     // SCHEMA
 
@@ -460,6 +462,7 @@ void ArchitectureWindow::mousePressEvent(QMouseEvent *event){
     if(event->button() == Qt::LeftButton){
         qDebug() << "Architecture:" << "Left click";
         setHighlighted("");
+        selection_box.setRect(event->x(), event->y(), 0, 0);
     }
     else if(event->button() == Qt::RightButton){
         qDebug() << "Architecture:" << "Right click";
@@ -475,11 +478,53 @@ void ArchitectureWindow::mouseDoubleClickEvent(QMouseEvent *event){
     }
 }
 
+bool encloses(const QRect &small, const QRect &big){
+    if(big.width() < 0 && big.height() > 0){
+        if(small.x() > big.x()+big.width() && small.y() > big.y() &&
+           small.width() < big.x() && small.height() < big.height()){
+            return true;
+        }
+    }
+    else if(big.width() > 0 && big.height() < 0){
+        if(small.x() > big.x() && small.y() > big.y()+big.height() &&
+           small.width() < big.width() && small.height() < big.y()){
+            return true;
+        }
+    }
+    else if(big.width() < 0 && big.height() < 0){
+        if(small.x() > big.x()+big.width() &&
+           small.y() > big.y()+big.height() &&
+           small.width() < big.x() && small.height() < big.y()){
+            return true;
+        }
+    }
+    else{
+        if(small.x() > big.x() && small.y() > big.y() &&
+           small.width() < big.width() && small.height() < big.height()){
+            return true;
+        }
+    }
+    return false;
+}
+
 void ArchitectureWindow::mouseMoveEvent(QMouseEvent *event){
     qDebug() << "Architecture::mouseMoveEvent: event->pos =" << event->pos();
     menuPos = event->pos();
+
+    if(selection_box.x() != -1 || selection_box.y() != -1){
+        selection_box.setWidth(event->x()-selection_box.x());
+        selection_box.setHeight(event->y()-selection_box.y());
+
+        QMap<QString,Block*>::iterator it;
+        for(it = blocks.begin(); it != blocks.end(); it++){
+            if(encloses(it.value()->geometry(), selection_box)){
+                qDebug() << "ZAF" << it.key();
+                this->setHighlighted(it.key());
+            }
+        }
+    }
     // Move block
-    if(blocks.contains(highlighted) && !connecting
+    else if(blocks.contains(highlighted) && !connecting
             && !resize_bottom && !resize_right && !resize_bottomright ){
         this->turnOffStimulation();
         blocks[highlighted]->moveXY(event->pos().x() - xStart,
@@ -545,6 +590,10 @@ void ArchitectureWindow::mouseMoveEvent(QMouseEvent *event){
 
 void ArchitectureWindow::mouseReleaseEvent(QMouseEvent *event){
     qDebug() << "Architecture::mouseReleaseEvent:" << event->pos();
+
+    if(selection_box.width() != 0 || selection_box.height() != 0){
+        selection_box.setRect(-1,-1,0,0);
+    }
 
     // If we're currently modifying something with the mouse:
     if(under_modification){

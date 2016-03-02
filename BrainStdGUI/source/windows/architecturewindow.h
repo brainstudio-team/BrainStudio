@@ -102,6 +102,8 @@
         bool initialized;
         bool under_modification;
 
+        QRect selection_box;
+
         // Variables needed to form new connections and visualize the process ------
         bool connecting; // We are during a new connection
         QString con_target; // The source of this new connection
