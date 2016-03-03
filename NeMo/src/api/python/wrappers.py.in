@@ -93,13 +93,22 @@ class Network():
             self._net.add_neuron(neuron_type, neuron_idx, paramDict['a'], paramDict['b'], paramDict['c'], \
                     paramDict['d'], paramDict['sigma'], stateDict['u'], stateDict['v'])
 
+        elif self.includedTypes[neuron_type] == 'Izhikevich2007DopSyn':
+            self._net.add_neuron(neuron_type, neuron_idx, paramDict['a'], paramDict['b'], paramDict['c'], \
+                    paramDict['d'], paramDict['vpeak'], paramDict['Vr'], paramDict['Vt'], paramDict['k'], \
+                    paramDict['Cm'], paramDict['sigma'], paramDict['d1'], paramDict['d2'], \
+                    paramDict['tMdtOt_exc'], paramDict['G_exc'], paramDict['E_exc'], \
+                    paramDict['tMdtOt_inh'], paramDict['G_inh'], paramDict['E_inh'], \
+                    stateDict['v'], stateDict['u'], stateDict['ge'], stateDict['gi'])
+
+
         elif self.includedTypes[neuron_type] == 'IF_curr_exp':
             self._net.add_neuron(neuron_type, neuron_idx, paramDict['v_rest'], paramDict['v_reset'], \
                     paramDict['c_m'], paramDict['tau_m'], paramDict['tau_refrac'], paramDict['tau_synE'], \
                     paramDict['tau_synI'], paramDict['v_thresh'], paramDict['I_offset'], \
                     stateDict['v'], stateDict['ie'], stateDict['ii'], stateDict['lastfired'])
 
-        elif self.includedTypes[neuron_type] == 'Input':
+        elif self.includedTypes[neuron_type] == 'Input' or self.includedTypes[neuron_type] == 'InhomogeneousPoissonSource':
             self._net.add_neuron(neuron_type, neuron_idx)
 
         elif self.includedTypes[neuron_type] == 'PoissonSource':
