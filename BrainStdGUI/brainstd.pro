@@ -45,7 +45,8 @@ HEADERS += \
     source/windows/backendterminal.h \
     source/helper/stimulus.h \
     source/qcustomplot/qcustomplot.h \
-    source/analysis/mutualinformation.h
+    source/analysis/mutualinformation.h \
+    source/analysis/synchrony.h
 
 SOURCES += \
     source/main.cpp \
@@ -82,7 +83,9 @@ SOURCES += \
     source/windows/stimulationwidget.cpp \
     source/windows/backendterminal.cpp \
     source/qcustomplot/qcustomplot.cpp \
-    source/analysis/mutualinformation.cpp
+    source/analysis/mutualinformation.cpp \
+    source/analysis/hilbertTransform.cpp \
+    source/analysis/synchrony.cpp
 
 FORMS += \
     source/windows/mainwindow.ui \

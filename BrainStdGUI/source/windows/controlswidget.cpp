@@ -192,6 +192,9 @@ void ControlsWidget::on_netAnalysischeckBox_clicked(bool checked){
     else if(checked && ui->networkMode->currentText() == "Transfer entropy"){
         schema->setNetworkMode(Controls::NET_TE);
     }
+    else if(checked && ui->networkMode->currentText() == "Synchrony"){
+        schema->setNetworkMode(Controls::NET_SYNC);
+    }
     else{
         schema->setNetworkMode(Controls::NET_NONE);
     }

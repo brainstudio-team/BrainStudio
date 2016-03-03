@@ -34,9 +34,47 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
         for(BlockIter bx = blocks.begin(); bx != blocks.end(); bx++){
             for(BlockIter by = blocks.begin(); by != blocks.end(); by++){
 
-                int value = (int)(255*mi->calculate(
+                int value;
+
+                if(bx.key() != by.key())
+                    value = (int)(255*mi->calculate(
                                       bx.value()->getWindowedFiringRate(),
                                       by.value()->getWindowedFiringRate()));
+                else
+                    value = (int)(255*mi->calculate_self(
+                                      bx.value()->getWindowedFiringRate()));
+
+                painter.setPen(QPen(QColor(0,0,0,value),
+                                    LINE_THICKNESS,Qt::SolidLine));
+                if(bx.key() != by.key())
+                    drawConnection(painter, bx.key(), by.key());
+                else{
+                    radius = bx.value()->width();
+                    if(radius>bx.value()->height())
+                        radius = bx.value()->height();
+                    radius = (float)radius/4.0;
+                    painter.drawEllipse(QPoint(bx.value()->x()+15,
+                                        bx.value()->y()+15), radius, radius);
+                }
+
+
+            }
+        }
+    }
+    else if(controls.network == Controls::NET_SYNC){
+        //painter.setPen(QPen(Qt::gray, LINE_THICKNESS, Qt::SolidLine));
+        for(BlockIter bx = blocks.begin(); bx != blocks.end(); bx++){
+            for(BlockIter by = blocks.begin(); by != blocks.end(); by++){
+
+                int value;
+
+                if(bx.key() != by.key())
+                    value = (int)(255*sync->calculate(
+                                      bx.value()->getWindowedFiringRate(),
+                                      by.value()->getWindowedFiringRate()));
+                else
+                    value = (int)(255*sync->calculate_self(
+                                      bx.value()->getWindowedFiringRate()));
 
                 painter.setPen(QPen(QColor(0,0,0,value),
                                     LINE_THICKNESS,Qt::SolidLine));

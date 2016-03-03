@@ -10,6 +10,7 @@ ArchitectureWindow::ArchitectureWindow(QWidget *parent): QWidget(parent),
     stimWidget = NULL;
     A = NULL;
     mi = NULL;
+    sync = NULL;
 
     x1 = y1 = x2 = y2 = xA = yA = xB = yB = 0;
     menuPos.setX(0);    menuPos.setY(0);
@@ -110,7 +111,9 @@ void ArchitectureWindow::update_f_rates(unsigned int *spikesArray, int spikes){
             passedNeurons++;
             frSUM+=bl.value()->getFiringRateNeuron(j);
         }
-        bl.value()->firingRateBlock.justSet(frSUM/(float)bl.value()->getNeuronsSize());
+        // PEDRO
+        // bl.value()->firingRateBlock.justSet(frSUM/(float)bl.value()->getNeuronsSize());
+        bl.value()->firingRateBlock.nextFR(frSUM/(float)bl.value()->getNeuronsSize());
     }
 }
 
@@ -722,9 +725,16 @@ void ArchitectureWindow::setNetworkMode(const int &mode){
             delete mi;
             mi = NULL;
         }
+        if(sync != NULL){
+            delete sync;
+            sync = NULL;
+        }
     }
     else if(mode == Controls::NET_MI && mi == NULL){
         mi = new MutualInformation();
+    }
+    else if(mode == Controls::NET_SYNC && sync == NULL){
+        sync = new Synchrony();
     }
     update();
 }

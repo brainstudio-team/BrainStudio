@@ -23,6 +23,7 @@
 #include "source/model/connection.h"
 
 #include "source/analysis/mutualinformation.h"
+#include "source/analysis/synchrony.h"
 
 class StimulationWidget;
 
@@ -33,7 +34,7 @@ public:
                       updateSchema(true),
                       savable(false), network(NET_NONE){}
 
-    enum {NET_NONE, NET_MI, NET_TE};
+    enum {NET_NONE, NET_MI, NET_TE, NET_SYNC};
 
     // From XML file:
     int speed;
@@ -94,6 +95,7 @@ protected:
     Simulator *A;
 
     MutualInformation *mi;
+    Synchrony *sync;
 
     bool grid;
     int GRID_SIZE;
