@@ -5,7 +5,6 @@
 #include <QThread>
 #include <QtWidgets/QMainWindow>
 
-#include "source/windows/backendterminal.h"
 #include "source/windows/xmlwindow.h"
 #include "source/windows/experimentwidget.h"
 #include "source/windows/pythonwidget.h"
@@ -32,15 +31,6 @@ class WorkspaceTab;
 class WorkspaceTab : public QMainWindow{
     Q_OBJECT
 
-
-private:
-    QProcess *back_end;
-
-private slots :
-    void back_end_error();
-    void back_end_output();
-
-
 private:
     Ui::WorkspaceTab *ui;
 
@@ -50,7 +40,6 @@ private:
     QListWidget *actionsList;
     ExperimentWidget *experimentWidget;
     PythonWidget *pythonWidget;
-    BackEndTerminal *backendTerminal;
 
     NewBlockWindow *addBlockWindow;
     NewConnectionWindow *addConnectionWindow;
@@ -79,14 +68,7 @@ private:
     Simulator *snn;
     QString FILENAME;
 
-    // -- Backends -------------------------------------------------------------
-    //TCPIP_Sim *client;
     void setBackend();
-    int backend;
-
-private slots:
-    void restart_backend();
-
 
 private :
     // Time

@@ -53,7 +53,6 @@ WorkspaceTab::WorkspaceTab(QString filename, QWidget *parent):
     // I do this first so the simulator will be the one defined in schema!
     loadAll();
 
-
     this->setBackend();
 
     // -------------------------------------------------------------------------
@@ -65,28 +64,13 @@ WorkspaceTab::WorkspaceTab(QString filename, QWidget *parent):
 
     updateTime();
     setMode(Block::modeEdit); // This is also the default in ControlsWidget
-
-
-
-    back_end = new QProcess(this);
-    //qDebug() << "==================== BACK-END ==========================";
-    QCoreApplication::processEvents();
-    connect(back_end, SIGNAL(readyReadStandardError()), this, SLOT(back_end_error()));
-    connect(back_end, SIGNAL(readyReadStandardOutput()), this, SLOT(back_end_output()));
-    this->restart_backend();
-    //qDebug() << "========================================================";
 }
 
 WorkspaceTab::~WorkspaceTab(){
-    back_end->kill();
-
     if(snn != NULL)
         delete snn;
     delete ui;
 }
-
-
-
 
 void WorkspaceTab::setBackend(){
 
@@ -107,21 +91,6 @@ void WorkspaceTab::setBackend(){
             this, SLOT(simulationErrorSlot(QString)));
     //client->sendmsg("connected!!!!! oleee!");
 }
-
-void WorkspaceTab::restart_backend(){
-    // If there is another instance running, kill it..
-    back_end->setWorkingDirectory(UserData::backend_path);
-    QString program = "python BrainStdBE.py -port " + QString::number(UserData::tcpip_port);
-    back_end->start(program);
-}
-
-
-
-
-
-
-
-
 
 void WorkspaceTab::resizeEvent(QResizeEvent * event ){
     controls->move(0, this->height()-controls->height()-55);
@@ -278,13 +247,6 @@ void WorkspaceTab::createDockWindows(){
     xmlDock->setWidget(xmlWindow);
     addDockWidget(Qt::RightDockWidgetArea, xmlDock);
     //viewMenu->addAction(dock->toggleViewAction());
-
-    // LOAD BACK END TERMINAL
-    backendTerminal = new BackEndTerminal(this);
-    connect(backendTerminal, SIGNAL(restart_backend()),
-            this,            SLOT(restart_backend()));
-    this->addDockWidget(Qt::RightDockWidgetArea, backendTerminal);
-
 
     // LOAD EXPERIMENT WIDGET
     experimentDock = new QDockWidget(tr("Experiment controls"), this);
@@ -464,21 +426,6 @@ void WorkspaceTab::setTimeSpeed(const int &value){
     schema->setSpeed(value);
 
     //??
-}
-
-void WorkspaceTab::back_end_error(){
-    QByteArray data = back_end->readAllStandardError();
-    //qDebug() << "BackendError:" << data;
-    backendTerminal->write(data);
-    //textEdit_verboseOutput->append(QString(data));
-
-}
-
-void WorkspaceTab::back_end_output(){
-    QByteArray data = back_end->readAllStandardOutput();
-    backendTerminal->write(data);
-    //qDebug() << "Backend:" << data;
-    //textEdit_verboseOutput->append(QString(data));
 }
 
 /* it creates a SNN based on the current schema! SOS: To delete - doesn't apply any more!

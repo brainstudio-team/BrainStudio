@@ -162,6 +162,22 @@ private slots:
     void on_actionPause_triggered();
     void on_actionStop_Un_load_network_triggered();
     void on_actionClear_screen_triggered();
+    void on_tcpipButton_clicked();
+
+
+    // -- Backends -------------------------------------------------------------
+    void on_backendComboBox_activated(int index);
+
+    void on_pushButton_clicked();
+
+private:
+    QProcess *backend_process;
+
+    void backend_restart();
+    void backend_write(const QString &text);
+    void backend_error();
+    void backend_output();
+    // -------------------------------------------------------------------------
 };
 
 #endif // MAINWINDOW_H

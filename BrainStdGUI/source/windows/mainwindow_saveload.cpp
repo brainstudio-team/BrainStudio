@@ -81,7 +81,7 @@ bool MainWindow::loadNewTab(const QString &filename){
 
     QString path = filename;
     if(!path.contains('\\') && !path.contains('/'))
-        path = UserData::workspace_path + "/" + path;
+        path = UserData::workspace_path + QDir::toNativeSeparators("/") + path;
     path = QDir::toNativeSeparators(path);
 
     if(!QFile::exists(path)){
