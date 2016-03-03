@@ -877,10 +877,22 @@ void ArchitectureWindow::paste(){
         return;
     }
 
+    // This is used to calculate the relative position of the new nodes
     int zero_x=0, zero_y=0;
     if(clipboard.length() > 0 && blocks.contains(clipboard[0])){
         zero_x = blocks[clipboard[0]]->x();
         zero_y = blocks[clipboard[0]]->y();
+    }
+
+    // A list of the edges that will be also copied
+    int old_con_size = connections.size();
+    for(int i=0; i<old_con_size; i++){
+        if(clipboard.contains(connections[i].source()) &&
+                clipboard.contains(connections[i].target())){
+            connections.append(connections[i]);
+            connections.last().setSource(connections[i].source()+"1");
+            connections.last().setTarget(connections[i].target()+"1");
+        }
     }
 
     while(clipboard.length()){

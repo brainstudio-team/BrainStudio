@@ -59,6 +59,9 @@ public:
     bool isFromFile()   const { if(_mode==FROMFILE) return true; return false;}
 
 
+    void setSource(const QString &id) { _source = id; }
+    void setTarget(const QString &id) { _target = id; }
+
     void setParam(const QString &key, const QString &value){
         params[key]=value;
         // If the parameter is called weight and it is negative. - Checks auto-
