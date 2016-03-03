@@ -25,6 +25,7 @@
 #include "workspacetab.h"
 #include "welcomewindow.h"
 #include "aboutwindow.h"
+#include "propertiesdialog.h"
 
 // Pointers:
 
@@ -39,6 +40,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow{
 private:
     WelcomeWindow *welcomeWindow;
     AboutWindow *aboutWindow;
+    PropertiesDialog *propertiesDialog;
 
     WorkspaceTab* tab() const { return (WorkspaceTab*)tabWidget->currentWidget(); }
     bool noTabYet() const;
@@ -51,9 +53,6 @@ protected:
     bool run;
 
     QMap<QString, WorkspaceTab*> workTab;
-
-    //QString FOLDERNAME;
-    QString FILENAME;
 
     int top_frame_separator;
 
@@ -70,9 +69,6 @@ protected:
 public:
     explicit MainWindow(QString filename="", QWidget *parent = 0);
     ~MainWindow();
-
-    //QString getFolderName(){ return FOLDERNAME; }
-    QString getFileName(){ return FILENAME; }
 
 signals:
     void createNetFromFileSignal(QString _filename, bool _updateSchemaCheckBox);
@@ -109,7 +105,7 @@ private slots:
     bool onSetGrid(const bool &on);
     bool selectTabWithKey(const unsigned &number);
     bool loadNewTab(const QString &filename);
-    void removeTab(const QString &filename);
+    void removeTab(const QString &path);
     void about(){}
     void onXmlToggle();
     void onActionsListToggle();
@@ -131,12 +127,11 @@ private slots:
     void on_action_export_network_triggered();
     void on_action_backup_triggered();
     void on_action_about_triggered();
+    void on_action_properties_triggered();
     void on_action_create_network_triggered();
     void on_action_grid_toggled(bool arg1);
     void on_actionXML_viewer_triggered();
     void on_actionActions_list_triggered();
-
-    void on_actionActivated_triggered(bool checked);
 
     void on_saveButton_clicked();
     void on_playButton_clicked();

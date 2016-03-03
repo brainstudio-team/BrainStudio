@@ -82,7 +82,7 @@ signals:
     void f6_xmlSignal();
     void f7_xmlSignal();
 
-    void schemaSetHighlighted(QString index);
+    //void schemaSetHighlighted(QString index); not used but it might be nice
     void schemaDoubleClick(QPoint point);
 };
 

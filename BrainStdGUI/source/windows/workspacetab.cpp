@@ -178,8 +178,6 @@ bool WorkspaceTab::loadAll(){
     this->refreshActionList();
     // LOAD CONTROLS WIDGET
     addControlsWidget();
-    // LOAD BLOCK PROPERTIES WIDGET
-    addBlockPropertiesWidget();
     // INFORM MainWindow THAT EVERYTHING IS LOADED
     emit workTabSchemaLoaded();
     return true;
@@ -508,14 +506,15 @@ bool WorkspaceTab::save(QString path = ""){
     if(path == ""){
         // If the user has not specified a name yet, return false which triggers
         // save_as
-        if(FILENAME.length() > 8 && FILENAME.left(8) == "untitled")
+        if(FILENAME.contains("untitled"))
             return false;
         if(FILENAME.contains('\\') || FILENAME.contains('/')) path = FILENAME;
         else path = QDir::toNativeSeparators(UserData::workspace_path+"/"+FILENAME);
     }
     else{
         // Change the filename
-        FILENAME = path.split("/", QString::SkipEmptyParts).last();
+        FILENAME = path.split(QDir::toNativeSeparators("/"),
+                              QString::SkipEmptyParts).last();
     }
     return schema->save_brn(path);
 }
@@ -875,22 +874,6 @@ void WorkspaceTab::addControlsWidget(){
         return;
         //delete controls;
     }*/
-}
-
-// CREATE NEW BLOCK_PROPERTIES
-void WorkspaceTab::addBlockPropertiesWidget(){
-    //if(blockProperties != NULL){
-    //    qDebug() << "WorkspaceTab::addBlockPropertiesWidget: Error: "
-    //                "Block properties not NULL!";
-    //    return;
-    //    //delete blockProperties;
-    //}
-    //blockProperties =new BlockPropertiesWidget(schema, snn, propertiesFrame);
-    //blockProperties->show();
-    //propertiesFrame->layout()->addWidget(blockProperties);
-
-    //connect(schema,         SIGNAL(schemaSetHighlighted(QString)),
-    //        blockProperties,  SLOT(schemaSetHighlighted(QString)));
 }
 
 void WorkspaceTab::disableControls(){

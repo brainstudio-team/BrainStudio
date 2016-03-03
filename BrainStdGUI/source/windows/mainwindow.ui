@@ -494,7 +494,7 @@ QTabBar::tab:selected {
      <x>0</x>
      <y>0</y>
      <width>1337</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -523,6 +523,8 @@ QTabBar::tab:selected {
      <string>Edit</string>
     </property>
     <addaction name="actionClear_screen"/>
+    <addaction name="separator"/>
+    <addaction name="action_properties"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -791,6 +793,14 @@ QTabBar::tab:selected {
    </property>
    <property name="toolTip">
     <string>Save the network in a new file</string>
+   </property>
+  </action>
+  <action name="action_properties">
+   <property name="text">
+    <string>Properties</string>
+   </property>
+   <property name="toolTip">
+    <string>Set the properties of brain studio</string>
    </property>
   </action>
  </widget>

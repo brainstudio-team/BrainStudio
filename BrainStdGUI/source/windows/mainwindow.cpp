@@ -8,6 +8,8 @@ MainWindow::MainWindow(QString filename, QWidget *parent) : QMainWindow(parent){
     top_frame_separator = 800;
     welcomeWindow = NULL;
     aboutWindow = NULL;
+    propertiesDialog = NULL;
+
     if(UserData::workspace_path == "empty" && filename==""){
         welcomeWindow = new WelcomeWindow();
         connect(welcomeWindow, SIGNAL(allDone()), this, SLOT(init()));
@@ -214,6 +216,10 @@ void MainWindow::on_action_about_triggered(){
     aboutWindow = new AboutWindow(this);
     aboutWindow->show();
 }
+void MainWindow::on_action_properties_triggered(){
+    propertiesDialog = new PropertiesDialog(this);
+    propertiesDialog->show();
+}
 void MainWindow::on_action_grid_toggled(bool arg1){
     this->onSetGrid(arg1);
 }
@@ -303,7 +309,12 @@ void MainWindow::onOpen(){
     QString path =
                  QFileDialog::getOpenFileName(this,"Open a network",
                                               UserData::workspace_path,"*.brn");
-    QStringList list1 = path.split("/", QString::SkipEmptyParts);
+    if(path == ""){
+        // Open was cancelled
+        return;
+    }
+    QStringList list1 = path.split(QDir::toNativeSeparators("/"),
+                                   QString::SkipEmptyParts);
     QString filename, FOLDERNAME;
 
     if(list1.size()>2){
@@ -350,7 +361,11 @@ bool MainWindow::onSaveAs(){
     if(!noTabYet()){
         QString path = QFileDialog::getSaveFileName(this, "Save brn network",
                                              UserData::workspace_path, "*.brn");
-        if(path.right(4) != ".brn"){
+        if(path == ""){
+            // Save was cancelled
+            return false;
+        }
+        else if(path.right(4) != ".brn"){
             path += ".brn";
         }
         if(tab()->save(path) && tab()->loadXML()){
@@ -388,7 +403,6 @@ bool MainWindow::onOpenFolder(){
 
     return true;
 }
-
 
 bool MainWindow::onCreateNetwork(){
     this->onSave();

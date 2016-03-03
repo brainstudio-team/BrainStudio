@@ -308,7 +308,6 @@ public slots:
     void turnOffStimulation();
 
 signals:
-    void schemaSetHighlighted(QString index);
     void schemaDoubleClick(QPoint point);
     void blockDoubleClick(QString id);
     void blockNewPlot(QString id);

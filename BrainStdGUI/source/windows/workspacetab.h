@@ -107,7 +107,6 @@ private:
     void updateTime();
     bool checkForAction();
     void addControlsWidget();
-    void addBlockPropertiesWidget();
     void calcLocalFieldPotentials();
 
     void closeEvent(QCloseEvent * event);

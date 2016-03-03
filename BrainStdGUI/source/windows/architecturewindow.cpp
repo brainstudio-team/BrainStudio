@@ -177,8 +177,8 @@ void ArchitectureWindow::paintEvent(QPaintEvent * event){
     }
 
     // SELECTION BOX
-    painter.setPen(QPen(QColor("#d4d4d4"), 3, Qt::DashLine));
-    painter.drawRect(selection_box);
+    /*painter.setPen(QPen(QColor("#d4d4d4"), 3, Qt::DashLine));
+    painter.drawRect(selection_box);*/
 
     // SCHEMA
 
@@ -283,7 +283,6 @@ bool ArchitectureWindow::setHighlighted(QString id){
         }
 
         highlighted = id;
-        emit schemaSetHighlighted(highlighted);
     }
 
     this->update();
@@ -333,7 +332,6 @@ void ArchitectureWindow::startConnectionSlot(QString id){
         return;
     }
 
-    emit schemaSetHighlighted(id);
     con_source = id;
     con_target = id;
 
