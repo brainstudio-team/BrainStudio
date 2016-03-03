@@ -239,6 +239,11 @@ public:
     QVector<Action> actions;
     QVector<Action> actionsDone;
 
+    // Used to keep track of how many edges each node has, so we know in which
+    // order to illustrate them.
+    QMap<QString, int > edges_stack_a;
+    QMap<QString, int > edges_stack_b;
+
     // Simulation stuff
 protected:
     Controls controls;
