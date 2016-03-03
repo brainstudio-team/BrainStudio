@@ -5,7 +5,7 @@ MainWindow::MainWindow(QString filename, QWidget *parent) : QMainWindow(parent){
 
     this->setWindowIcon(QIcon(":/new/prefix1/icons/brainstudio-logo.png"));
 
-    top_frame_separator = 800;
+    top_frame_separator = 750;
     welcomeWindow = NULL;
     aboutWindow = NULL;
     propertiesDialog = NULL;
@@ -37,7 +37,6 @@ void MainWindow::init(QString givenfilewithpath=""){
     this->tabWidget->setTabsClosable(true);
     this->connect(tabWidget, SIGNAL(tabCloseRequested(int)),
                   this,      SLOT(removeTab(int)));
-    this->tabWidget->tabBar()->setMaximumWidth(top_frame_separator);
 
     this->mainFrame->layout()->removeWidget(this->topFrame);
     this->mainFrame->layout()->removeWidget(this->topFrameBackground);
@@ -128,14 +127,38 @@ void MainWindow::keyPressEvent(QKeyEvent * event){
 }
 
 void MainWindow::resizeEvent(QResizeEvent * event){
-    this->topFrame->resize(this->width()-top_frame_separator, 41);
-    this->topFrame->move(top_frame_separator, 0);
-    this->topFrameBackground->resize(top_frame_separator, 41);
+    int separator;
+    if(this->width() < top_frame_separator + 200 && this->width() > 200){
+        separator = this->width()-200.0;
+        this->backend_stackedWidget->setVisible(false);
+        this->openFolderButton->setVisible(true);
+        this->xmlButton->setVisible(true);
+        this->actionsListButton->setVisible(true);
+    }
+    else if(this->width() < 200){
+        separator = 0;
+        this->backend_stackedWidget->setVisible(false);
+        this->openFolderButton->setVisible(false);
+        this->xmlButton->setVisible(false);
+        this->actionsListButton->setVisible(false);
+    }
+    else{
+        separator = top_frame_separator;
+        this->backend_stackedWidget->setVisible(true);
+        this->openFolderButton->setVisible(true);
+        this->xmlButton->setVisible(true);
+        this->actionsListButton->setVisible(true);
+    }
+
+    this->tabWidget->tabBar()->setMaximumWidth(this->width()-separator);
+
+    this->topFrame->resize(separator, 41);
+    this->topFrame->move(this->width()-separator, 0);
+    this->topFrameBackground->resize(this->width()-separator, 41);
     this->topFrameBackground->move(0, 0);
 
     this->backend_frame->resize(500, 500);
-    this->backend_frame->move(this->width() -
-                                   this->backend_frame->width(), 41);
+    this->backend_frame->move(this->width()-this->backend_frame->width(), 41);
     this->backend_frame->setVisible(false);
 }
 
