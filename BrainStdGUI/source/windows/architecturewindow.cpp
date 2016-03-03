@@ -177,8 +177,8 @@ void ArchitectureWindow::paintEvent(QPaintEvent * event){
     }
 
     // SELECTION BOX
-    /*painter.setPen(QPen(QColor("#d4d4d4"), 3, Qt::DashLine));
-    painter.drawRect(selection_box);*/
+    painter.setPen(QPen(QColor("#d4d4d4"), 3, Qt::DashLine));
+    painter.drawRect(selection_box);
 
     // SCHEMA
 
@@ -262,27 +262,56 @@ void ArchitectureWindow::paintEvent(QPaintEvent * event){
 }
 
 
-/* Sets
- *
+/* Warning: Calling this function with an id that doesn't exists will
+ * un-highlight everything!
  */
 bool ArchitectureWindow::setHighlighted(QString id){
     qDebug() << "Architecture::setHighlighted: " << id;
 
     // If not the currently highlighted, change it
     if(highlighted != id){
-        // Un-check the previous
-        if(blocks.contains(highlighted))
-            blocks[highlighted]->setHighlighted(false);
+
+        // We have this if statement to account for the cases of highlighted
+        // groups
+        if(blocks.contains(id) && !blocks[id]->isHighlighted()){
+            // Un-check the previous
+            for(BlockIter bl=blocks.begin(); bl != blocks.end(); bl++)
+                    bl.value()->setHighlighted(false);
+        }
+
 
         // Check the current
         if(blocks.contains(id)){
             blocks[id]->setHighlighted(true);
         }
         else{
+            // Un-check the previous
+            for(BlockIter bl=blocks.begin(); bl != blocks.end(); bl++)
+                    bl.value()->setHighlighted(false);
             id = "";
         }
 
         highlighted = id;
+    }
+
+    this->update();
+    return true;
+}
+
+/* Warning: Calling this function with an id that doesn't exists will
+ * un-highlight everything!
+ */
+bool ArchitectureWindow::setGroupHighlighted(QString id){
+    qDebug() << "Architecture::setHighlighted: " << id;
+
+    // Check the current
+    if(blocks.contains(id)){
+        blocks[id]->setHighlighted(true);
+    }
+    else{
+        for(BlockIter bl=blocks.begin(); bl != blocks.end();bl++)
+                bl.value()->setHighlighted(false);
+        return false;
     }
 
     this->update();
@@ -476,31 +505,37 @@ void ArchitectureWindow::mouseDoubleClickEvent(QMouseEvent *event){
 }
 
 bool encloses(const QRect &small, const QRect &big){
-    if(big.width() < 0 && big.height() > 0){
-        if(small.x() > big.x()+big.width() && small.y() > big.y() &&
-           small.width() < big.x() && small.height() < big.height()){
-            return true;
-        }
-    }
-    else if(big.width() > 0 && big.height() < 0){
-        if(small.x() > big.x() && small.y() > big.y()+big.height() &&
-           small.width() < big.width() && small.height() < big.y()){
-            return true;
-        }
+    int x1,y1,x2,y2,sx2,sy2;
+    sx2 = small.x() + small.width();
+    sy2 = small.y() + small.height();
+
+    if(big.width() > 0 && big.height() > 0){
+        x1 = big.x();
+        y1 = big.y();
+        x2 = big.x() + big.width();
+        y2 = big.y() + big.height();
     }
     else if(big.width() < 0 && big.height() < 0){
-        if(small.x() > big.x()+big.width() &&
-           small.y() > big.y()+big.height() &&
-           small.width() < big.x() && small.height() < big.y()){
-            return true;
-        }
+        x1 = big.x() + big.width();
+        y1 = big.y() + big.height();
+        x2 = big.x();
+        y2 = big.y();
     }
-    else{
-        if(small.x() > big.x() && small.y() > big.y() &&
-           small.width() < big.width() && small.height() < big.height()){
-            return true;
-        }
+    else if(big.width() > 0 && big.height() < 0){
+        x1 = big.x();
+        y1 = big.y() + big.height();
+        x2 = big.x() + big.width();
+        y2 = big.y();
     }
+    else if(big.width() < 0 && big.height() > 0){
+        x1 = big.x() + big.width();
+        y1 = big.y();
+        x2 = big.x();
+        y2 = big.y() + big.height();
+    }
+
+    if(x1 < small.x() && y1 < small.y() && x2 > sx2 && y2 > sy2)
+        return true;
     return false;
 }
 
@@ -512,20 +547,22 @@ void ArchitectureWindow::mouseMoveEvent(QMouseEvent *event){
         selection_box.setWidth(event->x()-selection_box.x());
         selection_box.setHeight(event->y()-selection_box.y());
 
-        QMap<QString,Block*>::iterator it;
-        for(it = blocks.begin(); it != blocks.end(); it++){
+        this->setGroupHighlighted("");
+
+        QMap<QString,Block*>::const_iterator it;
+        for(it = blocks.constBegin(); it != blocks.constEnd(); it++){
             if(encloses(it.value()->geometry(), selection_box)){
-                qDebug() << "ZAF" << it.key();
-                this->setHighlighted(it.key());
+                this->setGroupHighlighted(it.key());
             }
         }
     }
     // Move block
-    else if(blocks.contains(highlighted) && !connecting
-            && !resize_bottom && !resize_right && !resize_bottomright ){
+    else if(!connecting && !resize_bottom && !resize_right && !resize_bottomright ){
         this->turnOffStimulation();
-        blocks[highlighted]->moveXY(event->pos().x() - xStart,
-                                    event->pos().y() - yStart);
+
+        for(BlockIter bl = blocks.begin(); bl != blocks.end(); bl++)
+            bl.value()->moveXY(event->pos().x() - xStart,
+                               event->pos().y() - yStart);
         under_modification = true;
         xStart = event->pos().x();
         yStart = event->pos().y();

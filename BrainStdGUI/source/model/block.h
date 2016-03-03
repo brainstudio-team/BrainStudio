@@ -127,6 +127,7 @@ public:
     void id_exists(QString _old_id){ old_id = _old_id; idLineEdit->setText(old_id); }
 
     // ACCESSORS:
+    bool    isHighlighted(){ return highlighted; }
     QMap<QString,QString> getAllParams(){ return params; }
     QMap<QString,QString> getAllStates(){ return states; }
     QString getParam(const QString p_name) {if(params.contains(p_name)) return params[p_name]; else return "not found"; }

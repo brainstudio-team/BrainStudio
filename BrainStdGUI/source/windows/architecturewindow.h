@@ -310,6 +310,7 @@ public slots:
 
 public slots:
     bool setHighlighted(QString id); // SOS: returns the source of a connection!
+    bool setGroupHighlighted(QString id);
     void turnOnStimulation();
     void turnOffStimulation();
 
