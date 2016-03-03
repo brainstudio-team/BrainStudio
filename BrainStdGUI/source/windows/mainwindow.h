@@ -175,6 +175,8 @@ private:
 
     void backend_restart();
     void backend_write(const QString &text);
+
+private slots:
     void backend_error();
     void backend_output();
     // -------------------------------------------------------------------------
