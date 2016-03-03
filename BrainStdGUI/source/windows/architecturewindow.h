@@ -244,6 +244,7 @@ public:
     // order to illustrate them.
     QMap<QString, int > edges_stack_a;
     QMap<QString, int > edges_stack_b;
+    QMap<QString, int > edges_stack_rec;
 
     // Simulation stuff
 protected:

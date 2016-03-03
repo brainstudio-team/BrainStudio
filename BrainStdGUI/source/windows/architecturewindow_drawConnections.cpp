@@ -11,6 +11,7 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
     // At the begining of every paint event, we repopulate this list
     edges_stack_a.clear();
     edges_stack_b.clear();
+    edges_stack_rec.clear();
 
     // If 'firing rates' or 'raster plots' mode - Firing rate connections:
     if(false && (mode == Block::modeC || mode == Block::modeRasters)){
@@ -19,7 +20,7 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
             for(int j=0; j<bl.value()->getConnectionNo(); j++){
                 painter.setPen(QPen(QColor(bl.value()->
                                          getFiringRateBlockColour(j)),
-                                         LINE_THICKNESS,Qt::SolidLine));
+                                         LINE_THICKNESS, Qt::SolidLine));
                 if(bl.key() != bl.value()->getConnection(j))
                     drawConnection(painter, bl.key(), bl.value()->getConnection(j));
                 else{
@@ -95,11 +96,16 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
                     radius = blocks[connections[i].source()]->width();
                     if(radius > blocks[connections[i].source()]->height())
                         radius = blocks[connections[i].source()]->height();
-                    radius = (float)radius/4.0;
+
+                    QString comb_name = connections[i].source()+
+                                   connections[i].target();
+                    edges_stack_rec[comb_name] += 1;
+                    radius = (float)radius/(8.0);
                     painter.drawEllipse(QPoint(
                                     blocks[connections[i].source()]->x()+15,
                                     blocks[connections[i].source()]->y()+15),
-                                    radius, radius);
+                                    radius+9*edges_stack_rec[comb_name],
+                                    radius+9*edges_stack_rec[comb_name]);
                 }
 
             }
@@ -226,7 +232,7 @@ void ArchitectureWindow::drawDownToTop(QPainter &painter, const QString &bl1, co
 
 
 
-
+// SOS: I suspect that these are not really used!
 
 
 
