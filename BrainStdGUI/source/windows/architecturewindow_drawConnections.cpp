@@ -8,6 +8,11 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
     if(!show_connections)
         return;
 
+    // At the begining of every paint event, we repopulate this list
+    edges_stack_a.clear();
+    edges_stack_b.clear();
+    edges_stack_rec.clear();
+
     // If 'firing rates' or 'raster plots' mode - Firing rate connections:
     if(false && (mode == Block::modeC || mode == Block::modeRasters)){
         //painter.setPen(QPen(Qt::gray, LINE_THICKNESS, Qt::SolidLine));
@@ -15,7 +20,7 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
             for(int j=0; j<bl.value()->getConnectionNo(); j++){
                 painter.setPen(QPen(QColor(bl.value()->
                                          getFiringRateBlockColour(j)),
-                                         LINE_THICKNESS,Qt::SolidLine));
+                                         LINE_THICKNESS, Qt::SolidLine));
                 if(bl.key() != bl.value()->getConnection(j))
                     drawConnection(painter, bl.key(), bl.value()->getConnection(j));
                 else{
@@ -99,6 +104,10 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
         for(int i=0; i<connections.size(); i++){
             if(blocks.contains(connections[i].source()) &&
                blocks.contains(connections[i].target()) ){
+                // Repopulating the lists that are used to adjust final
+                // position of edges
+                edges_stack_a[connections[i].source()+connections[i].target()] += 1;
+
                 // Set colour and thickness
                 if(connections[i].inhibitory())
                     c.setRgb(0,0,180,150);
@@ -125,11 +134,16 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
                     radius = blocks[connections[i].source()]->width();
                     if(radius > blocks[connections[i].source()]->height())
                         radius = blocks[connections[i].source()]->height();
-                    radius = (float)radius/4.0;
+
+                    QString comb_name = connections[i].source()+
+                                   connections[i].target();
+                    edges_stack_rec[comb_name] += 1;
+                    radius = (float)radius/(8.0);
                     painter.drawEllipse(QPoint(
                                     blocks[connections[i].source()]->x()+15,
                                     blocks[connections[i].source()]->y()+15),
-                                    radius, radius);
+                                    radius+9*edges_stack_rec[comb_name],
+                                    radius+9*edges_stack_rec[comb_name]);
                 }
 
             }
@@ -137,7 +151,6 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
     }
     painter.setPen(QPen(Qt::black, 1, Qt::SolidLine));
 }
-
 
 /*
  *
@@ -158,10 +171,18 @@ void ArchitectureWindow::drawConnection(QPainter &painter, const QString &bl1, c
 }
 
 void ArchitectureWindow::drawLeftToRight(QPainter &painter, const QString &bl1, const QString &bl2){
+    int len1 = 0, len2 = 0;
+    if(edges_stack_a.contains(bl1+bl2) && edges_stack_a[bl1+bl2] > 0){
+        edges_stack_a[bl1+bl2] -= 1;
+        edges_stack_b[bl1+bl2] += 1;
+        len1 = 7+14*(edges_stack_b[bl1+bl2]-1);
+        len2 = 7+14*(edges_stack_b[bl1+bl2]-1);
+    }
+
     x1 = blocks[bl1]->x() + 1;                          // + 11;
-    y1 = blocks[bl1]->y() + blocks[bl1]->height()/2;    // + 10;
+    y1 = blocks[bl1]->y() + blocks[bl1]->height()/2+len1;    // + 10;
     x2 = blocks[bl2]->x() + blocks[bl2]->width();       // + 13;
-    y2 = blocks[bl2]->y() + blocks[bl2]->height()/2;    // + 10;
+    y2 = blocks[bl2]->y() + blocks[bl2]->height()/2+len2;    // + 10;
     xA = (x1+x2)/2;        yA = y1;
     xB = (x1+x2)/2;        yB = y2;
 
@@ -173,10 +194,18 @@ void ArchitectureWindow::drawLeftToRight(QPainter &painter, const QString &bl1, 
 }
 
 void ArchitectureWindow::drawRightToLeft(QPainter &painter, const QString &bl1, const QString &bl2){
+    int len1 = 0, len2 = 0;
+    if(edges_stack_a.contains(bl1+bl2) && edges_stack_a[bl1+bl2] > 0){
+        edges_stack_a[bl1+bl2] -= 1;
+        edges_stack_b[bl1+bl2] += 1;
+        len1 = -7-14*(edges_stack_b[bl1+bl2]-1);
+        len2 = -7-14*(edges_stack_b[bl1+bl2]-1);
+    }
+
     x1 = blocks[bl1]->x() + blocks[bl1]->width() - 1;   // + 9;
-    y1 = blocks[bl1]->y() + blocks[bl1]->height()/2;    // + 10;
+    y1 = blocks[bl1]->y() + blocks[bl1]->height()/2+len1;    // + 10;
     x2 = blocks[bl2]->x();                              // + 7;
-    y2 = blocks[bl2]->y() + blocks[bl2]->height()/2;    // + 10;
+    y2 = blocks[bl2]->y() + blocks[bl2]->height()/2+len2;    // + 10;
     xA = (x1+x2)/2;        yA = y1;
     xB = (x1+x2)/2;        yB = y2;
 
@@ -188,9 +217,17 @@ void ArchitectureWindow::drawRightToLeft(QPainter &painter, const QString &bl1, 
 }
 
 void ArchitectureWindow::drawTopToDown(QPainter &painter, const QString &bl1, const QString &bl2){
-    x1 = blocks[bl1]->x() + blocks[bl1]->width()/2;
+    int len1 = 0, len2 = 0;
+    if(edges_stack_a.contains(bl1+bl2) && edges_stack_a[bl1+bl2] > 0){
+        edges_stack_a[bl1+bl2] -= 1;
+        edges_stack_b[bl1+bl2] += 1;
+        len1 = 7+14*(edges_stack_b[bl1+bl2]-1);
+        len2 = 7+14*(edges_stack_b[bl1+bl2]-1);
+    }
+
+    x1 = blocks[bl1]->x() + blocks[bl1]->width()/2+len1;
     y1 = blocks[bl1]->y() + 2;                          // + 12;
-    x2 = blocks[bl2]->x() + blocks[bl2]->width()/2;
+    x2 = blocks[bl2]->x() + blocks[bl2]->width()/2+len2;
     y2 = blocks[bl2]->y() + blocks[bl2]->height();      // + 12;
     xA = x1;        yA = (y1+y2)/2;
     xB = x2;        yB = (y1+y2)/2;
@@ -203,9 +240,17 @@ void ArchitectureWindow::drawTopToDown(QPainter &painter, const QString &bl1, co
 }
 
 void ArchitectureWindow::drawDownToTop(QPainter &painter, const QString &bl1, const QString &bl2){
-    x1 = blocks[bl1]->x() + blocks[bl1]->width()/2;
+    int len1 = 0, len2 = 0;
+    if(edges_stack_a.contains(bl1+bl2) && edges_stack_a[bl1+bl2] > 0){
+        edges_stack_a[bl1+bl2] -= 1;
+        edges_stack_b[bl1+bl2] += 1;
+        len1 = -7-14*(edges_stack_b[bl1+bl2]-1);
+        len2 = -7-14*(edges_stack_b[bl1+bl2]-1);
+    }
+
+    x1 = blocks[bl1]->x() + blocks[bl1]->width()/2+len1;
     y1 = blocks[bl1]->y() + blocks[bl1]->height() - 2;  // + 7; // 12 - 5
-    x2 = blocks[bl2]->x() + blocks[bl2]->width()/2;
+    x2 = blocks[bl2]->x() + blocks[bl2]->width()/2+len2;
     y2 = blocks[bl2]->y();                              // + 7; // 12 - 5
     xA = x1;        yA = (y1+y2)/2;
     xB = x2;        yB = (y1+y2)/2;
@@ -225,11 +270,7 @@ void ArchitectureWindow::drawDownToTop(QPainter &painter, const QString &bl1, co
 
 
 
-
-
-
-
-
+// SOS: I suspect that these are not really used!
 
 
 

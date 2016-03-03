@@ -12,6 +12,8 @@ ArchitectureWindow::ArchitectureWindow(QWidget *parent): QWidget(parent),
     mi = NULL;
     sync = NULL;
 
+    selection_box.setRect(-1,-1,0,0);
+
     x1 = y1 = x2 = y2 = xA = yA = xB = yB = 0;
     menuPos.setX(0);    menuPos.setY(0);
     resize_bottom = resize_right = resize_bottomright = false;
@@ -39,7 +41,7 @@ ArchitectureWindow::ArchitectureWindow(QWidget *parent): QWidget(parent),
     pasteAct->setShortcuts(QKeySequence::InsertLineSeparator);
     pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
                               "selection"));
-    //connect(pasteAct, SIGNAL(triggered()), textEdit, SLOT(paste()));
+    connect(pasteAct, SIGNAL(triggered()), this, SLOT(paste()));
     newBlockAct = new QAction(QIcon(":/new/prefix1/icons/add_32.png"),
                               tr("&New block"),this);
     //newBlockAct->setShortcuts(QKeySequence::Paste);
@@ -177,8 +179,11 @@ void ArchitectureWindow::paintEvent(QPaintEvent * event){
         }
     }
 
-    painter.setPen(QPen(Qt::black, 1, Qt::SolidLine));
-
+    // SELECTION BOX
+    if(!connecting && !resize_bottom && !resize_right && !resize_bottomright){
+        painter.setPen(QPen(QColor("#d4d4d4"), 3, Qt::DashLine));
+        painter.drawRect(selection_box);
+    }
 
     // SCHEMA
 
@@ -262,28 +267,57 @@ void ArchitectureWindow::paintEvent(QPaintEvent * event){
 }
 
 
-/* Sets
- *
+/* Warning: Calling this function with an id that doesn't exists will
+ * un-highlight everything - but only in case that there is highlighted!
  */
 bool ArchitectureWindow::setHighlighted(QString id){
     qDebug() << "Architecture::setHighlighted: " << id;
 
     // If not the currently highlighted, change it
     if(highlighted != id){
-        // Un-check the previous
-        if(blocks.contains(highlighted))
-            blocks[highlighted]->setHighlighted(false);
+
+        // We have this if statement to account for the cases of highlighted
+        // groups
+        if(blocks.contains(id) && !blocks[id]->isHighlighted()){
+            // Un-check the previous
+            for(BlockIter bl=blocks.begin(); bl != blocks.end(); bl++)
+                    bl.value()->setHighlighted(false);
+        }
+
 
         // Check the current
         if(blocks.contains(id)){
             blocks[id]->setHighlighted(true);
         }
         else{
+            // Un-check the previous
+            for(BlockIter bl=blocks.begin(); bl != blocks.end(); bl++)
+                    bl.value()->setHighlighted(false);
             id = "";
         }
 
         highlighted = id;
-        emit schemaSetHighlighted(highlighted);
+    }
+
+    this->update();
+    return true;
+}
+
+/* Warning: Calling this function with an id that doesn't exists will
+ * un-highlight everything!
+ */
+bool ArchitectureWindow::setGroupHighlighted(QString id){
+    qDebug() << "Architecture::setHighlighted: " << id;
+
+    // Check the current
+    if(blocks.contains(id)){
+        blocks[id]->setHighlighted(true);
+    }
+    else{
+        highlighted = "";
+        for(BlockIter bl=blocks.begin(); bl != blocks.end();bl++)
+                bl.value()->setHighlighted(false);
+        return false;
     }
 
     this->update();
@@ -333,7 +367,6 @@ void ArchitectureWindow::startConnectionSlot(QString id){
         return;
     }
 
-    emit schemaSetHighlighted(id);
     con_source = id;
     con_target = id;
 
@@ -460,7 +493,8 @@ bool ArchitectureWindow::addLFPcounter(const QString &index){
 void ArchitectureWindow::mousePressEvent(QMouseEvent *event){
     if(event->button() == Qt::LeftButton){
         qDebug() << "Architecture:" << "Left click";
-        setHighlighted("");
+        setGroupHighlighted("");
+        selection_box.setRect(event->x(), event->y(), 0, 0);
     }
     else if(event->button() == Qt::RightButton){
         qDebug() << "Architecture:" << "Right click";
@@ -476,21 +510,69 @@ void ArchitectureWindow::mouseDoubleClickEvent(QMouseEvent *event){
     }
 }
 
+bool encloses(const QRect &small, const QRect &big){
+    int x1,y1,x2,y2,sx2,sy2;
+    sx2 = small.x() + small.width();
+    sy2 = small.y() + small.height();
+
+    if(big.width() > 0 && big.height() > 0){
+        x1 = big.x();
+        y1 = big.y();
+        x2 = big.x() + big.width();
+        y2 = big.y() + big.height();
+    }
+    else if(big.width() < 0 && big.height() < 0){
+        x1 = big.x() + big.width();
+        y1 = big.y() + big.height();
+        x2 = big.x();
+        y2 = big.y();
+    }
+    else if(big.width() > 0 && big.height() < 0){
+        x1 = big.x();
+        y1 = big.y() + big.height();
+        x2 = big.x() + big.width();
+        y2 = big.y();
+    }
+    else if(big.width() < 0 && big.height() > 0){
+        x1 = big.x() + big.width();
+        y1 = big.y();
+        x2 = big.x();
+        y2 = big.y() + big.height();
+    }
+
+    if(x1 < small.x() && y1 < small.y() && x2 > sx2 && y2 > sy2)
+        return true;
+    return false;
+}
+
 void ArchitectureWindow::mouseMoveEvent(QMouseEvent *event){
     qDebug() << "Architecture::mouseMoveEvent: event->pos =" << event->pos();
     menuPos = event->pos();
+    bool something_moved = false;
+
     // Move block
-    if(blocks.contains(highlighted) && !connecting
-            && !resize_bottom && !resize_right && !resize_bottomright ){
+    if(highlighted != "" && !connecting && !resize_bottom
+            && !resize_right && !resize_bottomright ){
         this->turnOffStimulation();
-        blocks[highlighted]->moveXY(event->pos().x() - xStart,
-                                    event->pos().y() - yStart);
-        under_modification = true;
-        xStart = event->pos().x();
-        yStart = event->pos().y();
+
+        for(BlockIter bl = blocks.begin(); bl != blocks.end(); bl++){
+            if(bl.value()->isHighlighted()){
+                bl.value()->moveXY(event->pos().x() - xStart,
+                                   event->pos().y() - yStart);
+                something_moved = true;
+            }
+        }
+        if(something_moved){
+            under_modification = true;
+            xStart = event->pos().x();
+            yStart = event->pos().y();
+            this->update();
+            return;
+        }
     }
+
     // Check for target of connection
-    else if(connecting){
+    if(connecting){
         this->turnOffStimulation();
         QString result = in(event->pos().x(), event->pos().y());
         if(blocks.contains(result)){
@@ -539,6 +621,19 @@ void ArchitectureWindow::mouseMoveEvent(QMouseEvent *event){
             under_modification = true;
         }
     }
+    else if(selection_box.x() != -1 || selection_box.y() != -1){
+        selection_box.setWidth(event->x()-selection_box.x());
+        selection_box.setHeight(event->y()-selection_box.y());
+
+        this->setGroupHighlighted("");
+
+        QMap<QString,Block*>::const_iterator it;
+        for(it = blocks.constBegin(); it != blocks.constEnd(); it++){
+            if(encloses(it.value()->geometry(), selection_box)){
+                this->setGroupHighlighted(it.key());
+            }
+        }
+    }
 
     this->update();
 }
@@ -546,6 +641,12 @@ void ArchitectureWindow::mouseMoveEvent(QMouseEvent *event){
 
 void ArchitectureWindow::mouseReleaseEvent(QMouseEvent *event){
     qDebug() << "Architecture::mouseReleaseEvent:" << event->pos();
+    xRelease = event->pos().x();
+    yRelease = event->pos().y();
+
+    if(selection_box.width() != 0 || selection_box.height() != 0){
+        selection_box.setRect(-1,-1,0,0);
+    }
 
     // If we're currently modifying something with the mouse:
     if(under_modification){
@@ -668,6 +769,8 @@ void ArchitectureWindow::addBlock(Block *block){
             this,  SLOT(blockIdChangedSlot(QString,QString)));
     connect(block, SIGNAL(stimulationSignal()),
             this,  SLOT(turnOnStimulation()));
+    connect(block, SIGNAL(signal_cut()), this, SLOT(cut()));
+    connect(block, SIGNAL(signal_copy()), this, SLOT(copy()));
 
     blocks[block->getId()] = block;
     LFPvalue[block->getId()] = 0.0;
@@ -708,15 +811,12 @@ bool ArchitectureWindow::addBlock(QString _name, QString _type,
     return true;
 }
 
-
 void ArchitectureWindow::restartActions(){
     while(actionsDone.size() > 0){
         actions.push_front(actionsDone.last());
         actionsDone.pop_back();
     }
 }
-
-
 
 void ArchitectureWindow::setNetworkMode(const int &mode){
     controls.network = mode;
@@ -738,6 +838,163 @@ void ArchitectureWindow::setNetworkMode(const int &mode){
     }
     update();
 }
+
+void ArchitectureWindow::cut(){
+    clipboard.clear();
+    for(BlockIter bl = blocks.begin(); bl != blocks.end(); bl++){
+        if(bl.value()->isHighlighted() && !clipboard.contains(bl.key())){
+            clipboard.append(bl.key());
+        }
+    }
+}
+
+void ArchitectureWindow::copy(){
+    clipboard.clear();
+    for(BlockIter bl = blocks.begin(); bl != blocks.end(); bl++){
+        if(bl.value()->isHighlighted() && !clipboard.contains(bl.key())){
+            clipboard.append(bl.key());
+        }
+    }
+}
+
+
+void ArchitectureWindow::paste(){
+    if(clipboard.empty())
+        return;
+    this->setGroupHighlighted("");
+    QString name;
+    int x =xRelease, y=yRelease;
+
+    if(x < 0 || x > this->width())
+        x = this->width()/2;
+    if(y < 0 || y > this->height())
+        y = this->height()/2;
+
+    if(clipboard.length() == 1){
+        name = clipboard.takeFirst();
+        if(blocks.contains(name)){
+            this->addBlock(name+"1", blocks[name]->getType(), x, y,
+                           blocks[name]->width(),
+                           blocks[name]->height(),
+                           blocks[name]->getColour(),
+                           blocks[name]->getNeuronsSize());
+            blocks[name+"1"]->setAllParams(blocks[name]->getAllParams());
+            blocks[name+"1"]->setAllStates(blocks[name]->getAllStates());
+        }
+
+        this->setHighlighted(name+"1");
+        this->update();
+        return;
+    }
+
+    // This is used to calculate the relative position of the new nodes
+    int zero_x=0, zero_y=0;
+    if(clipboard.length() > 0 && blocks.contains(clipboard[0])){
+        zero_x = blocks[clipboard[0]]->x();
+        zero_y = blocks[clipboard[0]]->y();
+    }
+
+    // A list of the edges that will be also copied
+    int old_con_size = connections.size();
+    for(int i=0; i<old_con_size; i++){
+        if(clipboard.contains(connections[i].source()) &&
+                clipboard.contains(connections[i].target())){
+            connections.append(connections[i]);
+            connections.last().setSource(connections[i].source()+"1");
+            connections.last().setTarget(connections[i].target()+"1");
+        }
+    }
+
+    while(clipboard.length()){
+        name = clipboard.takeFirst();
+        if(blocks.contains(name)){
+            this->addBlock(name+"1", blocks[name]->getType(),
+                           x - zero_x + blocks[name]->x(),
+                           y - zero_y + blocks[name]->y(),
+                           blocks[name]->width(),
+                           blocks[name]->height(),
+                           blocks[name]->getColour(),
+                           blocks[name]->getNeuronsSize());
+            blocks[name+"1"]->setAllParams(blocks[name]->getAllParams());
+            blocks[name+"1"]->setAllStates(blocks[name]->getAllStates());
+        }
+        this->setGroupHighlighted(name+"1");
+    }
+    this->update();
+}
+
+void ArchitectureWindow::select_all(){
+    for(BlockIter bl = blocks.begin(); bl != blocks.end(); bl++){
+        bl.value()->setHighlighted(true);
+    }
+    this->update();
+}
+
+
+
+void ArchitectureWindow::keyUP(){
+    bool something_moved = false;
+    for(BlockIter bl = blocks.begin(); bl != blocks.end(); bl++){
+        if(bl.value()->isHighlighted()){
+            bl.value()->moveY(-1);
+            something_moved = true;
+        }
+    }
+    if(something_moved){
+        this->setModified();
+        this->update();
+    }
+}
+
+void ArchitectureWindow::keyDOWN(){
+    bool something_moved = false;
+    for(BlockIter bl = blocks.begin(); bl != blocks.end(); bl++){
+        if(bl.value()->isHighlighted()){
+            bl.value()->moveY(1);
+            something_moved = true;
+        }
+    }
+    if(something_moved){
+        this->setModified();
+        this->update();
+    }
+}
+
+void ArchitectureWindow::keyLEFT(){
+    bool something_moved = false;
+    for(BlockIter bl = blocks.begin(); bl != blocks.end(); bl++){
+        if(bl.value()->isHighlighted()){
+            bl.value()->moveX(-1);
+            something_moved = true;
+        }
+    }
+    if(something_moved){
+        this->setModified();
+        this->update();
+    }
+}
+
+void ArchitectureWindow::keyRIGHT(){
+    bool something_moved = false;
+    for(BlockIter bl = blocks.begin(); bl != blocks.end(); bl++){
+        if(bl.value()->isHighlighted()){
+            bl.value()->moveX(1);
+            something_moved = true;
+        }
+    }
+    if(something_moved){
+        this->setModified();
+        this->update();
+    }
+}
+
+
+
+
+
+
+
+
 
 
 

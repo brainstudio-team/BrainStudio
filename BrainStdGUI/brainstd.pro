@@ -17,11 +17,14 @@ HEADERS += \
     source/windows/welcomewindow.h \
     source/windows/pythonwidget.h \
     source/windows/aboutwindow.h \
+    source/windows/stimulationwidget.h \
+    source/windows/propertiesdialog.h \
     source/graphs/graphs.h \
     source/graphs/currentgraph.h \
     source/graphs/rasterplot.h \
     source/graphs/basicgraph.h \
     source/graphs/phaseportraitgraph.h \
+    source/graphs/plot2D.h \
     source/simulation/synapticmodel.h \
     source/simulation/simulator.h \
     source/xmleditor/xmlhighlighter.h \
@@ -36,13 +39,10 @@ HEADERS += \
     source/helper/firingrate.h \
     source/simulation/izhikevichneuronLS.h \
     source/simulation/izhikevichneuronSTN.h \
-    source/helper/userdata.h \
     source/simulation/tcpip.h \
+    source/helper/userdata.h \
     source/helper/tcpip_initialization.h \
     source/helper/backendData.h \
-    source/graphs/plot2D.h \
-    source/windows/stimulationwidget.h \
-    source/windows/backendterminal.h \
     source/helper/stimulus.h \
     source/qcustomplot/qcustomplot.h \
     source/analysis/mutualinformation.h \
@@ -66,11 +66,14 @@ SOURCES += \
     source/windows/architecturewindow_xmpparser.cpp \
     source/windows/architecturewindow_drawConnections.cpp \
     source/windows/aboutwindow.cpp \
+    source/windows/stimulationwidget.cpp \
+    source/windows/propertiesdialog.cpp \
     source/graphs/graphs.cpp \
     source/graphs/currentgraph.cpp \
     source/graphs/rasterplot.cpp \
     source/graphs/basicgraph.cpp \
     source/graphs/phaseportraitgraph.cpp \
+    source/graphs/plot2D.cpp \
     source/simulation/tcpip.cpp \
     source/xmleditor/xmlhighlighter.cpp \
     source/xmleditor/highlighter.cpp \
@@ -79,9 +82,6 @@ SOURCES += \
     source/model/textblock.cpp \
     source/helper/TransferEntropyCalculator.cpp \
     source/helper/tcpip_initialization.cpp \
-    source/graphs/plot2D.cpp \
-    source/windows/stimulationwidget.cpp \
-    source/windows/backendterminal.cpp \
     source/qcustomplot/qcustomplot.cpp \
     source/analysis/mutualinformation.cpp \
     source/analysis/hilbertTransform.cpp \
@@ -100,42 +100,10 @@ FORMS += \
     source/windows/welcomewindow.ui \
     source/windows/pythonwidget.ui \
     source/windows/stimulationwidget.ui \
-    source/windows/BackEndTerminalDock.ui \
-    source/windows/aboutwindow.ui
+    source/windows/aboutwindow.ui \
+    source/windows/propertiesdialog.ui
 
 RESOURCES += source/icons.qrc
 
 OTHER_FILES += workspace/config.ini
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

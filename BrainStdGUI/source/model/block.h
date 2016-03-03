@@ -127,6 +127,9 @@ public:
     void id_exists(QString _old_id){ old_id = _old_id; idLineEdit->setText(old_id); }
 
     // ACCESSORS:
+    bool    isHighlighted(){ return highlighted; }
+    QMap<QString,QString> getAllParams(){ return params; }
+    QMap<QString,QString> getAllStates(){ return states; }
     QString getParam(const QString p_name) {if(params.contains(p_name)) return params[p_name]; else return "not found"; }
     QMap<QString,QString> getParams() { return params; }
     bool    containsParam(QString data){ return params.contains(data); }
@@ -176,6 +179,13 @@ public:
     int     getNeuronConnectionNo() const { return neuronConnections.size(); }
 
     // MODIFIERS:
+    void setAllParams(const QMap<QString,QString> &data){ params.clear();
+        for(QMap<QString,QString>::const_iterator it=data.constBegin(); it!=data.constEnd(); it++)
+              this->setParam(it.key(), it.value());}
+    void setAllStates(const QMap<QString,QString> &data){ states.clear();
+        for(QMap<QString,QString>::const_iterator it=data.constBegin(); it!=data.constEnd(); it++)
+              this->setState(it.key(), it.value());}
+
     void setParam(const QString &p_name, const QString &value){
         if(p_name == param_for_neurons) this->sizeChanged(value);
         else{ params.insert(p_name, value); emit schemaModified(); }
@@ -318,9 +328,18 @@ signals:
     void newPlotSignal(QString id);
     void doubleClickSignal(QString id);
     void stimulationSignal();
+
+    // COPY/PASTE STUFF
+private slots:
+    void cut(){ emit signal_cut();}
+    void copy(){ emit signal_copy();}
+signals:
+    void signal_cut();
+    void signal_copy();
 };
 
 #endif // BLOCK_H
+
 
 
 

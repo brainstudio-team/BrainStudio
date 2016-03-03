@@ -63,23 +63,6 @@ void PlotWindow::resizeEvent(QResizeEvent * event ){
     ui->optionsFrame->setMinimumSize(this->width(), 32);
 }
 
-
-/*void PlotWindow::setHighlighted(QString value){
-    if(!active){
-        highlighted = value;
-        if(value >=0){
-            this->setWindowTitle(schema->blocks[value]->getName());
-        }
-        else{
-            this->setWindowTitle("no block");
-        }
-
-        if(tab != NULL)
-            plot = tab->getPlot();
-    }
-}*/
-
-
 void PlotWindow::updateActivePlot(){
     if(ui->graphComboBox->currentIndex() == 0){
         for(int i=0; i<schema->blocks[highlighted]->getNeuronsSize(); i++)

@@ -5,7 +5,6 @@
 #include <QThread>
 #include <QtWidgets/QMainWindow>
 
-#include "source/windows/backendterminal.h"
 #include "source/windows/xmlwindow.h"
 #include "source/windows/experimentwidget.h"
 #include "source/windows/pythonwidget.h"
@@ -32,15 +31,6 @@ class WorkspaceTab;
 class WorkspaceTab : public QMainWindow{
     Q_OBJECT
 
-
-private:
-    QProcess *back_end;
-
-private slots :
-    void back_end_error();
-    void back_end_output();
-
-
 private:
     Ui::WorkspaceTab *ui;
 
@@ -50,7 +40,6 @@ private:
     QListWidget *actionsList;
     ExperimentWidget *experimentWidget;
     PythonWidget *pythonWidget;
-    BackEndTerminal *backendTerminal;
 
     NewBlockWindow *addBlockWindow;
     NewConnectionWindow *addConnectionWindow;
@@ -79,14 +68,7 @@ private:
     Simulator *snn;
     QString FILENAME;
 
-    // -- Backends -------------------------------------------------------------
-    //TCPIP_Sim *client;
     void setBackend();
-    int backend;
-
-private slots:
-    void restart_backend();
-
 
 private :
     // Time
@@ -107,7 +89,6 @@ private:
     void updateTime();
     bool checkForAction();
     void addControlsWidget();
-    void addBlockPropertiesWidget();
     void calcLocalFieldPotentials();
 
     void closeEvent(QCloseEvent * event);
@@ -137,10 +118,6 @@ public:
     bool addBlock();
     bool removeBlock();
     bool removeAllBlocks();
-    bool keyUP();
-    bool keyDOWN();
-    bool keyLEFT();
-    bool keyRIGHT();
     void setTimeSpeed(const int &value);
     void disableControls();
     void enableControls();
@@ -202,6 +179,17 @@ signals:
     void togglePythonSignal();          // ZAF: Will be used to change the button on MainWindow
     void schemaModifiedSignal();
     void simulationErrorSignal(QString msg);
+
+public slots:
+    void cut(){schema->cut();}
+    void copy(){schema->copy();}
+    void paste(){schema->paste();}
+    void select_all(){schema->select_all();}
+
+    void keyUP(){schema->keyUP();}
+    void keyDOWN(){schema->keyDOWN();}
+    void keyLEFT(){schema->keyLEFT();}
+    void keyRIGHT(){schema->keyRIGHT();}
 };
 
 #endif // WORKSPACETAB_H

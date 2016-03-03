@@ -5,9 +5,11 @@ MainWindow::MainWindow(QString filename, QWidget *parent) : QMainWindow(parent){
 
     this->setWindowIcon(QIcon(":/new/prefix1/icons/brainstudio-logo.png"));
 
-    top_frame_separator = 800;
+    top_frame_separator = 750;
     welcomeWindow = NULL;
     aboutWindow = NULL;
+    propertiesDialog = NULL;
+
     if(UserData::workspace_path == "empty" && filename==""){
         welcomeWindow = new WelcomeWindow();
         connect(welcomeWindow, SIGNAL(allDone()), this, SLOT(init()));
@@ -18,6 +20,7 @@ MainWindow::MainWindow(QString filename, QWidget *parent) : QMainWindow(parent){
 }
 
 MainWindow::~MainWindow() {
+    backend_process->kill();
     /*if(welcomeWindow != NULL)
         delete welcomeWindow;*/
 }
@@ -34,10 +37,10 @@ void MainWindow::init(QString givenfilewithpath=""){
     this->tabWidget->setTabsClosable(true);
     this->connect(tabWidget, SIGNAL(tabCloseRequested(int)),
                   this,      SLOT(removeTab(int)));
-    this->tabWidget->tabBar()->setMaximumWidth(top_frame_separator);
 
     this->mainFrame->layout()->removeWidget(this->topFrame);
     this->mainFrame->layout()->removeWidget(this->topFrameBackground);
+    this->mainFrame->layout()->removeWidget(this->backend_frame);
 
     this->saveButton->setEnabled(false);
     this->playButton->setEnabled(false);
@@ -61,6 +64,15 @@ void MainWindow::init(QString givenfilewithpath=""){
     this->on_PORTlineEdit_editingFinished();
     // -------------------------------------------------------------------------
 
+    //qDebug() << "==================== BACK-END ==========================";
+    backend_process = new QProcess(this);
+    QCoreApplication::processEvents();
+    connect(backend_process, SIGNAL(readyReadStandardError()),
+            this, SLOT(backend_error()));
+    connect(backend_process, SIGNAL(readyReadStandardOutput()),
+            this, SLOT(backend_output()));
+    this->backend_restart();
+    //qDebug() << "========================================================";
 
     QFileInfo givenFile(givenfilewithpath);
     QFileInfo defaultFile(UserData::workspace_path+"/network1.brn");
@@ -92,6 +104,7 @@ bool MainWindow::noTabYet() const {
 void MainWindow::keyPressEvent(QKeyEvent * event){
     if(event->key()==Qt::Key_Escape)    onExit();
     else if(event->key()==Qt::Key_W)    onExit();
+    else if(event->key()==Qt::Key_T)    on_tcpipButton_clicked();
     else if(event->key()==Qt::Key_1)    selectTabWithKey(0);
     else if(event->key()==Qt::Key_2)    selectTabWithKey(1);
     else if(event->key()==Qt::Key_3)    selectTabWithKey(2);
@@ -111,13 +124,47 @@ void MainWindow::keyPressEvent(QKeyEvent * event){
     else if(event->key()==Qt::Key_Down) { if(!noTabYet()) tab()->keyDOWN(); }
     else if(event->key()==Qt::Key_Left) { if(!noTabYet()) tab()->keyLEFT(); }
     else if(event->key()==Qt::Key_Right){ if(!noTabYet()) tab()->keyRIGHT(); }
+
+    else if(event->key()==Qt::Key_X){ if(!noTabYet()) tab()->cut(); }
+    else if(event->key()==Qt::Key_C){ if(!noTabYet()) tab()->copy(); }
+    else if(event->key()==Qt::Key_V){ if(!noTabYet()) tab()->paste(); }
+    else if(event->key()==Qt::Key_A){ if(!noTabYet()) tab()->select_all(); }
 }
 
 void MainWindow::resizeEvent(QResizeEvent * event){
-    this->topFrame->resize(this->width()-top_frame_separator, 41);
-    this->topFrame->move(top_frame_separator, 0);
-    this->topFrameBackground->resize(top_frame_separator, 41);
+    int separator;
+    if(this->width() < top_frame_separator + 200 && this->width() > 200){
+        separator = this->width()-200.0;
+        this->backend_stackedWidget->setVisible(false);
+        this->openFolderButton->setVisible(true);
+        this->xmlButton->setVisible(true);
+        this->actionsListButton->setVisible(true);
+    }
+    else if(this->width() < 200){
+        separator = 0;
+        this->backend_stackedWidget->setVisible(false);
+        this->openFolderButton->setVisible(false);
+        this->xmlButton->setVisible(false);
+        this->actionsListButton->setVisible(false);
+    }
+    else{
+        separator = top_frame_separator;
+        this->backend_stackedWidget->setVisible(true);
+        this->openFolderButton->setVisible(true);
+        this->xmlButton->setVisible(true);
+        this->actionsListButton->setVisible(true);
+    }
+
+    this->tabWidget->tabBar()->setMaximumWidth(this->width()-separator);
+
+    this->topFrame->resize(separator, 41);
+    this->topFrame->move(this->width()-separator, 0);
+    this->topFrameBackground->resize(this->width()-separator, 41);
     this->topFrameBackground->move(0, 0);
+
+    this->backend_frame->resize(500, 500);
+    this->backend_frame->move(this->width()-this->backend_frame->width(), 41);
+    this->backend_frame->setVisible(false);
 }
 
 
@@ -214,6 +261,10 @@ void MainWindow::on_action_about_triggered(){
     aboutWindow = new AboutWindow(this);
     aboutWindow->show();
 }
+void MainWindow::on_action_properties_triggered(){
+    propertiesDialog = new PropertiesDialog(this);
+    propertiesDialog->show();
+}
 void MainWindow::on_action_grid_toggled(bool arg1){
     this->onSetGrid(arg1);
 }
@@ -239,7 +290,7 @@ void MainWindow::on_removeBlockButton_clicked(){
 void MainWindow::on_IPlineEdit_editingFinished(){
     IPlineEdit->setStyleSheet("background: #fff;");
     PORTlineEdit->setStyleSheet("background: #fff;");
-    tcpipLabel->setText("  Connecting..");
+    tcpipButton->setText("  Connecting..");
     UserData::tcpip_hostname = this->IPlineEdit->text();
     UserData::save();
     // -------------------------------------------------------------------------
@@ -248,7 +299,7 @@ void MainWindow::on_IPlineEdit_editingFinished(){
 void MainWindow::on_PORTlineEdit_editingFinished(){
     IPlineEdit->setStyleSheet("background: #fff;");
     PORTlineEdit->setStyleSheet("background: #fff;");
-    tcpipLabel->setText("  Connecting..");
+    tcpipButton->setText("  Connecting..");
     UserData::tcpip_port = (int)this->PORTlineEdit->text().toShort();
     UserData::save();
     tcpip_init->connect_to_download_data();
@@ -303,7 +354,12 @@ void MainWindow::onOpen(){
     QString path =
                  QFileDialog::getOpenFileName(this,"Open a network",
                                               UserData::workspace_path,"*.brn");
-    QStringList list1 = path.split("/", QString::SkipEmptyParts);
+    if(path == ""){
+        // Open was cancelled
+        return;
+    }
+    QStringList list1 = path.split(QDir::toNativeSeparators("/"),
+                                   QString::SkipEmptyParts);
     QString filename, FOLDERNAME;
 
     if(list1.size()>2){
@@ -350,7 +406,11 @@ bool MainWindow::onSaveAs(){
     if(!noTabYet()){
         QString path = QFileDialog::getSaveFileName(this, "Save brn network",
                                              UserData::workspace_path, "*.brn");
-        if(path.right(4) != ".brn"){
+        if(path == ""){
+            // Save was cancelled
+            return false;
+        }
+        else if(path.right(4) != ".brn"){
             path += ".brn";
         }
         if(tab()->save(path) && tab()->loadXML()){
@@ -374,33 +434,20 @@ bool MainWindow::onBackup(){
     }
     return false;
 }
-//        xdg-open /path/to/folde
-bool MainWindow::onOpenFolder(){
-    /*QString command; = QDir::currentPath();
-    QString folder = FOLDERNAME;
-    command.remove(QRegExp("build"));
-    folder.remove(0,3);
-    command += folder;*/
 
+bool MainWindow::onOpenFolder(){
     QString command;
-    #ifdef WIN32
-        command = QDir::currentPath();
-        QString folder = FOLDERNAME;
-        command.remove(QRegExp("build"));
-        folder.remove(0,3);
-        command += folder;
-        command.replace("/", "\\");
-        qDebug() << "MainWindow::onOpenFolder: Opening " << command;
-        command = "explorer.exe " + command;
-    #elif linux
-    command = "xdg-open " + UserData::workspace_path;
-    qDebug() << "MainWindow::onOpenFolder: Opening " << command;
-    #endif
+    QString path = QDir::toNativeSeparators(UserData::workspace_path);
+    qDebug() << "MainWindow::onOpenFolder: Opening " << path;
+#ifdef WIN32
+    command = "explorer.exe " + path;
+#elif linux
+    command = "xdg-open " + path;
+#endif
     system(command.toStdString().c_str());
 
     return true;
 }
-
 
 bool MainWindow::onCreateNetwork(){
     this->onSave();
@@ -516,7 +563,7 @@ void MainWindow::edges_downloaded(QString data){
     BackendData::load_edges(data);
     IPlineEdit->setStyleSheet("background: #ccc;");
     PORTlineEdit->setStyleSheet("background: #ccc;");
-    tcpipLabel->setText("  Connected!");
+    tcpipButton->setText("  Connected!");
 
     tcpip_init->disconnect();
 }
@@ -556,6 +603,12 @@ void MainWindow::on_actionClear_screen_triggered(){
     }
 }
 
+void MainWindow::on_tcpipButton_clicked(){
+    if(this->backend_frame->isVisible())
+        this->backend_frame->setVisible(false);
+    else
+        this->backend_frame->setVisible(true);
+}
 
 
 
@@ -564,3 +617,55 @@ void MainWindow::on_actionClear_screen_triggered(){
 
 
 
+
+
+
+
+
+
+
+
+void MainWindow::backend_restart(){
+    // If there is another instance running, kill it..
+    backend_process->kill();
+    this->backend_write("Starting backend");
+    backend_process->setWorkingDirectory(UserData::backend_path);
+    QString program = "python BrainStdBE.py -port " + QString::number(UserData::tcpip_port);
+    backend_process->start(program);
+}
+
+void MainWindow::backend_write(const QString &text){
+    this->backend_terminal->append(text);
+    this->backend_terminal->verticalScrollBar()->setValue(
+                this->backend_terminal->verticalScrollBar()->maximum());
+}
+
+void MainWindow::backend_error(){
+    QByteArray data = backend_process->readAllStandardError();
+    //qDebug() << "BackendError:" << data;
+    this->backend_write(data);
+    //textEdit_verboseOutput->append(QString(data));
+}
+
+void MainWindow::backend_output(){
+    QByteArray data = backend_process->readAllStandardOutput();
+    this->backend_write(data);
+    //qDebug() << "Backend:" << data;
+    //textEdit_verboseOutput->append(QString(data));
+}
+
+void MainWindow::on_backendComboBox_activated(int index){
+    if(index == 0){
+        this->backend_restart();
+        this->backend_stackedWidget->setCurrentIndex(0);
+    }
+    else if(index == 1){
+        backend_process->kill();
+        this->backend_write("Backend killed");
+        this->backend_stackedWidget->setCurrentIndex(1);
+    }
+}
+
+void MainWindow::on_pushButton_clicked(){
+    this->backend_stackedWidget->setCurrentIndex(0);
+}

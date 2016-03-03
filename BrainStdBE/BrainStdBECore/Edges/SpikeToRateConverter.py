@@ -41,7 +41,7 @@ class BrainStdBEClass(WeightedPathway) :
     def get_all_data(self):
         return list(self.weights)
             
-    def get_data(self, args): 
+    def transfer_data(self, args): 
         args = {'first_neuron' :  self.preFirst, 'last' : self.preLast }
         self.buffer[:, self.index] = self.source.get_data(args)
         if self.index == self.window:

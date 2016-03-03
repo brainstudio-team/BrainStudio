@@ -10,7 +10,6 @@
 
 #include <math.h>
 
-
 //#include <stdlib.h>
 //#include <qapplication.h>
 #include <qprocess.h>
@@ -72,7 +71,6 @@ public:
     QString parameter;
 };
 
-
 namespace Ui {
 class ArchitectureWindow;
 }
@@ -111,12 +109,15 @@ protected:
     int zoom;
     bool under_modification;
 
+    QRect selection_box;
+
     // Variables needed to form new connections and visualize the process ------
     bool connecting; // We are during a new connection
     QString con_target; // The source of this new connection
     QString con_source; // Potential target (for visualization)
 
     int xStart, yStart; // The initial coordinates when moving a node
+    int xRelease, yRelease; // Where the mouse was during the last release
 
     bool SIMULATION;
 
@@ -184,6 +185,7 @@ public:
         A = _A;
     }
 
+
     // Widget stuff
     void setModeStatesPixels(){mode = Block::modeStatesPixels; setBlockMode(Block::modeStatesPixels); update();}
     void setModeEdit(){    mode = Block::modeEdit; setBlockMode(Block::modeEdit); update();}
@@ -192,9 +194,9 @@ public:
     void setModeStatesPlots(){mode = Block::modeStatesPlots; setBlockMode(Block::modeStatesPlots); update();}
     void setModeNetwork(){mode = Block::modeNetwork; setBlockMode(Block::modeNetwork); update();}
     void setBlockMode(int value);
-    void setNetworkMode(const int &mode);
     void setDetails(bool value){ details = value; update(); }
     void setZoom(int value){ zoom = value; update(); }
+    void setNetworkMode(const int &mode);
     void setWINDOW_X(int value){ WINDOW_X = value; update(); }
     void setWINDOW_Y(int value){ WINDOW_Y = value; update(); }
     void setGrid(bool on){ grid = on; }
@@ -239,6 +241,12 @@ public:
     QList<TextBlock> textBlocks;
     QVector<Action> actions;
     QVector<Action> actionsDone;
+
+    // Used to keep track of how many edges each node has, so we know in which
+    // order to illustrate them.
+    QMap<QString, int > edges_stack_a;
+    QMap<QString, int > edges_stack_b;
+    QMap<QString, int > edges_stack_rec;
 
     // Simulation stuff
 protected:
@@ -305,11 +313,11 @@ public slots:
 
 public slots:
     bool setHighlighted(QString id); // SOS: returns the source of a connection!
+    bool setGroupHighlighted(QString id);
     void turnOnStimulation();
     void turnOffStimulation();
 
 signals:
-    void schemaSetHighlighted(QString index);
     void schemaDoubleClick(QPoint point);
     void blockDoubleClick(QString id);
     void blockNewPlot(QString id);
@@ -317,25 +325,20 @@ signals:
     void schemaAddingNewConnection(QString source, QString target);
     void modifiedSignal();
     void showMessageSignal(const QString &text, int timeout);
+
+    // COPY/PASTE STUFF
+private:
+    QList<QString> clipboard;
+public slots:
+    void cut();
+    void copy();
+    void paste();
+    void select_all();
+
+    void keyUP();
+    void keyDOWN();
+    void keyLEFT();
+    void keyRIGHT();
 };
 
 #endif // ARCHITECTUREWINDOW_H
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

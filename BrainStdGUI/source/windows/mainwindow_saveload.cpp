@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 
-
 // Connect Slots/Signals
 void MainWindow::connectTabSignals(const QString &key){
     if(!workTab.contains(key))
@@ -82,7 +81,7 @@ bool MainWindow::loadNewTab(const QString &filename){
 
     QString path = filename;
     if(!path.contains('\\') && !path.contains('/'))
-        path = UserData::workspace_path + "/" + path;
+        path = UserData::workspace_path + QDir::toNativeSeparators("/") + path;
     path = QDir::toNativeSeparators(path);
 
     if(!QFile::exists(path)){
@@ -98,99 +97,33 @@ bool MainWindow::loadNewTab(const QString &filename){
 
     qDebug() << "MainWindow::loadTab: Creating a new tab:" << filename <<
                 "path:" << path;
-    FILENAME = QDir::toNativeSeparators(filename);
+
+    QString brn_filename = path.split(QDir::toNativeSeparators("/"),
+                                      QString::SkipEmptyParts).last();
+
+    // REMOVE PREV TAB
+    this->removeTab(path);
 
     // CREATE NEW TAB
-    this->removeTab(FILENAME);
 
-    workTab[FILENAME] = new WorkspaceTab(FILENAME, this);
-    if(workTab[FILENAME]->failed()){
-        qDebug() << "MainWindow::loadTab: Creating a new tab:" << filename;
+    workTab[path] = new WorkspaceTab(path, this);
+    if(workTab[path]->failed()){
+        qDebug() << "MainWindow::loadTab: Creating a new tab:" << brn_filename;
         return false;
     }
 
-    tabWidget->addTab(workTab[FILENAME], FILENAME);
-    tabWidget->setCurrentWidget(workTab[FILENAME]);
-    connectTabSignals(FILENAME);
+    tabWidget->addTab(workTab[path], brn_filename);
+    tabWidget->setCurrentWidget(workTab[path]);
+    connectTabSignals(path);
 
     return true;
 }
 
-void MainWindow::removeTab(const QString &filename){
-    if(workTab.contains(filename)){
-        disconnectTabSignals(filename);
-        delete workTab[filename];
-        workTab.remove(filename);
+void MainWindow::removeTab(const QString &path){
+    if(workTab.contains(path)){
+        disconnectTabSignals(path);
+        delete workTab[path];
+        workTab.remove(path);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//
-//                      T O    D E L E T E    ! ! !
-//
-//
-void MainWindow::on_actionActivated_triggered(bool checked){
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
