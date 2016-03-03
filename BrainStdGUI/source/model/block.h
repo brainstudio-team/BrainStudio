@@ -331,11 +331,11 @@ signals:
 
     // COPY/PASTE STUFF
 private slots:
-    void cut(){ emit signal_cut(this->idLineEdit->text());}
-    void copy(){ emit signal_copy(this->idLineEdit->text());}
+    void cut(){ emit signal_cut();}
+    void copy(){ emit signal_copy();}
 signals:
-    void signal_cut(QString);
-    void signal_copy(QString);
+    void signal_cut();
+    void signal_copy();
 };
 
 #endif // BLOCK_H

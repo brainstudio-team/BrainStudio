@@ -326,10 +326,16 @@ signals:
     // COPY/PASTE STUFF
 private:
     QList<QString> clipboard;
-private slots:
-    void cut_block(QString id);
-    void copy_block(QString id);
+public slots:
+    void cut();
+    void copy();
     void paste();
+    void select_all();
+
+    void keyUP();
+    void keyDOWN();
+    void keyLEFT();
+    void keyRIGHT();
 };
 
 #endif // ARCHITECTUREWINDOW_H

@@ -912,39 +912,6 @@ void WorkspaceTab::schemaModifiedSlot(){
     emit schemaModifiedSignal();
 }
 
-bool WorkspaceTab::keyUP(){
-    if(schema->getHighlighted() == "")
-        return false;
-    schema->blocks[schema->getHighlighted()]->moveY(-1);
-    schema->update();
-    this->schemaModifiedSlot();
-    return true;
-}
-bool WorkspaceTab::keyDOWN(){
-    if(schema->getHighlighted() == "")
-        return false;
-    schema->blocks[schema->getHighlighted()]->moveY(1);
-    schema->update();
-    this->schemaModifiedSlot();
-    return true;
-}
-bool WorkspaceTab::keyLEFT(){
-    if(schema->getHighlighted() == "")
-        return false;
-    schema->blocks[schema->getHighlighted()]->moveX(-1);
-    schema->update();
-    this->schemaModifiedSlot();
-    return true;
-}
-bool WorkspaceTab::keyRIGHT(){
-    if(schema->getHighlighted() == "")
-        return false;
-    schema->blocks[schema->getHighlighted()]->moveX(1);
-    schema->update();
-    this->schemaModifiedSlot();
-    return true;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 ///                            TO CHANGE                                     ///
 ////////////////////////////////////////////////////////////////////////////////

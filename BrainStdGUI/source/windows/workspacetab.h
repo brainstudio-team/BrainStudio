@@ -118,10 +118,6 @@ public:
     bool addBlock();
     bool removeBlock();
     bool removeAllBlocks();
-    bool keyUP();
-    bool keyDOWN();
-    bool keyLEFT();
-    bool keyRIGHT();
     void setTimeSpeed(const int &value);
     void disableControls();
     void enableControls();
@@ -183,6 +179,17 @@ signals:
     void togglePythonSignal();          // ZAF: Will be used to change the button on MainWindow
     void schemaModifiedSignal();
     void simulationErrorSignal(QString msg);
+
+public slots:
+    void cut(){schema->cut();}
+    void copy(){schema->copy();}
+    void paste(){schema->paste();}
+    void select_all(){schema->select_all();}
+
+    void keyUP(){schema->keyUP();}
+    void keyDOWN(){schema->keyDOWN();}
+    void keyLEFT(){schema->keyLEFT();}
+    void keyRIGHT(){schema->keyRIGHT();}
 };
 
 #endif // WORKSPACETAB_H

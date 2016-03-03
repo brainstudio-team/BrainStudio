@@ -124,6 +124,11 @@ void MainWindow::keyPressEvent(QKeyEvent * event){
     else if(event->key()==Qt::Key_Down) { if(!noTabYet()) tab()->keyDOWN(); }
     else if(event->key()==Qt::Key_Left) { if(!noTabYet()) tab()->keyLEFT(); }
     else if(event->key()==Qt::Key_Right){ if(!noTabYet()) tab()->keyRIGHT(); }
+
+    else if(event->key()==Qt::Key_X){ if(!noTabYet()) tab()->cut(); }
+    else if(event->key()==Qt::Key_C){ if(!noTabYet()) tab()->copy(); }
+    else if(event->key()==Qt::Key_V){ if(!noTabYet()) tab()->paste(); }
+    else if(event->key()==Qt::Key_A){ if(!noTabYet()) tab()->select_all(); }
 }
 
 void MainWindow::resizeEvent(QResizeEvent * event){
