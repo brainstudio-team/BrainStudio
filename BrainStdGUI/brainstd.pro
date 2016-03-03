@@ -18,7 +18,6 @@ HEADERS += \
     source/windows/pythonwidget.h \
     source/windows/aboutwindow.h \
     source/windows/stimulationwidget.h \
-    source/windows/backendterminal.h \
     source/windows/propertiesdialog.h \
     source/graphs/graphs.h \
     source/graphs/currentgraph.h \
@@ -67,7 +66,6 @@ SOURCES += \
     source/windows/architecturewindow_drawConnections.cpp \
     source/windows/aboutwindow.cpp \
     source/windows/stimulationwidget.cpp \
-    source/windows/backendterminal.cpp \
     source/windows/propertiesdialog.cpp \
     source/graphs/graphs.cpp \
     source/graphs/currentgraph.cpp \
@@ -99,43 +97,10 @@ FORMS += \
     source/windows/welcomewindow.ui \
     source/windows/pythonwidget.ui \
     source/windows/stimulationwidget.ui \
-    source/windows/BackEndTerminalDock.ui \
     source/windows/aboutwindow.ui \
     source/windows/propertiesdialog.ui
 
 RESOURCES += source/icons.qrc
 
 OTHER_FILES += workspace/config.ini
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

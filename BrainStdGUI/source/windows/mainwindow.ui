@@ -679,13 +679,8 @@ QTabBar::tab:selected {
 </string>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>-1</number>
             </property>
-            <widget class="QWidget" name="tab">
-             <attribute name="title">
-              <string>Page</string>
-             </attribute>
-            </widget>
            </widget>
           </item>
          </layout>

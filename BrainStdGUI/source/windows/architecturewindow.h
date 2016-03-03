@@ -115,6 +115,7 @@ protected:
     QString con_source; // Potential target (for visualization)
 
     int xStart, yStart; // The initial coordinates when moving a node
+    int xRelease, yRelease; // Where the mouse was during the last release
 
     bool SIMULATION;
 
@@ -320,6 +321,14 @@ signals:
     void schemaAddingNewConnection(QString source, QString target);
     void modifiedSignal();
     void showMessageSignal(const QString &text, int timeout);
+
+    // COPY/PASTE STUFF
+private:
+    QList<QString> clipboard;
+private slots:
+    void cut_block(QString id);
+    void copy_block(QString id);
+    void paste();
 };
 
 #endif // ARCHITECTUREWINDOW_H

@@ -40,7 +40,7 @@ ArchitectureWindow::ArchitectureWindow(QWidget *parent): QWidget(parent),
     pasteAct->setShortcuts(QKeySequence::InsertLineSeparator);
     pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
                               "selection"));
-    //connect(pasteAct, SIGNAL(triggered()), textEdit, SLOT(paste()));
+    connect(pasteAct, SIGNAL(triggered()), this, SLOT(paste()));
     newBlockAct = new QAction(QIcon(":/new/prefix1/icons/add_32.png"),
                               tr("&New block"),this);
     //newBlockAct->setShortcuts(QKeySequence::Paste);
@@ -587,6 +587,8 @@ void ArchitectureWindow::mouseMoveEvent(QMouseEvent *event){
 
 void ArchitectureWindow::mouseReleaseEvent(QMouseEvent *event){
     qDebug() << "Architecture::mouseReleaseEvent:" << event->pos();
+    xRelease = event->pos().x();
+    yRelease = event->pos().y();
 
     if(selection_box.width() != 0 || selection_box.height() != 0){
         selection_box.setRect(-1,-1,0,0);
@@ -713,6 +715,10 @@ void ArchitectureWindow::addBlock(Block *block){
             this,  SLOT(blockIdChangedSlot(QString,QString)));
     connect(block, SIGNAL(stimulationSignal()),
             this,  SLOT(turnOnStimulation()));
+    connect(block, SIGNAL(signal_cut(QString)),
+            this, SLOT(copy_cut(QString)));
+    connect(block, SIGNAL(signal_copy(QString)),
+            this, SLOT(copy_block(QString)));
 
     blocks[block->getId()] = block;
     LFPvalue[block->getId()] = 0.0;
@@ -753,15 +759,12 @@ bool ArchitectureWindow::addBlock(QString _name, QString _type,
     return true;
 }
 
-
 void ArchitectureWindow::restartActions(){
     while(actionsDone.size() > 0){
         actions.push_front(actionsDone.last());
         actionsDone.pop_back();
     }
 }
-
-
 
 void ArchitectureWindow::setNetworkMode(const int &mode){
     controls.network = mode;
@@ -776,6 +779,67 @@ void ArchitectureWindow::setNetworkMode(const int &mode){
     }
     update();
 }
+
+void ArchitectureWindow::cut_block(QString id){
+    //if(!clipboard.contains(id))
+    clipboard.clear();
+    clipboard.append(id);
+}
+
+void ArchitectureWindow::copy_block(QString id){
+    //if(!clipboard.contains(id))
+    clipboard.clear();
+    clipboard.append(id);
+}
+
+void ArchitectureWindow::paste(){
+    QString name;
+    int x =xRelease, y=yRelease;
+
+    if(clipboard.length() == 1){
+        name = clipboard.takeFirst();
+        if(blocks.contains(name)){
+            this->addBlock(name+"1", blocks[name]->getType(), x, y,
+                           blocks[name]->width(),
+                           blocks[name]->height(),
+                           blocks[name]->getColour(),
+                           blocks[name]->getNeuronsSize());
+            blocks[name+"1"]->setAllParams(blocks[name]->getAllParams());
+            blocks[name+"1"]->setAllStates(blocks[name]->getAllStates());
+        }
+        return;
+    }
+
+    if(clipboard.length() > 0 && blocks.contains(clipboard[0])){
+        x = x + blocks[clipboard[0]]->x();
+        y = y + blocks[clipboard[0]]->y();
+    }
+
+    while(clipboard.length()){
+        name = clipboard.takeFirst();
+        if(blocks.contains(name)){
+            this->addBlock(name+"1", blocks[name]->getType(), x, y,
+                           blocks[name]->width(),
+                           blocks[name]->height(),
+                           blocks[name]->getColour(),
+                           blocks[name]->getNeuronsSize());
+            blocks[name+"1"]->setAllParams(blocks[name]->getAllParams());
+            blocks[name+"1"]->setAllStates(blocks[name]->getAllStates());
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

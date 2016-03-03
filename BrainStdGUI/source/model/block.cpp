@@ -41,17 +41,18 @@ Block::Block(QString _id, QString _type, bool _spiking,
     cutAct = new QAction(QIcon(":/new/prefix1/icons/cut.png"), tr("Cu&t"),this);
     cutAct->setShortcuts(QKeySequence::Cut);
     cutAct->setStatusTip(tr("Cut this block to the clipboard"));
-    //connect(cutAct, SIGNAL(triggered()), textEdit, SLOT(cut()));
+    connect(cutAct, SIGNAL(triggered()), this, SLOT(cut()));
+
     copyAct=new QAction(QIcon(":/new/prefix1/icons/copy.png"),tr("&Copy"),this);
     copyAct->setShortcuts(QKeySequence::Copy);
     copyAct->setStatusTip(tr("Copy the current block to the clipboard"));
-    //connect(copyAct, SIGNAL(triggered()), textEdit, SLOT(copy()));
+    connect(copyAct, SIGNAL(triggered()), this, SLOT(copy()));
 
     pasteAct = new QAction(QIcon(":/new/prefix1/icons/paste.png"), tr("&Paste"),
                            this);
     pasteAct->setShortcuts(QKeySequence::Paste);
-    pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
-                              "selection"));
+    pasteAct->setStatusTip(tr("Replace the current selection with the "
+                              "clipboard's contents"));
     //connect(pasteAct, SIGNAL(triggered()), textEdit, SLOT(paste()));
 
     newPlotAct=new QAction(QIcon(":/new/prefix1/icons/addPlot.png"),
