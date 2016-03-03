@@ -79,7 +79,10 @@ void StimulationWidget::setStimulus(const int &value){
 
     } else if (isOscillation && isBaseline) {
 
-        double baseline = ui->stimulusSomeSlider->value();
+        // PEDRO
+        // double baseline = ui->stimulusSomeSlider->value();
+        double baseline = ui->stimulusSlider->value();
+
         double amplitude = ui->oscAmpSlider->value();
         double frequency = ui->oscFrequencySlider->value();
         double phase = ui->oscPhaseSpinBox->value();
@@ -103,7 +106,11 @@ void StimulationWidget::update_plot(){
     QVector<double> x, y;
     double plot_range = 1.0;
 
-    ui->plot->graph(0)->clearData();
+    // PEDRO: TODO: hack, hack, hackity hack
+    // ui->plot->graph(0)->clearData();
+    if (ui->plot->graph(0)) {
+        ui->plot->graph(0)->clearData();
+    }
 
 
     if(ui->oscFrequencySlider->value() > 0){
@@ -128,7 +135,11 @@ void StimulationWidget::update_plot(){
                  sin(2.0*M_PI*ui->oscFrequencySlider->value()*i - ui->oscPhaseSpinBox->value()));
     }
 
-    ui->plot->graph(0)->setData(x,y);
+    // PEDRO: TODO: hack, hack, hackity hack
+    // ui->plot->graph(0)->setData(x,y);
+    if (ui->plot->graph(0)) {
+        ui->plot->graph(0)->setData(x,y);
+    }
     ui->plot->replot();
 }
 
