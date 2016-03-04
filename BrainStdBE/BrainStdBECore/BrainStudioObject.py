@@ -112,10 +112,6 @@ class BrainStudioObject() :
     def get_all_data(self):
         return list(np.array())
         
-    @abstractmethod
-    def get_data(self, args):
-        pass
-        
     def get_where(self):
         return self.class_name + ' -> ' + self.namespace + '::' + self.name
         
