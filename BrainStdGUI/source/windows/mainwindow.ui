@@ -415,7 +415,7 @@ font: 14px;
 </string>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="backend_page_main">
              <property name="minimumSize">
