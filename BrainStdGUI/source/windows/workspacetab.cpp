@@ -831,7 +831,8 @@ void WorkspaceTab::loadTempSchema_xmlSlot(){
                     "schema is NULL!";
         return;
     }
-    if(!schema->load_brn(UserData::only_path+"/temp.brn"))//TEMP_FILE
+    if(!schema->load_brn(QDir::toNativeSeparators(
+                             UserData::only_path+"/temp.brn")))//TEMP_FILE
         qDebug() << "WorkspaceTab::loadTempSchema_xmlSlot: Error: "
                     "Cannot load temp.brn!";
     schema->update();
@@ -899,8 +900,10 @@ void WorkspaceTab::togglePython(){
 // the XML viewer.
 void WorkspaceTab::schemaModifiedSlot(){
     if(xmlWindow != NULL){
-        schema->save_brn(UserData::only_path+"/temp.brn");
-        xmlWindow->loadFile(UserData::only_path+"/temp.brn");
+        schema->save_brn(QDir::toNativeSeparators(
+                             UserData::only_path+"/temp.brn"));
+        xmlWindow->loadFile(QDir::toNativeSeparators(
+                                UserData::only_path+"/temp.brn"));
     }
     //qDebug() << "HERE I WILL CHANGE XML IF DIDN'T SEND COMMAND. IF YES, I WILL DEACTIVATE A BOOLEAN";
     emit schemaModifiedSignal();

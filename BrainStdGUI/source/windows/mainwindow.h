@@ -94,7 +94,7 @@ private slots:
     void init(QString givenfilewithpath);
     //void newFile(){}
     void onNew();
-    void onOpen();
+    void onOpen(QString path);
     bool onSave();
     bool onSaveAs();
     bool onExportNetwork();
@@ -151,7 +151,7 @@ private slots:
     void workTabGetTime(QString time);
     void workTabGetInfo(QList<float> data);
 
-    void on_openFolderButton_clicked();
+    void on_workspaceButton_clicked();
     void on_rtNeuronSlider_sliderMoved(int position);
     void on_tabWidget_currentChanged(int index);
 

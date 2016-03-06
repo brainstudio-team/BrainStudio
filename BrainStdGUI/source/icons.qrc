@@ -56,5 +56,6 @@
         <file>icons/window_close.ico</file>
         <file>icons/backend_back.png</file>
         <file>icons/backend_back2.png</file>
+        <file>icons/workspace.png</file>
     </qresource>
 </RCC>

@@ -136,7 +136,8 @@ void XmlWindow::build_xml(){
         textEdit->document()->setModified(false);
         setWindowModified(false);
 
-        saveFile(UserData::only_path+"/temp.brn"); //TEMP_FILE
+        //TEMP_FILE
+        saveFile(QDir::toNativeSeparators(UserData::only_path+"/temp.brn"));
         //statusBar()->showMessage(tr("File saved and built"), 2000);
 
         during_update_of_schema = true;

@@ -140,21 +140,21 @@ void MainWindow::resizeEvent(QResizeEvent * event){
     if(this->width() < top_frame_separator + 200 && this->width() > 200){
         separator = this->width()-200.0;
         this->backend_stackedWidget->setVisible(false);
-        this->openFolderButton->setVisible(true);
+        this->workspaceButton->setVisible(true);
         this->xmlButton->setVisible(true);
         this->actionsListButton->setVisible(true);
     }
     else if(this->width() < 200){
         separator = 0;
         this->backend_stackedWidget->setVisible(false);
-        this->openFolderButton->setVisible(false);
+        this->workspaceButton->setVisible(false);
         this->xmlButton->setVisible(false);
         this->actionsListButton->setVisible(false);
     }
     else{
         separator = top_frame_separator;
         this->backend_stackedWidget->setVisible(true);
-        this->openFolderButton->setVisible(true);
+        this->workspaceButton->setVisible(true);
         this->xmlButton->setVisible(true);
         this->actionsListButton->setVisible(true);
     }
@@ -243,7 +243,7 @@ void MainWindow::on_action_new_triggered(){
     this->onNew();
 }
 void MainWindow::on_action_load_triggered(){
-    this->onOpen();
+    this->onOpen("");
 }
 void MainWindow::on_action_save_triggered(){
     this->onSave();
@@ -320,7 +320,7 @@ void MainWindow::on_CreateNetworkButton_clicked(){
 void MainWindow::on_saveButton_clicked(){
     this->onSave();
 }
-void MainWindow::on_openFolderButton_clicked(){
+void MainWindow::on_workspaceButton_clicked(){
     this->onOpenFolder();
 }
 // -------------------------------------------------------------------------- //
@@ -355,34 +355,36 @@ void MainWindow::onNew(){
     loadNewTab(untitled_path);
 }
 
-void MainWindow::onOpen(){
-    QString path =
-                 QFileDialog::getOpenFileName(this,"Open a network",
-                                              UserData::workspace_path,"*.brn");
+void MainWindow::onOpen(QString path=""){
+    if(path == ""){
+        path = QFileDialog::getOpenFileName(this, "Open a network",
+                                            UserData::workspace_path,"*.brn");
+    }
     if(path == ""){
         // Open was cancelled
         return;
     }
     QStringList list1 = path.split(QDir::toNativeSeparators("/"),
                                    QString::SkipEmptyParts);
-    QString filename, FOLDERNAME;
+    QString filename, foldername;
 
     if(list1.size()>2){
-        FOLDERNAME = path.left(path.size()-list1.last().size());
-        filename  = list1[list1.size()-1];
+        foldername = path.left(path.size()-list1.last().size());
     }
     else if(list1.size()>1){
-        filename  = list1[list1.size()-1];
+        foldername = "";
     }
     else{
         qDebug() << "MainWindow::open: Error: Path not recognized!";
+        return;
     }
+    filename  = list1.last();
 
-    if(QDir::toNativeSeparators(UserData::workspace_path+"/") != FOLDERNAME){
+    if(QDir::toNativeSeparators(UserData::workspace_path+"/") != foldername){
         qDebug() << "MainWindow::onOpen: Path is different!";
         qDebug() << "The reason if it's not working could be the path."
                  << "\nPath: " << path
-                 << "\nFOLDERNAME: " << FOLDERNAME
+                 << "\nFOLDERNAME: " << foldername
                  << "\nWorkspacePath: " << UserData::workspace_path
                  << "\nfilename: " << filename;
         // ZAF SOS: Display a message asking them if they want to change the
@@ -418,7 +420,9 @@ bool MainWindow::onSaveAs(){
         else if(path.right(4) != ".brn"){
             path += ".brn";
         }
-        if(tab()->save(path) && tab()->loadXML()){
+        if(tab()->save(path) /*&& tab()->loadXML()*/){
+            this->removeTab(tab()->filename());
+            this->onOpen(path);
             this->saveButton->setEnabled(false);
             return true;
         }

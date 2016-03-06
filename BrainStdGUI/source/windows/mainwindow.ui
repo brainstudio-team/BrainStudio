@@ -210,6 +210,9 @@ p, li { white-space: pre-wrap; }
               <height>41</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>Save the BRN file.</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -236,6 +239,9 @@ p, li { white-space: pre-wrap; }
               <height>41</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>Upload the current simulation to the current backend.</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -258,6 +264,9 @@ p, li { white-space: pre-wrap; }
               <width>41</width>
               <height>41</height>
              </size>
+            </property>
+            <property name="toolTip">
+             <string>Play/pause simulation.</string>
             </property>
             <property name="text">
              <string/>
@@ -312,6 +321,9 @@ p, li { white-space: pre-wrap; }
               <height>41</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>Show/hide actions window.</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -338,6 +350,9 @@ p, li { white-space: pre-wrap; }
               <height>41</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>Show/hide BRN window.</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -357,45 +372,31 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QCommandLinkButton" name="openFolderButton">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
+           <widget class="QCommandLinkButton" name="workspaceButton">
             <property name="maximumSize">
              <size>
-              <width>60</width>
-              <height>16777215</height>
+              <width>41</width>
+              <height>41</height>
              </size>
             </property>
-            <property name="font">
-             <font>
-              <family>Segoe UI</family>
-              <pointsize>11</pointsize>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QCommandLinkButton{
-color: white;
-}
-</string>
+            <property name="toolTip">
+             <string>Open the workspace folder.</string>
             </property>
             <property name="text">
-             <string>Wsp</string>
+             <string/>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
-              <normaloff>:/new/prefix1/icons/save.png</normaloff>:/new/prefix1/icons/save.png</iconset>
+              <normaloff>:/new/prefix1/icons/workspace.png</normaloff>:/new/prefix1/icons/workspace.png</iconset>
             </property>
             <property name="iconSize">
              <size>
-              <width>0</width>
-              <height>10</height>
+              <width>25</width>
+              <height>25</height>
              </size>
+            </property>
+            <property name="autoRepeatDelay">
+             <number>300</number>
             </property>
            </widget>
           </item>
@@ -414,7 +415,7 @@ font: 14px;
 </string>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="backend_page_main">
              <property name="minimumSize">
@@ -672,6 +673,9 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
                   <height>41</height>
                  </size>
                 </property>
+                <property name="toolTip">
+                 <string>Hide the terminal (backend will still run).</string>
+                </property>
                 <property name="text">
                  <string/>
                 </property>
@@ -698,6 +702,9 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
                   <height>41</height>
                  </size>
                 </property>
+                <property name="toolTip">
+                 <string>Clear the backend terminal.</string>
+                </property>
                 <property name="text">
                  <string/>
                 </property>
@@ -723,6 +730,9 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
                   <width>41</width>
                   <height>41</height>
                  </size>
+                </property>
+                <property name="toolTip">
+                 <string>Restart embedded backend.</string>
                 </property>
                 <property name="text">
                  <string/>
