@@ -3,15 +3,14 @@
 Block::Block(QString _id, QString _type, bool _spiking,
              int _x, int _y, int _w, int _h, QString _col,
              int _size, QWidget *parent ): QWidget(parent), old_id(_id),
-             stimulusFirst(0), stimulusLast(_size),
-             highlighted(false), mode(modeEdit),
+             stimulus(0, _size), highlighted(false), mode(modeEdit),
              initial_x(_x), initial_y(_y), WINDOW_X(0), WINDOW_Y(0),
              connecting(false), spiking(_spiking){
 
     state.resize(_size);
     firingRateNeuron.resize(_size);
 
-    param_for_neurons = "neurons";                                              // ZAF SOS: This is not general!
+    param_for_neurons = "neurons";                                              // ZAF SOS: TODO: This is not general!
 
 #ifndef LOGS
     qDebug() <<"Block::Block: "<<_type <<" created";
@@ -31,8 +30,6 @@ Block::Block(QString _id, QString _type, bool _spiking,
     LFPcalculated = false;
     colour = _col;
     firstNeuronIdx = lastNeuronIdx = 0;
-    stimulusAmount = 0.0f;
-    oscillationPhase = oscillationFrequency = 0.0f;
 
     if(!this->isVisible())
         this->setVisible(true);

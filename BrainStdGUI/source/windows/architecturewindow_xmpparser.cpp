@@ -304,6 +304,7 @@ void ArchitectureWindow::addActions(QList< QMap<QString,QString> >& data){
                               map["type"],
                               map["node"],
                               new_value,
+                              map["amplitude"].toDouble(),
                               map["first"].toInt(),
                               map["last"].toInt(),
                               map["parameter"],

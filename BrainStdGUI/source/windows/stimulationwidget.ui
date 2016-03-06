@@ -137,16 +137,6 @@ background: rgba(210,210,210,220);
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="3" column="0">
-            <widget class="QRadioButton" name="stimulusFullButton">
-             <property name="text">
-              <string>Single value</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="0">
             <layout class="QHBoxLayout" name="horizontalLayout_12">
              <item>
@@ -197,6 +187,16 @@ background: rgba(210,210,210,220);
              </item>
             </layout>
            </item>
+           <item row="3" column="0">
+            <widget class="QRadioButton" name="stimulusFullButton">
+             <property name="text">
+              <string>Single value</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
            <item row="4" column="0">
             <widget class="QRadioButton" name="stimulusSomeButton">
              <property name="text">
@@ -239,23 +239,44 @@ background: rgba(210,210,210,220);
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QLabel" name="stimLabel">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>19</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Current injection (I=0)</string>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QLabel" name="stimLabel">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>19</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Current injection (I=0)</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="exitButton">
+               <property name="maximumSize">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../icons.qrc">
+                 <normaloff>:/new/prefix1/icons/window_close.ico</normaloff>:/new/prefix1/icons/window_close.ico</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
@@ -448,6 +469,8 @@ background: rgba(210,210,210,220);
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

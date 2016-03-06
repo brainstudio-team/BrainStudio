@@ -54,25 +54,23 @@ void TCPIP_Sim::handleMessage(){
         reply = list.at(1);
         timeStep = reply.toDouble();
 
-        if(list.size() > 2){
-            if(list.at(2) == "spikes" && list.size() > 3){
-                QString str_spikes = list.at(3);
-                QStringList list_spikes = str_spikes.split(",");
+        if(list.size() > 3 && list.at(2) == "spikes"){
+            QString str_spikes = list.at(3);
+            QStringList list_spikes = str_spikes.split(",");
 
-                for(int i=0; i<list_spikes.size(); i++){
-                    spikesArray[i] = list_spikes[i].toInt();
-                }
-                spikes = (size_t)list_spikes.size();
+            for(int i=0; i<list_spikes.size(); i++){
+                spikesArray[i] = list_spikes[i].toInt();
             }
-            if(list.at(5) == "rates" && list.size() > 8){
-                QString str_rates_ind = list.at(6);
-                QString str_rates_val = list.at(7);
-                QStringList list_rates_ind = str_rates_ind.split(",");
-                QStringList list_rates_val = str_rates_val.split(",");
+            spikes = (size_t)list_spikes.size();
+        }
+        if(list.size() > 8 && list.at(5) == "rates"){
+            QString str_rates_ind = list.at(6);
+            QString str_rates_val = list.at(7);
+            QStringList list_rates_ind = str_rates_ind.split(",");
+            QStringList list_rates_val = str_rates_val.split(",");
 
-                for(int i=0; i<list_rates_ind.size(); i++){
-                    neuronsState[list_rates_ind[i].toInt()] = list_rates_val[i].toFloat();
-                }
+            for(int i=0; i<list_rates_ind.size(); i++){
+                neuronsState[list_rates_ind[i].toInt()] = list_rates_val[i].toFloat();
             }
         }
 

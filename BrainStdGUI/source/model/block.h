@@ -19,6 +19,7 @@
 #include "source/helper/firingrate.h"
 #include "source/helper/helperClasses.h"
 #include "source/helper/backendData.h"
+#include "source/helper/stimulus.h"
 
 class Block : public QWidget{
     Q_OBJECT
@@ -50,13 +51,10 @@ protected:
     int firstNeuronIdx;
     int lastNeuronIdx;
 
-    int stimulusFirst, stimulusLast;
-    float stimulusAmount;
-    float oscillationPhase, oscillationFrequency, oscillationAmplitude;
+    Stimulus stimulus;
 
     // This is used in arch.window in order to change the QMap when id changes
     QString old_id;
-
 
     // -- STATES ---------------------------------------------------------------
     // Main state of the neurons of the system (updated from MainWindow)
@@ -209,22 +207,8 @@ public:
     void setLastNeuronIdx(int value){ lastNeuronIdx = value; }
     void setFiringRateDepth(const int &value);
 
-    // -- STIMULUS -------------------------------------------------------------
-    void setStimulus(const float &value, const int &first, const int &last){stimulusAmount=value;stimulusFirst=first;stimulusLast=last;}
-    void setStimulus(const float &value){ stimulusAmount = value; stimulusFirst=0; stimulusLast=state.size();}
-    void setStimulusFirst(const int &value){ stimulusFirst = value; }
-    void setStimulusLast(const int &value){ stimulusLast = value; }
-    void setStimulusAmount(const float &value){ stimulusAmount = value; }
-    void setOscillationPhase(const float &value){ oscillationPhase = value; }
-    void setOscillationFrequency(const float &value){ oscillationFrequency = value; }
-    void setOscillationAmplitude(const float &value){ oscillationAmplitude = value; }
-
-    int getStimulusFirst(){ return stimulusFirst; }
-    int getStimulusLast(){ return stimulusLast; }
-    float getStimulusAmount(){ return stimulusAmount; }
-    float getOscillationPhase(){ return oscillationPhase; }
-    float getOscillationFrequency(){ return oscillationFrequency; }
-    float getOscillationAmplitude(){ return oscillationAmplitude; }
+    void setStimulus(const Stimulus &_object){ stimulus = _object; }
+    Stimulus getStimulus(){ return stimulus; }
     // -------------------------------------------------------------------------
 
 
@@ -312,7 +296,7 @@ private slots:
     void typeChanged(int curr_index){ emit schemaModified(); }
     void sizeChanged(const QString &new_size){ state.resize(new_size.toInt());
                                       firingRateNeuron.resize(new_size.toInt());
-                                      stimulusLast = new_size.toInt();
+                                      stimulus.lastNeuron = new_size.toInt();
                                       params[param_for_neurons] = new_size;
                                       emit schemaModified();
                                         }

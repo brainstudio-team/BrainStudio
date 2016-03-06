@@ -180,6 +180,9 @@ private slots:
     void backend_error();
     void backend_output();
     // -------------------------------------------------------------------------
+    void on_terminalCloseButton_clicked();
+    void on_terminalCleanButton_clicked();
+    void on_terminalRefreshButton_clicked();
 };
 
 #endif // MAINWINDOW_H

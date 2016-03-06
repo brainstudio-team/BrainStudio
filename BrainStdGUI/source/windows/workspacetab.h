@@ -19,6 +19,7 @@
 #include "source/simulation/tcpip.h"
 
 #include "source/helper/userdata.h"
+#include "source/helper/stimulus.h"
 
 
 // Because we declaire also workspacetab in Controlswidget because we call stuff

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>BrainStd</string>
+   <string>Brain Studio Pre-alpha version</string>
   </property>
   <property name="styleSheet">
    <string notr="true">#topFrame , #topFrameBackground{
@@ -129,8 +129,8 @@ background:gray;
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
@@ -402,8 +402,16 @@ color: white;
           <item>
            <widget class="QStackedWidget" name="backend_stackedWidget">
             <property name="styleSheet">
-             <string notr="true">background: transparent;
-font: 14px;</string>
+             <string notr="true">QPushButton{
+background: transparent;
+font: 14px;
+}
+
+#backend_stackedWidget, #backend_page_main, #backend_page_tcpip, #backend_page_terminal_controls{
+background: transparent;
+font: 14px;
+}
+</string>
             </property>
             <property name="currentIndex">
              <number>0</number>
@@ -450,19 +458,18 @@ background: rgba(0,0,0,100);
                <widget class="QComboBox" name="backendComboBox">
                 <property name="minimumSize">
                  <size>
-                  <width>150</width>
+                  <width>180</width>
                   <height>30</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>150</width>
+                  <width>180</width>
                   <height>16777215</height>
                  </size>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">background:rgba(255,255,255,100);
-</string>
+                 <string notr="true"/>
                 </property>
                 <item>
                  <property name="text">
@@ -627,7 +634,116 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="backend_page_path"/>
+            <widget class="QWidget" name="backend_page_terminal_controls">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>313</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QCommandLinkButton" name="terminalCloseButton">
+                <property name="maximumSize">
+                 <size>
+                  <width>41</width>
+                  <height>41</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/new/prefix1/icons/backend_back.png</normaloff>:/new/prefix1/icons/backend_back.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>23</width>
+                  <height>23</height>
+                 </size>
+                </property>
+                <property name="autoRepeatDelay">
+                 <number>300</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCommandLinkButton" name="terminalCleanButton">
+                <property name="maximumSize">
+                 <size>
+                  <width>41</width>
+                  <height>41</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/new/prefix1/icons/backend_clear_terminal.png</normaloff>:/new/prefix1/icons/backend_clear_terminal.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>23</width>
+                  <height>23</height>
+                 </size>
+                </property>
+                <property name="autoRepeatDelay">
+                 <number>300</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCommandLinkButton" name="terminalRefreshButton">
+                <property name="maximumSize">
+                 <size>
+                  <width>41</width>
+                  <height>41</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/new/prefix1/icons/backend_restart.png</normaloff>:/new/prefix1/icons/backend_restart.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>23</width>
+                  <height>23</height>
+                 </size>
+                </property>
+                <property name="autoRepeatDelay">
+                 <number>300</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
          </layout>
@@ -701,7 +817,7 @@ QTabBar::tab:selected {
      <x>0</x>
      <y>0</y>
      <width>1337</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

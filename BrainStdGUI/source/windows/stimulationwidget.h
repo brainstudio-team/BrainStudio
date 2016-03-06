@@ -18,16 +18,19 @@ private:
 protected:
     Block *block;
     Simulator *A;
+    int prev_stim_value; // This is used to ...
+    // This is used in the constructor for when we set default values to the
+    // different widgets. Without that, the act of changing the values of the
+    // widgets will trigger a signal which will change the block back.
     bool initialized;
-    int prev_stim_value;
 
     QMap<QString, QPoint > fbands;
     QString band;
 
     void refreshWidgetValues();
-    void setStimulus(const int &value);
     void setStimulus();
 
+    void update_labels();
     void update_plot();
 
 public:
@@ -38,7 +41,7 @@ private slots:
     // Stimulus
     void on_stimulusSlider_valueChanged(int value);
     void on_stimulusFullButton_clicked();
-    void on_stimulusSomeButton_clicked(bool checked);
+    void on_stimulusSomeButton_clicked();
     void on_stimulusSomeSlider_valueChanged(int value);
     void on_startSpinBox_valueChanged();
     void on_sizeSpinBox_valueChanged();
@@ -51,6 +54,8 @@ private slots:
     void on_oscPhaseSpinBox_valueChanged();
 
     void on_oscAmpSlider_valueChanged(int value);
+
+    void on_exitButton_clicked();
 
 signals:
     void setStimulus(QString blockName, const int &firstNeuron, const int &lastNeuron,

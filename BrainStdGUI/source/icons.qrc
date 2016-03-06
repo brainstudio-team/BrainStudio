@@ -51,5 +51,10 @@
         <file>icons/orange-brainstudio-on-trans.png</file>
         <file>icons/brainstudio-on-white.png</file>
         <file>icons/orange-brainstudio-on-white.png</file>
+        <file>icons/backend_clear_terminal.png</file>
+        <file>icons/backend_restart.png</file>
+        <file>icons/window_close.ico</file>
+        <file>icons/backend_back.png</file>
+        <file>icons/backend_back2.png</file>
     </qresource>
 </RCC>

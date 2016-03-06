@@ -116,6 +116,8 @@ bool MainWindow::loadNewTab(const QString &filename){
     tabWidget->setCurrentWidget(workTab[path]);
     connectTabSignals(path);
 
+    UserData::last_file = path;
+    UserData::save();
     return true;
 }
 

@@ -6,6 +6,8 @@
 
 QString UserData::workspace_path = "empty";
 QString UserData::backend_path = "empty";
+int UserData::backend_type = UserData::BCKEND_INTERNAL;
+QString UserData::last_file = "empty";
 QString UserData::file = "";
 QString UserData::only_path = "";
 QString UserData::tcpip_hostname = "localhost";

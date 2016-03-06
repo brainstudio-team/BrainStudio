@@ -324,29 +324,23 @@ bool WorkspaceTab::checkForAction(){
     }
 
     else if(temp.type == "stimulate"){
+        int first, last;
+
         // If there is no information about the first/last neurons in actions
-        int first = temp.firstNeuron;
-        int last = temp.lastNeuron;
-        if(first == last){
-            schema->blocks[temp.node]->setStimulus(temp.new_value);
+        if(temp.firstNeuron == temp.lastNeuron){
             first = schema->blocks[temp.node]->getFirstNeuronIdx();
             last  = schema->blocks[temp.node]->getLastNeuronIdx();
         }
+
+        if(temp.frequency>0.0){
+            Stimulus new_stimulus(first, last, temp.new_value, temp.amplitude,
+                                  temp.frequency, temp.phase);
+            schema->blocks[temp.node]->setStimulus(new_stimulus);
+        }
         else{
-            schema->blocks[temp.node]->setStimulus(temp.new_value, first, last);
-            first+= schema->blocks[temp.node]->getFirstNeuronIdx();
-            last += schema->blocks[temp.node]->getFirstNeuronIdx();
+            Stimulus new_stimulus(first, last, temp.new_value);
+            schema->blocks[temp.node]->setStimulus(new_stimulus);
         }
-        /* SOS TODO: Since the back-end is going to handle that, delete those
-         * things from here and let this function just to change sliders etc..
-         * if(temp.frequency == 0.0){
-            snn->stopOscillation(first, last);
-            snn->setStimulus(first, last, temp.new_value);
-        }
-        else snn->setOscillation(first, last, temp.new_value, temp.frequency,
-                                 temp.phase, 0.0);*/
-        schema->blocks[temp.node]->setOscillationFrequency(temp.frequency);
-        schema->blocks[temp.node]->setOscillationPhase(temp.phase);
     }
 
     return true;

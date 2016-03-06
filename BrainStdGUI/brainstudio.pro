@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = BrainStd
+TARGET = BrainStudio
 
 QT += core widgets gui network xml printsupport #opengl
 

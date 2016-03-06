@@ -1,6 +1,6 @@
 #include <cassert>
 #include <nemo/fixedpoint.hpp>
-#include <nemo/plugins/Izhikevich2007.h>
+#include <nemo/plugins/Izhikevich2007DopSyn.h>
 
 #include "neuron_model.h"
 

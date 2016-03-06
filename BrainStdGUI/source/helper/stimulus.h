@@ -15,14 +15,19 @@ private:
 public:
 
     int firstNeuron, lastNeuron;
-    double value, baseline, amplitude, frequency, phase;
+    double baseline, amplitude, frequency, phase;
 
-    Stimulus() {}
+    Stimulus(){Stimulus(0,0);}
+
+    // Constructor for zero stimulus
+    Stimulus(int first, int last) : firstNeuron(first), lastNeuron(last),
+                 baseline(0.0), amplitude(0.0), frequency(0.0), phase(0.0),
+                 stim_type(STIMULATION_RANGE){}
 
     Stimulus(const int &_first, const int &_last, const double &_val) :
             firstNeuron(_first),
             lastNeuron(_last),
-            value(_val),
+            baseline(_val),
             stim_type(STIMULATION_RANGE) {}
 
     Stimulus(const int &_first, const int &_last, const double &_baseline,
@@ -41,7 +46,7 @@ public:
         case STIMULATION_RANGE:
             firstNeuron = other.firstNeuron;
             lastNeuron = other.lastNeuron;
-            value = other.value;
+            baseline = other.baseline;
             stim_type = STIMULATION_RANGE;
             break;
 
@@ -54,8 +59,9 @@ public:
             phase = other.phase;
             stim_type = OSCILLATION;
         }
-
     }
+
+    int size(){ return lastNeuron - firstNeuron; }
 
     QString toString(int timeStep) const {
 
@@ -64,7 +70,7 @@ public:
                     + QString::number(lastNeuron) + " ";
 
         if (stim_type == STIMULATION_RANGE) {
-            s += QString::number(value)+' ';
+            s += QString::number(baseline)+' ';
         }
         else if (stim_type == OSCILLATION) {
             double val = baseline + amplitude*sin(2.0*M_PI*frequency*timeStep/1000.0 - phase);

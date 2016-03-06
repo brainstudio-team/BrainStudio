@@ -20,7 +20,7 @@ WelcomeWindow::~WelcomeWindow(){
 void WelcomeWindow::on_commandLinkButton_clicked(){
     if(ui->stackedWidget->currentIndex() == 0){
         ui->stackedWidget->setCurrentIndex(1);
-        ui->commandLinkButton->setText("Start BrainStd");
+        ui->commandLinkButton->setText("Start Brain Studio");
     }
     else{
         UserData::workspace_path = ui->pathLineEdit->text();

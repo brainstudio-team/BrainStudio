@@ -93,6 +93,7 @@ class BrainStdBEClass(Node) :
         # transposing the image before thresholding
 
     def __del__(self):
-        self.cam.stop()
-        self.cam.quit()
+        if getattr(self, 'cam', None) != None :
+            self.cam.stop()
+            self.cam.quit()
 

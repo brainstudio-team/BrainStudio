@@ -1,5 +1,5 @@
 /*
-Interface for different classes of backends that might used in BrainStd.
+Interface for different classes of backends that might used in BrainStdudio.
 Although the default functionality provides only a tool to connect to
 other backends-programs via tcpip, this interface can be used to create
 an embedded backend.
@@ -156,7 +156,7 @@ public:
 public slots :
     virtual void setStimulus(QString blockName, int neuronIndex, float value) {
         if (stimuli.contains(blockName)) {
-            stimuli[blockName].value = value;
+            stimuli[blockName].baseline = value;
             stimuli[blockName].firstNeuron = neuronIndex;
             stimuli[blockName].lastNeuron = neuronIndex;
         } else {
@@ -167,7 +167,7 @@ public slots :
 
     virtual void setStimulus(QString blockName, int firstNeuron, int lastNeuron, float value) {
         if (stimuli.contains(blockName)) {
-            stimuli[blockName].value = value;
+            stimuli[blockName].baseline = value;
             stimuli[blockName].firstNeuron = firstNeuron;
             stimuli[blockName].lastNeuron = lastNeuron;
         } else {

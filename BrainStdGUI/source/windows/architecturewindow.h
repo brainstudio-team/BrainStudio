@@ -47,12 +47,13 @@ public:
 class Action{
 public:
     Action(const int &_time=0, const QString &_type="", const QString &_node="",
-           const double &_new_value=0.0,
+           const double &_baseline=0.0, const double &_amplitude=0.0,
            const int&_first=0, const int&_last=0,
            const QString &_parameter="",
            const double &_frequency=0.0, const int &_phase=0):
                 time(_time), type(_type), node(_node),
-                new_value(_new_value), firstNeuron(_first), lastNeuron(_last),
+                new_value(_baseline), amplitude(amplitude),
+                firstNeuron(_first), lastNeuron(_last),
                 parameter(_parameter), frequency(_frequency), phase(_phase){}
     // Used in all actions
     int time;
@@ -67,6 +68,7 @@ public:
     // Used in stimulate
     double phase;
     double frequency;
+    double amplitude;
 
     QString parameter;
 };
@@ -203,14 +205,6 @@ public:
 
     void showActions(){ _showActions = true; }
     void hideActions(){ _showActions = false; }
-
-    /*void addAction(const int &_time, const QString &_type, const QString &_node,
-                   const double &_new_value, const int&_first, const int&_last,
-                   const QString &_parameter, const double &_frequency,
-                   const int &_phase){
-            actions.push_back(Action(_time, _type, _node,_new_value, _first,
-                                     _last, _parameter, _frequency, _phase));
-    }*/
 
     void addBlock(Block *block);
     bool addBlock(QString _name, QString _type, int _x, int _y,

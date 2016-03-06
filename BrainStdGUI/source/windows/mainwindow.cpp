@@ -5,7 +5,7 @@ MainWindow::MainWindow(QString filename, QWidget *parent) : QMainWindow(parent){
 
     this->setWindowIcon(QIcon(":/new/prefix1/icons/brainstudio-logo.png"));
 
-    top_frame_separator = 750;
+    top_frame_separator = 820;
     welcomeWindow = NULL;
     aboutWindow = NULL;
     propertiesDialog = NULL;
@@ -74,16 +74,20 @@ void MainWindow::init(QString givenfilewithpath=""){
     this->backend_restart();
     //qDebug() << "========================================================";
 
-    QFileInfo givenFile(givenfilewithpath);
-    QFileInfo defaultFile(UserData::workspace_path+"/network1.brn");
+    if(UserData::backend_type == UserData::BCKEND_INTERNAL)
+        this->backendComboBox->setCurrentIndex(0);
+    else if(UserData::backend_type == UserData::BCKEND_SERVER)
+        this->backendComboBox->setCurrentIndex(1);
 
+    // If the user did not use a file as an argument when running brain studio,
+    // try to open the last file that was loaded.
+    if(givenfilewithpath == "")
+        givenfilewithpath = UserData::last_file;
+
+    QFileInfo givenFile(givenfilewithpath);
     // If file is given try to load this file:
     if(givenFile.exists() && givenFile.isFile()){
         this->loadNewTab(givenfilewithpath);
-    }
-    // Else, try to load the default file
-    else if(defaultFile.exists() && defaultFile.isFile()){
-        this->loadNewTab("network1.brn");
     }
     // If not show a new file
     else{
@@ -329,8 +333,9 @@ void MainWindow::onExit(){
     this->close(); // So it can call the destructors!
 }
 void MainWindow::onNew(){
-    QString untitled_path = UserData::only_path + "/" + "untitled" +
-                            QString::number(tabWidget->count()+1)+".brn";
+    QString untitled_path = QDir::toNativeSeparators(UserData::only_path +
+                                  "/untitled" +
+                                  QString::number(tabWidget->count()+1)+".brn");
 
     QFile data(untitled_path);
     if (data.open(QFile::WriteOnly | QFile::Truncate)) {
@@ -373,7 +378,7 @@ void MainWindow::onOpen(){
         qDebug() << "MainWindow::open: Error: Path not recognized!";
     }
 
-    if(UserData::workspace_path+"/" != FOLDERNAME){
+    if(QDir::toNativeSeparators(UserData::workspace_path+"/") != FOLDERNAME){
         qDebug() << "MainWindow::onOpen: Path is different!";
         qDebug() << "The reason if it's not working could be the path."
                  << "\nPath: " << path
@@ -604,26 +609,27 @@ void MainWindow::on_actionClear_screen_triggered(){
 }
 
 void MainWindow::on_tcpipButton_clicked(){
-    if(this->backend_frame->isVisible())
-        this->backend_frame->setVisible(false);
-    else
+    if(this->backend_frame->isVisible()){
+        this->on_terminalCloseButton_clicked();
+    }
+    else{
         this->backend_frame->setVisible(true);
+        this->backend_stackedWidget->setCurrentIndex(2);
+    }
 }
 
+void MainWindow::on_terminalCloseButton_clicked(){
+    this->backend_frame->setVisible(false);
+    this->backend_stackedWidget->setCurrentIndex(0);
+}
 
+void MainWindow::on_terminalCleanButton_clicked(){
+    this->backend_terminal->clear();
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+void MainWindow::on_terminalRefreshButton_clicked(){
+    this->backend_restart();
+}
 
 void MainWindow::backend_restart(){
     // If there is another instance running, kill it..
@@ -658,11 +664,15 @@ void MainWindow::on_backendComboBox_activated(int index){
     if(index == 0){
         this->backend_restart();
         this->backend_stackedWidget->setCurrentIndex(0);
+        UserData::backend_type = UserData::BCKEND_INTERNAL;
+        UserData::save();
     }
     else if(index == 1){
         backend_process->kill();
         this->backend_write("Backend killed");
         this->backend_stackedWidget->setCurrentIndex(1);
+        UserData::backend_type = UserData::BCKEND_SERVER;
+        UserData::save();
     }
 }
 

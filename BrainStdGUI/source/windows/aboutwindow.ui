@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>530</width>
-    <height>540</height>
+    <height>555</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -163,7 +163,7 @@ background: #fff;
      <item row="1" column="1">
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zafeirios Fountas (&lt;span style=&quot; font-style:italic;&quot;&gt;zfountas@imperial.ac.uk&lt;/span&gt;)&lt;br/&gt;David Bhowmik&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Computational Neurodynamics Group&lt;br/&gt;&lt;/span&gt;Department of Computing&lt;br/&gt;Imperial College London&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zafeirios Fountas (&lt;span style=&quot; font-style:italic;&quot;&gt;zfountas@imperial.ac.uk&lt;/span&gt;)&lt;br/&gt;David Bhowmik&lt;br/&gt;Pedro Martinez Mediano&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Computational Neurodynamics Group&lt;br/&gt;&lt;/span&gt;Department of Computing&lt;br/&gt;Imperial College London&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>

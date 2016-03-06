@@ -4,7 +4,6 @@
 StimulationWidget::StimulationWidget(Block *_block, QWidget *parent):
                                  QWidget(parent), ui(new Ui::StimulationWidget){
     block = _block;
-    initialized = false;
     prev_stim_value = 0;
 
     fbands["delta"] = QPoint(0.1, 3.0);
@@ -13,50 +12,73 @@ StimulationWidget::StimulationWidget(Block *_block, QWidget *parent):
     fbands["beta"] = QPoint(15.0, 30.0);
     fbands["gamma"] = QPoint(30.0, 100.0);
 
-    ui->setupUi(this);
     this->move(0,0);
 
-    ui->stimulusSlider->setMaximum(50);
-    ui->startSpinBox->setMinimum(0);
-    ui->sizeSpinBox->setMinimum(0);
-    ui->sizeSpinBox->setValue(10);
-    ui->stimulusSomeSlider->setMinimum(0);
-    ui->maxSpinBox->setValue(ui->stimulusSlider->maximum());
-
-    this->refreshWidgetValues();
-
-    initialized = true;
-
+    ui->setupUi(this);
     ui->plot->addGraph();
     ui->plot->graph(0)->removeFromLegend();
 
+    initialized = false;
+    this->refreshWidgetValues();
+    initialized = true;
 }
 
 StimulationWidget::~StimulationWidget(){
     delete ui;
 }
 
+/* Refresh all widgets based on the stimulation values in the block
+ * SOS: Always setMaximum() should be called before setValue()!
+ */
 void StimulationWidget::refreshWidgetValues(){
-    ui->stimulusSlider->setValue((int)block->getStimulusAmount());
-    ui->startSpinBox->setValue(block->getStimulusFirst());
-    ui->startSpinBox->setMaximum(block->getNeuronsSize());
-    ui->sizeSpinBox->setValue(block->getStimulusLast() -
-                              block->getStimulusFirst());
-    ui->sizeSpinBox->setMaximum(block->getNeuronsSize());
+    Stimulus stimulus = block->getStimulus();
 
-    ui->oscPhaseSpinBox->setValue((int)block->getOscillationPhase());
-    ui->stimulusSomeSlider->setValue(ui->startSpinBox->value());
-    ui->stimulusSomeSlider->setMaximum(ui->startSpinBox->maximum());
-
-    ui->oscFrequencySlider->setValue(block->getOscillationFrequency());
-    if(ui->oscCheckBox->isChecked()){
-        // TODO: Understand why???
-        ui->sizeSpinBox->setEnabled(true);
+    // Setting boarders
+    if(stimulus.baseline == 0.0){
+        ui->maxSpinBox->setValue(500);
     }
+    else if(abs((int)stimulus.baseline) < 500){
+        ui->maxSpinBox->setValue(500);
+    }
+    else{
+        ui->maxSpinBox->setValue((int)stimulus.baseline);
+    }
+    if(stimulus.baseline < 0.0){
+        ui->negativeCheckBox->setChecked(true);
+    }
+    else{
+        ui->negativeCheckBox->setChecked(false);
+    }
+    ui->stimulusSlider->setMaximum(ui->maxSpinBox->value());
+    ui->oscAmpSlider->setMaximum(ui->maxSpinBox->value());
+    if(ui->negativeCheckBox->isChecked()){
+        ui->stimulusSlider->setMaximum(-ui->maxSpinBox->value());
+        ui->oscAmpSlider->setMaximum(-ui->maxSpinBox->value());
+    }
+    ui->stimulusSlider->setValue((int)stimulus.baseline);
+
+    // Widgets that are updated in the same way for any stimulus
+    ui->startSpinBox->setMaximum(stimulus.lastNeuron);
+    ui->startSpinBox->setValue(stimulus.firstNeuron);
+
+    ui->stimulusSomeSlider->setMaximum(ui->startSpinBox->maximum());
+    ui->stimulusSomeSlider->setValue(ui->startSpinBox->value());
+
+    ui->sizeSpinBox->setMaximum(block->getNeuronsSize());
+    ui->sizeSpinBox->setValue(stimulus.lastNeuron - stimulus.firstNeuron);
+
+    // Oscillations
+    ui->oscPhaseSpinBox->setValue(stimulus.phase);
+    ui->oscFrequencySlider->setValue(stimulus.frequency);
+    ui->oscAmpSlider->setValue((int)stimulus.amplitude);
+    ui->oscCheckBox->setChecked(ui->oscFrequencySlider->value() > 0);
     this->on_oscCheckBox_clicked(ui->oscCheckBox->isChecked());
+
+    this->update_plot();
+    this->update_labels();
 }
 
-void StimulationWidget::setStimulus(const int &value){
+void StimulationWidget::setStimulus(){
     if(!initialized)
         return;
 
@@ -68,38 +90,96 @@ void StimulationWidget::setStimulus(const int &value){
     int blockFirst = block->getFirstNeuronIdx();
     int stimFirst = blockFirst + ui->startSpinBox->value();
     int stimLast = stimFirst + ui->sizeSpinBox->value();
+    double baseline = (double)ui->stimulusSlider->value();
 
-    if (!isOscillation && !isBaseline) {
+    if (!isOscillation && !isBaseline){
+        // For the schema
+        block->setStimulus(Stimulus(block->getFirstNeuronIdx()-blockFirst,
+                                    block->getLastNeuronIdx()-blockFirst));
+        // For the backend
         emit clearStimulus(block->getId());
-        block->setStimulus(0);
-
-    } else if (!isOscillation && isBaseline) {
-        emit setStimulus(block->getId(), stimFirst, stimLast, (float) value);
-        block->setStimulus(value, stimFirst, stimLast);
-
-    } else if (isOscillation && isBaseline) {
-
-        // PEDRO
-        // double baseline = ui->stimulusSomeSlider->value();
-        double baseline = ui->stimulusSlider->value();
-
+    }
+    else if (!isOscillation && isBaseline) {
+        // For the schema
+        block->setStimulus(Stimulus(stimFirst-blockFirst,
+                                    stimLast-blockFirst, baseline));
+        // For the backend
+        emit setStimulus(block->getId(), stimFirst, stimLast, (float)baseline);
+    }
+    else if (isOscillation && isBaseline) {
         double amplitude = ui->oscAmpSlider->value();
         double frequency = ui->oscFrequencySlider->value();
         double phase = ui->oscPhaseSpinBox->value();
 
-        emit setStimulus(block->getId(), stimFirst, stimLast, baseline, amplitude, frequency, phase);
-
-        block->setStimulus(value, stimFirst, stimLast);
-        block->setOscillationFrequency(ui->oscFrequencySlider->value());
-        block->setOscillationPhase(ui->oscPhaseSpinBox->value());
-        block->setOscillationAmplitude(ui->oscAmpSlider->value());
-
+        // For the schema
+        block->setStimulus(Stimulus(stimFirst-blockFirst, stimLast-blockFirst,
+                                    baseline, amplitude, frequency, phase));
+        // For the backend
+        emit setStimulus(block->getId(), stimFirst, stimLast, baseline,
+                         amplitude, frequency, phase);
     }
 
 }
 
-void StimulationWidget::setStimulus(){
-    this->setStimulus(ui->stimulusSlider->value());
+/* Update the labels of the GUI to account for the changes in sliders
+ */
+void StimulationWidget::update_labels(){
+    int baseline = ui->stimulusSlider->value();
+    int frequency = ui->oscFrequencySlider->value();
+    int start = ui->stimulusSomeSlider->value();
+    int last = start + ui->sizeSpinBox->value();
+    bool negativeStim = ui->negativeCheckBox->isChecked();
+    bool oscillations = ui->oscCheckBox->isChecked();
+
+    ui->stimulusSomeButton->setText("From " + QString::number(start) + " to " +
+                                    QString::number(last));
+
+    if(start != 0 || last != block->getNeuronsSize()){
+        ui->stimulusFullButton->setChecked(false);
+        ui->stimulusSomeButton->setChecked(true);
+    }
+    else{
+        ui->stimulusFullButton->setChecked(true);
+        ui->stimulusSomeButton->setChecked(false);
+    }
+
+    QString name;
+    if(oscillations){
+        name = "Av. current injection ";
+    }
+    else{
+        name = "Current injection ";
+    }
+
+    if(baseline){
+        ui->stimLabel->setText(name + QString::number(baseline)+" pA");
+    }
+    else{
+        ui->stimLabel->setText(name + "(I=0)");
+    }
+
+    if(frequency > 0){
+        QString band = "";
+        for(QMap<QString,QPoint>::iterator it=fbands.begin();
+                                                      it != fbands.end(); it++){
+            if(it.value().x() < frequency && frequency < it.value().y()){
+                band += " (" + it.key() + " band)";
+            }
+        }
+
+        ui->oscCheckBox->setText("Oscillation F: " +
+                                 QString::number(frequency) + " Hz" + band);
+    }
+    else{
+        ui->oscCheckBox->setText("Oscillation (No freq)");
+    }
+
+    if(negativeStim){
+        ui->maxMinLabel->setText("Max/min:");
+    }
+    else{
+        ui->maxMinLabel->setText("Max:");
+    }
 }
 
 void StimulationWidget::update_plot(){
@@ -149,6 +229,8 @@ void StimulationWidget::update_plot(){
 // -------------------------------------------------------------------------- //
 
 void StimulationWidget::on_stimulusFullButton_clicked() {
+    if(!initialized)
+        return;
     // If the "single value" option is checked, apply stimulus to all neurons
     if (ui->stimulusFullButton->isChecked()) {
         // Start in the first neuron
@@ -161,26 +243,20 @@ void StimulationWidget::on_stimulusFullButton_clicked() {
         ui->sizeSpinBox->setMinimum(0);
         ui->sizeSpinBox->setValue(block->getNeuronsSize());
     }
+    this->update_labels();
+    this->setStimulus();
+}
+
+void StimulationWidget::on_stimulusSomeButton_clicked(){
+    if(!initialized)
+        return;
+    this->update_labels();
     this->setStimulus();
 }
 
 void StimulationWidget::on_stimulusSlider_valueChanged(int value){
-    // Show value to GUI
-    QString name;
-    if(ui->oscCheckBox->isChecked()){
-        name = "Av. current injection ";
-    }
-    else{
-        name = "Current injection ";
-    }
-
-
-    if(value){
-        ui->stimLabel->setText(name + QString::number(value)+" pA");
-    }
-    else{
-        ui->stimLabel->setText(name + "(I=0)");
-    }
+    if(!initialized)
+        return;
 
     // Oscillatory stuff
     if(ui->oscCheckBox->isChecked()){
@@ -194,106 +270,76 @@ void StimulationWidget::on_stimulusSlider_valueChanged(int value){
     }
 
     prev_stim_value = value;
-    this->setStimulus(value);
+    this->update_labels();
+    this->setStimulus();
 }
 
 void StimulationWidget::on_oscFrequencySlider_valueChanged(int value){
-    if(value > 0){
-        QString band = "";
-        for(QMap<QString,QPoint>::iterator it=fbands.begin();
-                                                      it != fbands.end(); it++){
-            if(it.value().x() < value && value < it.value().y()){
-                band += " (" + it.key() + " band)";
-            }
-        }
-
-        ui->oscCheckBox->setText("Oscillation F: " + QString::number(value) +
-                                                                  " Hz" + band);
-        if(!ui->oscCheckBox->isChecked()){
-            ui->oscCheckBox->setChecked(true);
-            on_oscCheckBox_clicked(true);
-        }
+    if(!initialized)
+        return;
+    if(value > 0 && !ui->oscCheckBox->isChecked()){
+        ui->oscCheckBox->setChecked(true);
+        on_oscCheckBox_clicked(true);
     }
-    else{
-        ui->oscCheckBox->setText("Oscillation (No freq)");
+    else if(value <= 0){
         ui->oscCheckBox->setChecked(false);
         on_oscCheckBox_clicked(false);
     }
 
     this->update_plot();
+    this->update_labels();
     this->setStimulus();
 }
 
 
 void StimulationWidget::on_stimulusSomeSlider_valueChanged(int value){
+    if(!initialized)
+        return;
     // Custom stimulus
     ui->startSpinBox->setValue(value);
-    ui->stimulusSomeButton->setText("From " + QString::number(value) + " to " +
-                               QString::number(value+ui->sizeSpinBox->value()));
-
     ui->sizeSpinBox->setMaximum(block->getNeuronsSize()
                                   -ui->startSpinBox->value());
+    this->update_labels();
     this->setStimulus();
 }
 
 void StimulationWidget::on_startSpinBox_valueChanged(){
+    if(!initialized)
+        return;
     // Custom stimulus
     ui->sizeSpinBox->setMaximum(block->getNeuronsSize()
                                - ui->startSpinBox->value());
     ui->stimulusSomeSlider->setValue(ui->startSpinBox->value());
-    ui->stimulusSomeButton->setText("From " +
-                                QString::number(ui->startSpinBox->value()) +
-                                " to " +
-                                QString::number(ui->startSpinBox->value()+
-                                                ui->sizeSpinBox->value()));
-    if(ui->startSpinBox->value() == 0 && ui->startSpinBox->value() +
-            ui->sizeSpinBox->value() == block->getNeuronsSize()){
-        ui->stimulusFullButton->setChecked(true);
-    } else {
-        ui->stimulusSomeButton->setChecked(true);
-    }
+    this->update_labels();
     this->setStimulus();
 }
 
 void StimulationWidget::on_sizeSpinBox_valueChanged(){
+    if(!initialized)
+        return;
     // Custom stimulus
     ui->startSpinBox->setMaximum(block->getNeuronsSize()
                                  -ui->sizeSpinBox->value());
     ui->stimulusSomeSlider->setMaximum(ui->startSpinBox->maximum());
-    ui->stimulusSomeButton->setText("From " +
-                                QString::number(ui->startSpinBox->value()) +
-                                " to " +
-                                QString::number(ui->startSpinBox->value()+
-                                                ui->sizeSpinBox->value()));
-    if(ui->startSpinBox->value() == 0 && ui->startSpinBox->value() +
-            ui->sizeSpinBox->value() == block->getNeuronsSize()){
-        ui->stimulusFullButton->setChecked(true);
-    }
-    else{
-        ui->stimulusSomeButton->setChecked(true);
-    }
+    this->update_labels();
     this->setStimulus();
 }
-
-void StimulationWidget::on_stimulusSomeButton_clicked(bool checked){
-    ui->startSpinBox->setEnabled(checked);
-    ui->sizeSpinBox->setEnabled(checked);
-    this->setStimulus();
-}
-
 
 void StimulationWidget::on_negativeCheckBox_clicked(bool checked){
+    if(!initialized)
+        return;
     if(checked){
         ui->stimulusSlider->setMinimum(-ui->maxSpinBox->value());
-        ui->maxMinLabel->setText("Max/min:");
     }
     else{
         ui->stimulusSlider->setMinimum(0);
-        ui->maxMinLabel->setText("Max:");
     }
+    this->update_labels();
 }
 
 void StimulationWidget::on_maxSpinBox_valueChanged(int arg1){
+    if(!initialized)
+        return;
     if(arg1 > 0){
         ui->stimulusSlider->setMaximum(arg1);
         ui->oscAmpSlider->setMaximum(arg1);
@@ -311,10 +357,14 @@ void StimulationWidget::on_maxSpinBox_valueChanged(int arg1){
 }
 
 void StimulationWidget::on_oscPhaseSpinBox_valueChanged(){
+    if(!initialized)
+        return;
     this->update_plot();
+    this->update_labels();
     this->setStimulus();
 }
 
+                                                                                    // SOS     if(!initialized) return;
 
 void StimulationWidget::on_oscCheckBox_clicked(bool checked){
     ui->oscPhaseSpinBox->setEnabled(checked);
@@ -339,15 +389,23 @@ void StimulationWidget::on_oscCheckBox_clicked(bool checked){
         this->setMinimumHeight(height_without);
     }
     this->resize(this->width(), this->maximumHeight());
+    this->update_labels();
     this->setStimulus();
 }
 
 void StimulationWidget::on_oscAmpSlider_valueChanged(int value){
+    if(!initialized)
+        return;
     if(ui->oscAmpSlider->value() > ui->stimulusSlider->value()){
         ui->stimulusSlider->setValue(value);
     }
     ui->oscCheckBox->setChecked(true);
     on_oscCheckBox_clicked(true);
     this->update_plot();
+    this->update_labels();
     this->setStimulus();
+}
+
+void StimulationWidget::on_exitButton_clicked(){
+    this->close();
 }
