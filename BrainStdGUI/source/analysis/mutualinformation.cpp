@@ -1,6 +1,7 @@
 #include "mutualinformation.h"
 
 MutualInformation::MutualInformation(){
+    jvmCreated = false;
     JavaVMOption* options = new JavaVMOption[1];
     options[0].optionString = "-Djava.class.path=/usr/lib/java:/home/pmediano/JCjidt/jidt/infodynamics.jar";
     vm_args.version = JNI_VERSION_1_6;

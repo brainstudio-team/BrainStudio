@@ -15,7 +15,7 @@ private:
     JNIEnv *env;       /* pointer to native method interface */
     JavaVMInitArgs vm_args; /* JDK/JRE 6 VM initialization arguments */
     jclass cls;
-    bool jvmCreated = false;
+    bool jvmCreated;
 
 public:
     MutualInformation();

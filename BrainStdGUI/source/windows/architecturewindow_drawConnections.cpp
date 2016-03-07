@@ -70,6 +70,9 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
         //painter.setPen(QPen(Qt::gray, LINE_THICKNESS, Qt::SolidLine));
         for(BlockIter bx = blocks.begin(); bx != blocks.end(); bx++){
             for(BlockIter by = blocks.begin(); by != blocks.end(); by++){
+                // Repopulating the list that is used to adjust final position
+                // of edges
+                edges_stack_a[bx.key()+by.key()] += 1;
 
                 int value;
 
@@ -89,7 +92,10 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
                     radius = bx.value()->width();
                     if(radius>bx.value()->height())
                         radius = bx.value()->height();
-                    radius = (float)radius/4.0;
+
+                    QString comb_name = bx.key() + by.key();
+                    edges_stack_rec[comb_name] += 1;
+                    radius = (float)radius/(8.0);
                     painter.drawEllipse(QPoint(bx.value()->x()+15,
                                         bx.value()->y()+15), radius, radius);
                 }
@@ -104,8 +110,8 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
         for(int i=0; i<connections.size(); i++){
             if(blocks.contains(connections[i].source()) &&
                blocks.contains(connections[i].target()) ){
-                // Repopulating the lists that are used to adjust final
-                // position of edges
+                // Repopulating the list that is used to adjust final position
+                // of edges
                 edges_stack_a[connections[i].source()+connections[i].target()] += 1;
 
                 // Set colour and thickness
