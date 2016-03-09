@@ -1,5 +1,9 @@
 # Set up the build to set the rpath for all libraries and binaries 
 
+IF(APPLE)
+    SET(CMAKE_MACOSX_RPATH 1)
+ENDIF(APPLE)
+
 # Use the full RPATH for the build tree
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 
