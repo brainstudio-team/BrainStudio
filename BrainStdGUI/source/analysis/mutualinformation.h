@@ -2,7 +2,7 @@
 #define MUTUALINFORMATION_H
 
 // PEDRO: TODO: FIXME: OMG how did I get to this point
-#include "/usr/lib/jvm/java-7-openjdk-amd64/include/jni.h"
+// #include "/usr/lib/jvm/java-7-openjdk-amd64/include/jni.h"
 
 #include "math.h"
 
@@ -11,11 +11,13 @@
 
 class MutualInformation {
 private:
-    JavaVM *jvm;       /* denotes a Java VM */
-    JNIEnv *env;       /* pointer to native method interface */
-    JavaVMInitArgs vm_args; /* JDK/JRE 6 VM initialization arguments */
+/*
+    JavaVM *jvm;       // denotes a Java VM
+    JNIEnv *env;       // pointer to native method interface
+    JavaVMInitArgs vm_args; // JDK/JRE 6 VM initialization arguments
     jclass cls;
     bool jvmCreated;
+    */
 
 public:
     MutualInformation();
@@ -35,10 +37,12 @@ public:
 
     ~MutualInformation() {
         /* We are done. */
+        /*
         if (jvm != NULL && jvmCreated) {
             jvm->DestroyJavaVM();
             jvmCreated = false;
         }
+        */
     }
 
     double calculate(QList<float> tseriesA, QList<float> tseriesB);
