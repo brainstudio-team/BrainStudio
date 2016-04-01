@@ -11,9 +11,9 @@ from threading import Thread, Lock
 
 
 # Import the brainself
-from BrainStdBECore.ControllerBase import Controller as Controller
-from BrainStdBECore.Simulation import Brain as brain
-from BrainStdBECore.BSException import BSException as BSException 
+from BrainStudioBECore.ControllerBase import Controller as Controller
+from BrainStudioBECore.Simulation import Brain as brain
+from BrainStudioBECore.BSException import BSException as BSException 
 import exceptions
 
 import json
@@ -23,9 +23,9 @@ FILENAME = "simulation.brn"
 
 help ="\nHOW TO USE BRAINSTUDIO TREADED CONTROLLER:\n"
 help+="\nTo use this controller type:\n"
-help+="\tpython BrainStdBE.py -controller ThreadedController\n\n"
-help+="\tThe simulator will be open for connections from BrainStd.\n"
-help+="\tWhen a new simulation is requested by BrainStd, the .brn file\n"
+help+="\tpython BrainStudioBE.py -controller ThreadedController\n\n"
+help+="\tThe simulator will be open for connections from BrainStudio.\n"
+help+="\tWhen a new simulation is requested by BrainStudio, the .brn file\n"
 help+="\tof this simulation will be downloaded automatically and saved\n"
 help+="\tlocally as '"+FILENAME+"'.\n\n"
 help+="\tTo run "+FILENAME+" or any other 'brn' file, use the option:\n"
@@ -37,7 +37,7 @@ help+="\t-ip XXX: used to specify the ip address of the TCP/IP connection\n"
 help+="\t(deault is localhost).\n"
 
 
-class BrainStdBEClass(Controller) :
+class BrainStudioBEClass(Controller) :
 
 
     def __init__(self) :
@@ -90,11 +90,11 @@ class BrainStdBEClass(Controller) :
         i = 1
         while len(argv) > i :
             if argv[i] == "-help" :
-                # skip handled is BrainStdBE.py 
+                # skip handled is BrainStudioBE.py 
                 i=i+1
                 continue
             elif argv[i] == "-controller" and len(argv) > i+1 :
-                # skip handled is BrainStdBE.py
+                # skip handled is BrainStudioBE.py
                 i+=2
                 continue
             elif argv[i] == "-file" and len(argv) > i+1 :
@@ -108,7 +108,7 @@ class BrainStdBEClass(Controller) :
                 self.ip = str(argv[i])
             else :
                 print "Argument '" + argv[i] + "' not recognized. Please type python",\
-                "BrainStdBE.py -help."
+                "BrainStudioBE.py -help."
                 exit()
             
             i+=1

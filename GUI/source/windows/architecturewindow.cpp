@@ -119,6 +119,19 @@ void ArchitectureWindow::update_f_rates(unsigned int *spikesArray, int spikes){
     }
 }
 
+void ArchitectureWindow::update_effective_connectivity(){
+    // Network analysis mode - Update effective connectivity
+    if(mode == Block::modeNetwork){
+        for(BlockIter bl1 = blocks.begin(); bl1 != blocks.end(); bl1++){
+            for(BlockIter bl2 = blocks.begin(); bl2 != blocks.end(); bl2++){
+                ec_calculator[bl1.key()+bl2.key()].add(
+                                bl1.value()->firingRateBlock.getFR(),
+                                bl2.value()->firingRateBlock.getFR());
+            }
+        }
+    }
+}
+
 void ArchitectureWindow::on_horizontalScrollBar_valueChanged(int value){
     WINDOW_X = -value*12;
 

@@ -1,17 +1,17 @@
 __version__ = 0.001
 __abstract__ = False
 
-from BrainStdBECore.Node import Node as Node
-from BrainStdBECore.BSException import BSException as BSException
+from BrainStudioBECore.Node import Node as Node
+from BrainStudioBECore.BSException import BSException as BSException
 import numpy as np
 
 
-class BrainStdBEClass(Node) :
+class BrainStudioBEClass(Node) :
     
 
 
     def __init__(self) :
-        super(BrainStdBEClass,self).__init__()
+        super(BrainStudioBEClass,self).__init__()
         self.configurations['RateLayer'] = ([], [], [], []) 
         self.fields.append(['neurons', 'Neurons','integer', '1', ''])
         self.fields.append(['update_time', 'Update time','integer', '', ''])
@@ -43,7 +43,7 @@ class BrainStdBEClass(Node) :
             self.inputs[n] += inputs[n-first_neuron]
         
     def initialize(self, brain, node, args):
-        super(BrainStdBEClass,self).initialize(brain, node, args)
+        super(BrainStudioBEClass,self).initialize(brain, node, args)
         self.size = self.safely_get(node, 'neurons', 'int') 
         self.inputs = np.zeros(self.size)
         self.outputs = np.zeros(self.size)
@@ -52,7 +52,7 @@ class BrainStdBEClass(Node) :
         return self.size
             
     def update(self):
-        super(BrainStdBEClass,self).update()
+        super(BrainStudioBEClass,self).update()
     
         self.outputs = np.tanh(self.inputs)
         self.inputs = np.zeros(self.size)

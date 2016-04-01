@@ -7,9 +7,9 @@ import socket
 from sys import stderr
 
 # Import the brainself
-from BrainStdBECore.ControllerBase import Controller as Controller
-from BrainStdBECore.Simulation import Brain as brain
-from BrainStdBECore.BSException import BSException as BSException 
+from BrainStudioBECore.ControllerBase import Controller as Controller
+from BrainStudioBECore.Simulation import Brain as brain
+from BrainStudioBECore.BSException import BSException as BSException 
 import exceptions
 
 import json
@@ -19,11 +19,11 @@ FILENAME = "simulation.brn"
 
 help ="\nHOW TO USE BRAINSTUDIO DEFAULT CONTROLLER:\n"
 help+="\nTo use this controller type:\n"
-help+="\tpython BrainStdBE.py -controller DefaultControler\n"
+help+="\tpython BrainStudioBE.py -controller DefaultControler\n"
 help+="\nWith GUI:\n"
 help+="\tFor default behaviour, the simulator just waits for a\n"
-help+="\tconnection from BrainStd.\n"
-help+="\tWhen a new simulation is requested by BrainStd, the .brn file\n"
+help+="\tconnection from BrainStudio.\n"
+help+="\tWhen a new simulation is requested by BrainStudio, the .brn file\n"
 help+="\tof this simulation will be downloaded automatically and saved\n"
 help+="\tlocally as '"+FILENAME+"'.\n\n"
 help+="Without GUI:\n"
@@ -34,7 +34,7 @@ help+="\nOther options:\n"
 help+="\t-port XXX: used to specify the port of the TCP/IP connection.\n"
 
 
-class BrainStdBEClass(Controller) :
+class BrainStudioBEClass(Controller) :
 
 
     def __init__(self) :
@@ -58,11 +58,11 @@ class BrainStdBEClass(Controller) :
         i = 1
         while len(argv) > i :
             if argv[i] == "-help" :
-                # skip handled is BrainStdBE.py 
+                # skip handled is BrainStudioBE.py 
                 i=i+1
                 continue
             elif argv[i] == "-controller" and len(argv) > i+1 :
-                # skip handled is BrainStdBE.py
+                # skip handled is BrainStudioBE.py
                 i+=2
                 continue
             elif argv[i] == "-nogui" :
@@ -79,7 +79,7 @@ class BrainStdBEClass(Controller) :
                 self.ip = str(argv[i])
             else :
                 print "Argument '" + argv[i] + "' not recognized. Please type python",\
-                "BrainStdBE.py -help."
+                "BrainStudioBE.py -help."
                 exit()
             
             i+=1

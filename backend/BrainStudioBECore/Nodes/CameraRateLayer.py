@@ -1,8 +1,8 @@
 __version__ = 0.001
 __abstract__ = False
 
-from BrainStdBECore.Node import Node as Node
-from BrainStdBECore.BSException import BSException as BSException
+from BrainStudioBECore.Node import Node as Node
+from BrainStudioBECore.BSException import BSException as BSException
 import numpy as np
 import pygame
 import pygame.camera
@@ -13,12 +13,12 @@ import time
 import os
 
 
-class BrainStdBEClass(Node) :
+class BrainStudioBEClass(Node) :
     
 
 
     def __init__(self) :
-        super(BrainStdBEClass,self).__init__()
+        super(BrainStudioBEClass,self).__init__()
         self.configurations['CameraRateLayer'] = ([], [], [], []) 
         self.fields.append(['neurons', 'Neurons','integer', '1', ''])
         self.fields.append(['update_time', 'Update time','integer', '', ''])
@@ -51,7 +51,7 @@ class BrainStdBEClass(Node) :
         pass
         
     def initialize(self, brain, node, args):
-        super(BrainStdBEClass,self).initialize(brain, node, args)
+        super(BrainStudioBEClass,self).initialize(brain, node, args)
         new_size = self.safely_get(node, 'neurons', 'int')
         if abs(np.sqrt(new_size) - int(np.sqrt(new_size))) > 1e-6:
             # Square root is decimal, so number is not perfect square
@@ -71,7 +71,7 @@ class BrainStdBEClass(Node) :
         return self.size
             
     def update(self):
-        super(BrainStdBEClass,self).update()
+        super(BrainStudioBEClass,self).update()
     
         # The image will be the largest possible square image with the given
         # number of neurons, and the rest will stay silent

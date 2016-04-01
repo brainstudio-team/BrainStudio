@@ -1,5 +1,5 @@
 """
-The BrainStudioBE Edges
+The BrainStudioBE Nodes
 =======================
 
 """
@@ -8,15 +8,15 @@ import os
 
 __version__ = '0.0.1'
 
-sys.path.append('./BrainStdBECore/Edges')
+sys.path.append('./BrainStudioBECore/Nodes')
 
-modulePath = 'BrainStdBECore.Edges.'
+modulePath = 'BrainStudioBECore.Nodes.'
 __all__ = []
 
 classes = dict()
 
-#print('Edges:')
-for file in os.listdir("./BrainStdBECore/Edges"):
+#print('Nodes:')
+for file in os.listdir("./BrainStudioBECore/Nodes"):
     if file.endswith(".py"):
         if file != '__init__.py' :
             module = file[:-3]
@@ -24,4 +24,5 @@ for file in os.listdir("./BrainStdBECore/Edges"):
             if module_obj.__abstract__ == False :
                 __all__.append(module)     
                 classes[module] = module_obj
+
 

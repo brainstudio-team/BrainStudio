@@ -1,14 +1,14 @@
 __version__ = 0.002
 __abstract__ = False
 
-from BrainStdBECore.WeightedPathway import WeightedPathway as WeightedPathway
-from BrainStdBECore.BSException import BSException as BSException 
+from BrainStudioBECore.WeightedPathway import WeightedPathway as WeightedPathway
+from BrainStudioBECore.BSException import BSException as BSException 
 import numpy as np
 
-class BrainStdBEClass(WeightedPathway) :
+class BrainStudioBEClass(WeightedPathway) :
     
     def __init__(self) :
-        super(BrainStdBEClass,self).__init__()
+        super(BrainStudioBEClass,self).__init__()
         self.configurations['SpikeToRateConverter'] = (self.pathway_parameters, [], self.pathway_parameters_default, [])
         self.fields.append(['window', 'Window size','integer', '1', ''])
         
@@ -20,7 +20,7 @@ class BrainStdBEClass(WeightedPathway) :
         return __version__
         
     def initialize(self, brain, node, args):        
-        super(BrainStdBEClass,self).initialize(brain, node, args)
+        super(BrainStudioBEClass,self).initialize(brain, node, args)
 
         self.window = self.safely_get(node, 'window', 'int')      
         self.buffer = np.zeros((self.inputs,self.window))

@@ -7,15 +7,15 @@ import exceptions
 help ="\n                  HOW TO USE BRAINSTUDIO BACKEND\n"
 help+="----------------------------------------------------------------------\n"
 help+="For default behaviour, where the default controller is used type:\n"
-help+="\tpython BrainStdBE.py\n"
+help+="\tpython BrainStudioBE.py\n"
 help+="\nTo select a different controller type:\n"
-help+="\tpython BrainStdBE.py -controller XXX\n"
+help+="\tpython BrainStudioBE.py -controller XXX\n"
 help+="\nwhere XXX is the controller name.\n"
 help+="\nSee the induividual help for each controller for extra options.\n"
 help+="\nAvailable Controllers:.\n"
 
 
-from BrainStdBECore import Controllers
+from BrainStudioBECore import Controllers
 
 
 controller_name = "DefaultController"
@@ -31,7 +31,7 @@ while len(argv) > i :
         print('\n')
         
         for c in Controllers.classes:
-            Controllers.classes[c].BrainStdBEClass().print_help()
+            Controllers.classes[c].BrainStudioBEClass().print_help()
         
         exit()
         
@@ -46,7 +46,7 @@ try:
     found_controller = Controllers.classes[controller_name]
     print '\nExecuting controller: %s...' %controller_name
     
-    controller = found_controller.BrainStdBEClass()
+    controller = found_controller.BrainStudioBEClass()
     controller.set_classname(controller_name)
     #try:
     controller.execute(argv)

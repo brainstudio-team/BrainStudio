@@ -1,6 +1,6 @@
 __version__ = 0.001
 
-from BrainStdBECore.BSException import BSException as BSException 
+from BrainStudioBECore.BSException import BSException as BSException 
 import random, nemo, numpy as np, matplotlib.pyplot as plt, pickle, time
 import Nodes
 import Edges
@@ -33,7 +33,7 @@ class Brain :
         for key in Nodes.classes:
            node = Nodes.classes[key]
            if node.__abstract__ == False:              
-                node_object = node.BrainStdBEClass()
+                node_object = node.BrainStudioBEClass()
                 node_object.configure_static()
                 configurations = node_object.get_configurations() 
                 for con in configurations: 
@@ -53,7 +53,7 @@ class Brain :
         for key in Edges.classes:
            edge = Edges.classes[key]
            if edge.__abstract__ == False:
-                edge_object = edge.BrainStdBEClass()
+                edge_object = edge.BrainStudioBEClass()
                 edge_object.configure_static()
                 configurations = edge_object.get_configurations() 
                 for con in configurations: 
@@ -253,7 +253,7 @@ class Brain :
         node_model = node.tag
         try:
             data = self.instantiatable_nodes[node_model]
-            node_object = data[0].BrainStdBEClass()
+            node_object = data[0].BrainStudioBEClass()
 
         except KeyError:
             where = 'Simulator Brain '
@@ -288,7 +288,7 @@ class Brain :
         edge_model = node.tag
         try:
             data = self.instantiatable_edges[edge_model]
-            edge_object = data[0].BrainStdBEClass()
+            edge_object = data[0].BrainStudioBEClass()
 
         except KeyError:
             where = 'Simulator Brain '

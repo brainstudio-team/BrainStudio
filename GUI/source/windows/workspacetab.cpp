@@ -600,6 +600,13 @@ void WorkspaceTab::updateBot(){
             }
         }
     }
+    if(schema->modeNetwork()){
+        // We need this to calculate effective connectivity
+        schema->update_f_rates(snn->getSpikesArray(), snn->getSpikes());
+        // Update the buffer
+        schema->update_effective_connectivity();
+    }
+
 
     // PLOT WINDOWS:
     this->calcLocalFieldPotentials();

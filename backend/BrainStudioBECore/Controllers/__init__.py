@@ -9,15 +9,15 @@ import os
 
 __version__ = '0.0.1'
 
-sys.path.append('./BrainStdBECore/Controllers')
+sys.path.append('./BrainStudioBECore/Controllers')
 
-modulePath = 'BrainStdBECore.Controllers.'
+modulePath = 'BrainStudioBECore.Controllers.'
 __all__ = []
 
 classes =dict()
 
 #print('\nControllers:')
-for file in os.listdir("./BrainStdBECore/Controllers"):
+for file in os.listdir("./BrainStudioBECore/Controllers"):
     if file.endswith(".py"):
         if file != '__init__.py' :
             module = file[:-3]

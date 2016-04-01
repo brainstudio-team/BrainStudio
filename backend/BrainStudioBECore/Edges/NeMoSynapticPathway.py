@@ -1,15 +1,15 @@
 __version__ = 0.001
 __abstract__ = False
 
-from BrainStdBECore.WeightedPathway import WeightedPathway as WeightedPathway
-from BrainStdBECore.BSException import BSException as BSException
+from BrainStudioBECore.WeightedPathway import WeightedPathway as WeightedPathway
+from BrainStudioBECore.BSException import BSException as BSException
 import numpy as np
 import exceptions
 
-class BrainStdBEClass(WeightedPathway) :
+class BrainStudioBEClass(WeightedPathway) :
     
     def __init__(self) :
-        super(BrainStdBEClass,self).__init__()
+        super(BrainStudioBEClass,self).__init__()
         self.pathway_parameters.append('delay')
         self.pathway_parameters.append('plastic')
         self.pathway_parameters_default.append('RANDI(1,60)')
@@ -25,7 +25,7 @@ class BrainStdBEClass(WeightedPathway) :
         return __version__
         
     def initialize(self, brain, node, args):
-        super(BrainStdBEClass,self).initialize(brain, node, args)
+        super(BrainStudioBEClass,self).initialize(brain, node, args)
         self.brain = brain
         return self.size
         

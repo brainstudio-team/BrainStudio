@@ -640,7 +640,7 @@ void MainWindow::backend_restart(){
     backend_process->kill();
     this->backend_write("Starting backend");
     backend_process->setWorkingDirectory(UserData::backend_path);
-    QString program = "python BrainStudioBackend.py -port " + QString::number(UserData::tcpip_port);
+    QString program = "python BrainStudioBE.py -port " + QString::number(UserData::tcpip_port);
     backend_process->start(program);
 }
 

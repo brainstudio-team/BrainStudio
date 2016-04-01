@@ -3,6 +3,8 @@ TARGET = BrainStudio
 
 QT += core widgets gui network xml printsupport #opengl
 
+CONFIG += c++11
+
 HEADERS += \
     source/windows/mainwindow.h \
     source/windows/workspacetab.h \
@@ -46,7 +48,8 @@ HEADERS += \
     source/helper/stimulus.h \
     source/qcustomplot/qcustomplot.h \
     source/analysis/mutualinformation.h \
-    source/analysis/synchrony.h
+    source/analysis/synchrony.h \
+    source/analysis/effectiveconnectivitycalculator.h
 
 SOURCES += \
     source/main.cpp \

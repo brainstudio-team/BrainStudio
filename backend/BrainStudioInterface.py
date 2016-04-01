@@ -6,7 +6,7 @@ import time
 
 
 
-from BrainStdBECore import Controllers
+from BrainStudioBECore import Controllers
 
 class BrainStudioInterface:
     
@@ -17,7 +17,7 @@ class BrainStudioInterface:
             found_controller = Controllers.classes[controller_name]
             print '\nExecuting controller: %s...' %controller_name
             
-            self.controller = found_controller.BrainStdBEClass()
+            self.controller = found_controller.BrainStudioBEClass()
             self.controller.set_classname(controller_name)
             
             self.timestep = 0

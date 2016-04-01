@@ -1,4 +1,4 @@
-from BrainStdInterface import BrainStudioInterface 
+from BrainStudioInterface import BrainStudioInterface 
 import numpy as np
 bsInterface = BrainStudioInterface()
 bsInterface.initialize('localhost', 10000)

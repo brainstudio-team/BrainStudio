@@ -23,6 +23,7 @@
 
 #include "source/analysis/mutualinformation.h"
 #include "source/analysis/synchrony.h"
+#include "source/analysis/effectiveconnectivitycalculator.h"
 
 class StimulationWidget;
 
@@ -96,6 +97,7 @@ protected:
 
     MutualInformation *mi;
     Synchrony *sync;
+    QMap<QString, EffectiveConnectivityCalculator> ec_calculator;
 
     bool grid;
     int GRID_SIZE;
@@ -272,6 +274,7 @@ public:
     void setFiringRateDepth(const int &value);
     QString in(int x2, int y2); // Returns "" if not found
     void update_f_rates( unsigned int *spikesArray, int spikes);
+    void update_effective_connectivity();
 
     bool isEmpty(){ return blocks.isEmpty(); }
 

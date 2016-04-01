@@ -1,8 +1,8 @@
 __version__ = 0.002
 __abstract__ = False
 
-from BrainStdBECore.Node import Node as Node
-from BrainStdBECore.BSException import BSException as BSException
+from BrainStudioBECore.Node import Node as Node
+from BrainStudioBECore.BSException import BSException as BSException
 import numpy as np
 import nemo
 import exceptions
@@ -10,12 +10,12 @@ import os
 import sys
 import regex as re
 
-class BrainStdBEClass(Node) :
+class BrainStudioBEClass(Node) :
     
     added_classes = []
     
     def __init__(self) :
-        super(BrainStdBEClass,self).__init__()
+        super(BrainStudioBEClass,self).__init__()
         self.architecture = 'NeMo'
         self.model_type ='spike'
         self.input_field = 'neurons'
@@ -34,7 +34,7 @@ class BrainStdBEClass(Node) :
 
     def configure_static(self) :
         
-        BrainStdBEClass.added_classes = []
+        BrainStudioBEClass.added_classes = []
         
         print 'configuring NeMo neuron types'
 
@@ -168,7 +168,7 @@ class BrainStdBEClass(Node) :
             self.stim.append((n+self.get_start_neuron(),inputs[n-first_neuron]))
         
     def initialize(self, brain, node, args):
-        super(BrainStdBEClass,self).initialize(brain, node, args)
+        super(BrainStudioBEClass,self).initialize(brain, node, args)
         
         self.brain = brain
         
@@ -181,12 +181,12 @@ class BrainStdBEClass(Node) :
         
         where = self.get_where()  
         cn =  self.class_name[0:self.class_name.find('-')]
-        if self.class_name in BrainStdBEClass.added_classes:
+        if self.class_name in BrainStudioBEClass.added_classes:
             self.neuron_type_id = brain.get_nemo_neuron_type(cn)
         else:         
             try:
                 self.neuron_type_id = brain.add_nemo_neuron_type(cn)
-                BrainStdBEClass.added_classes.append(self.class_name)
+                BrainStudioBEClass.added_classes.append(self.class_name)
             except exceptions.BaseException as e:
                 what = 'Error in NeMo adding neuron type: ' + e.args[0]
                 raise BSException(where, what)
@@ -216,5 +216,5 @@ class BrainStdBEClass(Node) :
         return self.size
             
     def update(self):
-        super(BrainStdBEClass,self).update()
+        super(BrainStudioBEClass,self).update()
         
