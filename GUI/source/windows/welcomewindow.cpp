@@ -10,7 +10,7 @@ WelcomeWindow::WelcomeWindow(QWidget *parent): QDialog(parent),
                 + "/workspace");
     ui->backendPathLineEdit->setText(
           QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)
-          + "/BrainStd/backends/BrainStdBE");
+          + "/BrainStudio/backends/BrainStudioBackend");
 }
 
 WelcomeWindow::~WelcomeWindow(){

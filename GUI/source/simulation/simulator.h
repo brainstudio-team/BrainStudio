@@ -1,5 +1,5 @@
 /*
-Interface for different classes of backends that might used in BrainStdudio.
+Interface for different classes of backends that might used in BrainStudio.
 Although the default functionality provides only a tool to connect to
 other backends-programs via tcpip, this interface can be used to create
 an embedded backend.

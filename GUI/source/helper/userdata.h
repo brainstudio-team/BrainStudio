@@ -13,7 +13,7 @@
 #include <QDesktopServices>
 #include <QDir>
 
-#define UserDataFolder  "BrainStdudio"
+#define UserDataFolder  "BrainStudio"
 #define UserDataConfigFile    "config.ini"
 
 
