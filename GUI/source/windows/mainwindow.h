@@ -15,7 +15,7 @@
 #include <QtCore/QTime>
 #include <QtCore/QTextStream>
 
-#include <QtMultimedia/QSound>
+//#include <QtMultimedia/QSound>
 
 #include "source/helper/userdata.h"
 #include "source/helper/backendData.h"

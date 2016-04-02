@@ -376,6 +376,9 @@ void StimulationWidget::on_oscCheckBox_clicked(bool checked){
 #elif linux
     height_with = 460;
     height_without = 307;
+#else
+    height_with = 460;
+    height_without = 307;
 #endif
 
     if(checked){

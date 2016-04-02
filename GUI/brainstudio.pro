@@ -27,7 +27,6 @@ HEADERS += \
     source/graphs/basicgraph.h \
     source/graphs/phaseportraitgraph.h \
     source/graphs/plot2D.h \
-    source/simulation/synapticmodel.h \
     source/simulation/simulator.h \
     source/xmleditor/xmlhighlighter.h \
     source/xmleditor/highlighter.h \
@@ -39,8 +38,6 @@ HEADERS += \
     source/helper/modelValues.h \
     source/helper/helperClasses.h \
     source/helper/firingrate.h \
-    source/simulation/izhikevichneuronLS.h \
-    source/simulation/izhikevichneuronSTN.h \
     source/simulation/tcpip.h \
     source/helper/userdata.h \
     source/helper/tcpip_initialization.h \
