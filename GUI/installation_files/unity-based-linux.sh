@@ -1,3 +1,10 @@
+# == Install brain studio =====================================================
+cd ..
+mkdir build
+cd build
+qmake ..
+make
+
 
 # == Associate brn files with brain studio =====================================
 
@@ -26,7 +33,7 @@ update-mime-database    ~/.local/share/mime
 
 # Restart file manager 
 nautilus -q
-nautilus
+nautilus &
 
 # Adding an Icon
 # Now we need to associate an icon with the MIME type. Get an SVG icon and name it "text-extension.svg", or whatever your modified MIME type is named; this will be the icon to represent all instances of the MIME type on your system. For our python example, this is a good choice. Rename the .svg file so that the it matches "text-x-python.svg" (or "insertYourMIMEtype.svg") so that the slashes are replaced with "-" and there are no capital letters.
