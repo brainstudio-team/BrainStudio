@@ -18,6 +18,7 @@ Block::Block(QString _id, QString _type, bool _spiking,
     this->move(_x, _y);
     this->resize(_w, _h);
 
+    plot = NULL;
     graph = NULL;
     plotLayout = new QVBoxLayout(this);
     this->setLayout(plotLayout);
@@ -344,6 +345,11 @@ void Block::setMode(int value){
                  << " (Returning..)";
         return;
     }
+    if(plot != NULL){
+        plotLayout->removeWidget(plot);
+        delete plot;
+        plot = NULL;
+    }
     if(graph != NULL){
         plotLayout->removeWidget(graph);
         delete graph;
@@ -362,10 +368,15 @@ void Block::setMode(int value){
     }
 
     if(value == modeStatesPlots){
-        graph = new CurrentGraph("", state.size(), 0, 200, 5, 5, width()-10,
-                                 height()-10, Qt::red, Qt::blue, 500, this);
-        plotLayout->addWidget(graph);
-        graph->setVisible(true);
+        //graph = new CurrentGraph("", state.size(), 0, 200, 5, 5, width()-10,
+        //                         height()-10, Qt::red, Qt::blue, 500, this);
+        plot = new QCustomPlot(this);
+        plotLayout->addWidget(plot);
+        plot->move(5, 5);
+        plot->xAxis->setRange(0,BLOCK_PLOT_LENGTH);
+        plot->yAxis->setRange(-80,30);
+        plot->resize(this->width()-10, this->height()-10);
+        plot->setVisible(true);
     }
     else if(value == modeRasters){
         if(this->spiking){
@@ -374,10 +385,15 @@ void Block::setMode(int value){
             graph->setVisible(true);
         }
         else{
-            graph = new Plot2D("", state.size(), 0, 0.5, 5, 5, width()-10,
-                               height()-10, Qt::red, Qt::blue, 500, plotFrame);
-            plotLayout->addWidget(graph);
-            graph->setVisible(true);
+            //graph = new Plot2D("", state.size(), 0, 0.5, 5, 5, width()-10,
+            //                   height()-10, Qt::red, Qt::blue, 500, plotFrame);
+            plot = new QCustomPlot(this);
+            plotLayout->addWidget(plot);
+            plot->move(5, 5);
+            plot->resize(this->width()-10, this->height()-10);
+            plot->xAxis->setRange(0,BLOCK_PLOT_LENGTH);
+            plot->yAxis->setRange(-80,30);
+            plot->setVisible(true);
         }
     }
     mode = value;
@@ -387,6 +403,7 @@ void Block::setMode(int value){
 void Block::updateMe(){
     LFPcalculated = false;
     if(graph != NULL){
+        // ZAF: This first condition should not be needed now!
         if(mode == modeStatesPlots){
             for(up_i=0; up_i<state.size(); up_i++)
                 graph->add_new_value(up_i, state[up_i]+120);
@@ -395,6 +412,28 @@ void Block::updateMe(){
             for(up_i=0; up_i<state.size(); up_i++)
                 graph->add_new_value(up_i, state[up_i]);
         }
+    }
+    if(plot != NULL){
+        while(plot->graphCount() < state.size() || plot->graphCount() < BLOCK_PLOT_NUMBER){
+            plot->addGraph();
+            plot->graph(plot->graphCount()-1)->setPen(QPen(QColor(rand()%255,rand()%255,rand()%255)));
+        }
+        for(up_i=0; up_i<state.size(); up_i++){
+            //plot->add
+            //graph->add_new_value(up_i, state[up_i]+120);
+
+            Py[up_i].append(state[up_i]);
+            if(Px[up_i].length() >= BLOCK_PLOT_LENGTH){
+                Py[up_i].pop_front();
+            }
+            else{
+                Px[up_i].append(Px[up_i].size());
+            }
+
+            plot->graph(up_i)->setData(Px[up_i], Py[up_i]);
+
+        }
+        plot->replot();
     }
 }
 
