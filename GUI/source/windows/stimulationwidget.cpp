@@ -35,10 +35,10 @@ void StimulationWidget::refreshWidgetValues(){
 
     // Setting boarders
     if(stimulus.baseline == 0.0){
-        ui->maxSpinBox->setValue(500);
+        ui->maxSpinBox->setValue(10);
     }
-    else if(abs((int)stimulus.baseline) < 500){
-        ui->maxSpinBox->setValue(500);
+    else if(abs((int)stimulus.baseline) < 10){
+        ui->maxSpinBox->setValue(10);
     }
     else{
         ui->maxSpinBox->setValue((int)stimulus.baseline);
