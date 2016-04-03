@@ -175,6 +175,7 @@ class BrainStudioBEClass(Node) :
         inputs = args['inputs']
         first_neuron = args['first_neuron']
         last = args['last']
+        # PEDRO: this is quite inefficient. We could vectorize this loop.
         for n in range(first_neuron, last+1):
             self.stim.append((n+self.get_start_neuron(),inputs[n-first_neuron]))
         
