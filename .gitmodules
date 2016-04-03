@@ -1,0 +1,3 @@
+[submodule "NeMo"]
+	path = NeMo
+	url = https://github.com/brainstudio-team/NeMo
