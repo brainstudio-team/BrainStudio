@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema speed="1">
+	<actions>
+	</actions>
+	<nodes>
+		<Izhikevich-NeMo id="Excitatory module" x="203" y="-22" w="287" h="137" c="#396372">
+			<version>0.001</version>
+			<SpatiallyEmbedded>0</SpatiallyEmbedded>
+			<a>0.02</a>
+			<b>0.2</b>
+			<c>-65+15*RANDF()**2</c>
+			<d>8-6*RANDF()**2</d>
+			<eval_for_each>False</eval_for_each>
+			<neurons>800</neurons>
+			<sigma>1</sigma>
+			<u>b*v</u>
+			<v>-65</v>
+		</Izhikevich-NeMo>
+		<Izhikevich-NeMo id="Excitatory module 2" x="565" y="-19" w="288" h="140" c="#959572">
+			<version>0.001</version>
+			<SpatiallyEmbedded>0</SpatiallyEmbedded>
+			<a>0.02</a>
+			<b>0.2</b>
+			<c>-65+15*RANDF()**2</c>
+			<d>8-6*RANDF()**2</d>
+			<eval_for_each>False</eval_for_each>
+			<neurons>800</neurons>
+			<sigma>1</sigma>
+			<u>b*v</u>
+			<v>-65</v>
+		</Izhikevich-NeMo>
+		<Izhikevich-NeMo id="Inhibitory module" x="202" y="231" w="289" h="145" c="#523889">
+			<version>0.001</version>
+			<SpatiallyEmbedded>0</SpatiallyEmbedded>
+			<a>0.02+0.08*RANDF()</a>
+			<b>0.25-0.05*RANDF()</b>
+			<c>-65</c>
+			<d>2</d>
+			<eval_for_each>False</eval_for_each>
+			<neurons>200</neurons>
+			<sigma>1</sigma>
+			<u>b*v</u>
+			<v>-65</v>
+		</Izhikevich-NeMo>
+		<Izhikevich-NeMo id="Inhibitory module 2" x="554" y="237" w="311" h="140" c="#245938">
+			<version>0.001</version>
+			<SpatiallyEmbedded>0</SpatiallyEmbedded>
+			<a>0.02+0.08*RANDF()</a>
+			<b>0.25-0.05*RANDF()</b>
+			<c>-65</c>
+			<d>2</d>
+			<eval_for_each>False</eval_for_each>
+			<neurons>200</neurons>
+			<sigma>1</sigma>
+			<u>b*v</u>
+			<v>-65</v>
+		</Izhikevich-NeMo>
+	</nodes>
+	<edges>
+		<NeMoSynapticPathway-NeMo id="Excitatory module 2-Inhibitory module 2">
+			<source>Excitatory module 2</source>
+			<target>Inhibitory module 2</target>
+			<preFirst>0</preFirst>
+			<preLast>799</preLast>
+			<postFirst>0</postFirst>
+			<postLast>199</postLast>
+			<version>0.001</version>
+			<__connectivity>full</__connectivity>
+			<delay>4</delay>
+			<plastic>False</plastic>
+			<weight>2*RANDF()</weight>
+		</NeMoSynapticPathway-NeMo>
+		<NeMoSynapticPathway-NeMo id="Inhibitory module 2-Excitatory module 2">
+			<source>Inhibitory module 2</source>
+			<target>Excitatory module 2</target>
+			<preFirst>0</preFirst>
+			<preLast>199</preLast>
+			<postFirst>0</postFirst>
+			<postLast>799</postLast>
+			<version>0.001</version>
+			<__connectivity>full</__connectivity>
+			<delay>4</delay>
+			<plastic>False</plastic>
+			<weight>-2*RANDF()</weight>
+		</NeMoSynapticPathway-NeMo>
+		<NeMoSynapticPathway-NeMo id="Inhibitory module 2-Inhibitory module 2">
+			<source>Inhibitory module 2</source>
+			<target>Inhibitory module 2</target>
+			<preFirst>0</preFirst>
+			<preLast>199</preLast>
+			<postFirst>0</postFirst>
+			<postLast>199</postLast>
+			<version>0.001</version>
+			<__connectivity>full</__connectivity>
+			<delay>4</delay>
+			<plastic>False</plastic>
+			<weight>-2*RANDF()</weight>
+		</NeMoSynapticPathway-NeMo>
+		<NeMoSynapticPathway-NeMo id="Excitatory module 2-Excitatory module 2">
+			<source>Excitatory module 2</source>
+			<target>Excitatory module 2</target>
+			<preFirst>0</preFirst>
+			<preLast>799</preLast>
+			<postFirst>0</postFirst>
+			<postLast>799</postLast>
+			<version>0.001</version>
+			<__connectivity>probability</__connectivity>
+			<__probability>0.01</__probability>
+			<delay>4</delay>
+			<plastic>False</plastic>
+			<weight>17*RANDF()</weight>
+		</NeMoSynapticPathway-NeMo>
+		<NeMoSynapticPathway-NeMo id="Inhibitory module-Excitatory module">
+			<source>Inhibitory module</source>
+			<target>Excitatory module</target>
+			<preFirst>0</preFirst>
+			<preLast>199</preLast>
+			<postFirst>0</postFirst>
+			<postLast>799</postLast>
+			<version>0.001</version>
+			<__connectivity>full</__connectivity>
+			<delay>6</delay>
+			<plastic>False</plastic>
+			<weight>-2*RANDF()</weight>
+		</NeMoSynapticPathway-NeMo>
+		<NeMoSynapticPathway-NeMo id="Excitatory module-Inhibitory module">
+			<source>Excitatory module</source>
+			<target>Inhibitory module</target>
+			<preFirst>0</preFirst>
+			<preLast>799</preLast>
+			<postFirst>0</postFirst>
+			<postLast>199</postLast>
+			<version>0.001</version>
+			<__connectivity>full</__connectivity>
+			<delay>6</delay>
+			<plastic>False</plastic>
+			<weight>2*RANDF()</weight>
+		</NeMoSynapticPathway-NeMo>
+		<NeMoSynapticPathway-NeMo id="Inhibitory module-Inhibitory module">
+			<source>Inhibitory module</source>
+			<target>Inhibitory module</target>
+			<preFirst>0</preFirst>
+			<preLast>199</preLast>
+			<postFirst>0</postFirst>
+			<postLast>199</postLast>
+			<version>0.001</version>
+			<__connectivity>full</__connectivity>
+			<delay>6</delay>
+			<plastic>False</plastic>
+			<weight>-2*RANDF()</weight>
+		</NeMoSynapticPathway-NeMo>
+		<NeMoSynapticPathway-NeMo id="Excitatory module-Excitatory module">
+			<source>Excitatory module</source>
+			<target>Excitatory module</target>
+			<preFirst>0</preFirst>
+			<preLast>799</preLast>
+			<postFirst>0</postFirst>
+			<postLast>799</postLast>
+			<version>0.001</version>
+			<__connectivity>probability</__connectivity>
+			<__probability>0.01</__probability>
+			<delay>6</delay>
+			<plastic>False</plastic>
+			<weight>17*RANDF()</weight>
+		</NeMoSynapticPathway-NeMo>
+		<NeMoSynapticPathway-NeMo id="Excitatory module-Inhibitory module 2">
+			<source>Excitatory module</source>
+			<target>Inhibitory module 2</target>
+			<preFirst>0</preFirst>
+			<preLast>799</preLast>
+			<postFirst>0</postFirst>
+			<postLast>199</postLast>
+			<version>0.001</version>
+			<__connectivity>probability</__connectivity>
+			<__probability>0.01</__probability>
+			<delay>5</delay>
+			<plastic>False</plastic>
+			<weight>12*RANDF()</weight>
+		</NeMoSynapticPathway-NeMo>
+		<NeMoSynapticPathway-NeMo id="Excitatory module 2-Inhibitory module">
+			<source>Excitatory module 2</source>
+			<target>Inhibitory module</target>
+			<preFirst>0</preFirst>
+			<preLast>799</preLast>
+			<postFirst>0</postFirst>
+			<postLast>199</postLast>
+			<version>0.001</version>
+			<__connectivity>probability</__connectivity>
+			<__probability>0.01</__probability>
+			<delay>5</delay>
+			<plastic>False</plastic>
+			<weight>12*RANDF()</weight>
+		</NeMoSynapticPathway-NeMo>
+	</edges>
+	<textBlocks>
+	</textBlocks>
+</schema>
