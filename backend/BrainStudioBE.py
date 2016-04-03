@@ -1,3 +1,4 @@
+#!/usr/bin/python
 __version__ = 0.001
 
 from sys import argv

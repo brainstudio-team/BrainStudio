@@ -37,7 +37,11 @@ class Node(ProcessUnit) :
         self.sources.append(source)
         
     def get_stim(self):
-        return np.array()
+        return np.array([])
+
+    def get_state(self, state_name):
+        print "ZAF", self.name, state_name
+        return np.array([])
     
     @abstractmethod
     def get_input_size(self):
@@ -54,6 +58,12 @@ class Node(ProcessUnit) :
     @abstractmethod
     def set_data(self, args):
         pass
+    
+    def get_all_neurons_state(self, state_name):
+        return []
+
+    def get_all_neurons_parameter(self, par_name):
+        return []
     
     def update(self):     
         args = dict()

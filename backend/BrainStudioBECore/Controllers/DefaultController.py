@@ -196,17 +196,16 @@ class BrainStudioBEClass(Controller) :
                                 # mentioned above. It would be safer to check every part of the string
 
                                 try:
-                                    
                                     timestep = float(command[1])
                                     I_stim = []
-                                    speed = 0
-                                   
 
+                                    speed = 0
                                     if len(command) >= 6 :                                    
                                         speed = int(command[5])
 
                                     idx = 6
 
+                                    # See if the GUI is sending any stimulation
                                     while len(command) >= (idx+2) and command[idx] == 'stim':
                                         if command[idx+1][0] == '-':
                                             what = "Stim neuron is negative: "+ command[7]
@@ -223,11 +222,8 @@ class BrainStudioBEClass(Controller) :
                                         stim_b = int(command[idx+1].split('-')[1])
                                         
                                         stim_current = float(command[idx+2])
-
                                         I_stim += [ (indx, stim_current) for indx in range(stim_a, stim_b) ]
-
                                         idx += 3
-
 
                                     print "Timestep:", timestep
 
@@ -253,23 +249,45 @@ class BrainStudioBEClass(Controller) :
                                         print "Simulation stopped. Duration:", time() - self.exp_start
                                         timestep = -1.0
                                         paused = True
+                                        # Do not send any message!
+                                        continue
 
                                     if speed > 0 :
                                         sleep(speed/1000.0)
 
                                     timestep += 1.0
 
-                                    if len(command) <= 2 :
-                                        connection.sendall("done "+str(timestep))
+                                    message_to_send = "done "+str(timestep)
 
-                                    elif len(command) >= 6 :
-                                        if command[3] == "all" :
+                                    com = command
+                                    if com.count('spikes') > 0 : 
+                                        com = com[com.index('spikes'):]
+                                        if len(com) > 1 and com[1] == "all" :
                                             # Delete first and last element, i.e.'[' and ']'
                                             str_spikes = ','.join(str(x) for x in spikes)
                                             str_rates = ','.join(str(e) for e in rates[0])+' '+','.join(str(e) for e in rates[1])
-                                            connection.sendall("done "+str(timestep) + \
-                                                               " spikes " + str_spikes + ' end_spikes' + \
-                                                               ' rates ' + str_rates + ' end_rates')
+                                            message_to_send += " spikes " + str_spikes + " end_spikes" + \
+                                                               " rates " + str_rates + " end_rates"
+
+                                    com = command
+                                    while com.count('get_state') > 0 and len(com[com.index('get_state'):]) > 2:
+                                        com = com[com.index('get_state'):]
+                                        node_name = com[1].replace('+', ' ')
+
+                                        # Get the state!
+                                        state_name = com[2]
+                                        states = sim.get_node_states_by_name(node_name, state_name)
+                                        str_states = ','.join(str(x) for x in states)
+                                        node_start = sim.get_node_first_neuron(node_name)
+                                        node_end = node_start + sim.get_node_size(node_name)
+
+                                        message_to_send += " state " + com[1] + " " + state_name + " " 
+                                        message_to_send += str(node_start) + "-" + str(node_end) + " "
+                                        message_to_send += str_states + " end_state"
+
+                                        com = com[3:]
+
+                                    connection.sendall(message_to_send)
                                                                
                           
                                 except ValueError:

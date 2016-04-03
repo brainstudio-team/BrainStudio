@@ -542,6 +542,29 @@ void WorkspaceTab::updateBot(){
         return;
     }
     this->checkForAction();
+
+    ArchitectureWindow::BlockIter bl;
+
+    snn->restart_requesting();
+
+    // When I need to visualize states, I call this
+    if(schema->modeStatesPixels() || schema->modeStatesPlots()){
+        for(bl = schema->blocks.begin(); bl != schema->blocks.end(); bl++){
+            if(bl.value()->isSpiking()){
+                snn->request_state(bl.key(), "u");
+            }
+            else{
+                for(int i=bl.value()->getFirstNeuronIdx();
+                                     i<bl.value()->getLastNeuronIdx(); i++){
+                    bl.value()->setNeuronMemPot(
+                                        i - bl.value()->getFirstNeuronIdx(),
+                                        snn->getNeuronState(i));
+                }
+            }
+        }
+
+    }
+
     snn->step(this->getSpeed());
 
 #ifdef RUNTIME_LOGS
@@ -553,20 +576,20 @@ void WorkspaceTab::updateBot(){
 #endif
     updateTime();
 
-    ArchitectureWindow::BlockIter bl;
 
     if(schema->updateSchemaIsOn()){
         for(bl = schema->blocks.begin(); bl != schema->blocks.end(); bl++)
             bl.value()->updateMe();
 
-        if(schema->modeStatesPixels()){
+        if(schema->modeStatesPixels() || schema->modeStatesPlots()){
             // Update the blocks
-            bl = schema->blocks.begin(); // block b1
-            for(int i=0; i<snn->getNeurons(); i++){
-                if( i >= bl.value()->getLastNeuronIdx())
-                    bl++;
-                bl.value()->setNeuronMemPot(i - bl.value()->getFirstNeuronIdx(),
-                                            snn->getNeuronState(i));
+            for(bl = schema->blocks.begin(); bl != schema->blocks.end(); bl++){
+                for(int i=bl.value()->getFirstNeuronIdx();
+                                     i<bl.value()->getLastNeuronIdx(); i++){
+                    bl.value()->setNeuronMemPot(
+                                        i - bl.value()->getFirstNeuronIdx(),
+                                        snn->getNeuronState(i));
+                }
             }
         }
         else if(schema->modeC()){
@@ -588,15 +611,6 @@ void WorkspaceTab::updateBot(){
                                             snn->getNeuronState(i));
                     }
                 }
-            }
-        }
-        else if(schema->modeStatesPlots()){
-            bl = schema->blocks.begin(); // block b1
-            for(int i=0; i<snn->getNeurons(); i++){
-                if( i >= bl.value()->getLastNeuronIdx() )
-                    bl++;
-                bl.value()->setNeuronMemPot(i - bl.value()->getFirstNeuronIdx(),
-                                            snn->getNeuronState(i));
             }
         }
     }

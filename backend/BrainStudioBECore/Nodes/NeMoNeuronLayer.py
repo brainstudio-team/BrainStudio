@@ -138,7 +138,7 @@ class BrainStudioBEClass(Node) :
         first_neuron = args['first_neuron']
         last = args['last']
         if self.class_name == 'Kuramoto-NeMo': 
-            return self.brain.get_nemo_neurons_state(range(self.get_start_neuron()+first_neuron, self.get_start_neuron()+last+1), 0)    
+            return self.brain.get_nemo_sim_neurons_state(range(self.get_start_neuron()+first_neuron, self.get_start_neuron()+last+1), 0)
         else:
 
             outputs = np.zeros(last-first_neuron+1)
@@ -155,10 +155,21 @@ class BrainStudioBEClass(Node) :
         
     def get_all_data(self):
         if self.class_name == 'Kuramoto-NeMo': 
-            return self.brain.get_nemo_neurons_state(range(self.get_start_neuron(), self.get_start_neuron()+self.size), 0)
+            return self.brain.get_nemo_sim_neurons_state(range(self.get_start_neuron(), self.get_start_neuron()+self.size), 0)
         else:
             return self.fired
 
+    def get_all_neurons_state(self, state_name):
+        if state_name in self.states :
+            return self.brain.get_nemo_sim_neurons_state(range(self.get_start_neuron(), self.get_start_neuron()+self.size), self.states.index(state_name))
+        else :
+            return []
+
+    def get_all_neurons_parameter(self, par_name):
+        if par_name in self.parameters :
+            return self.brain.get_nemo_neurons_parameter(range(self.get_start_neuron(), self.get_start_neuron()+self.size), self.parameters.index(par_name))
+        else :
+            return []
         
     def set_data(self, args):
         inputs = args['inputs']
