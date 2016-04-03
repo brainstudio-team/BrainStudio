@@ -74,6 +74,25 @@ void TCPIP_Sim::handleMessage(){
             }
         }
 
+        if(list.contains("state")){
+            int from = 0;
+            int idx = list.indexOf("state", from);
+            while(idx >= 0){
+                QString node_name = list.at(idx+1);
+                QString state_name = list.at(idx+2);
+                int node_start = list.at(idx+3).split('-')[0].toInt();
+                int node_end = list.at(idx+3).split('-')[1].toInt();
+                QStringList list_states = list.at(idx+4).split(",");
+                for(int i=node_start; i<node_end; i++){
+                    neuronsState[i] = list_states[i-node_start].toFloat();
+                }
+
+                from++;
+                idx = list.indexOf("state", from);
+            }
+        }
+
+
         emit step_done();
     }
     else if(reply.size() >= 6 && reply.left(6) == "spikes"){
@@ -174,6 +193,18 @@ void TCPIP_Sim::step(const int &speed){
         QMap<QString, Stimulus>::const_iterator it;
         for(it=stimuli.constBegin(); it != stimuli.constEnd(); it++){
             msg += it.value().toString(timeStep);
+        }
+    }
+
+    if(!requested_states.isEmpty()) {
+        QMap<QString, QList<QString> >::const_iterator it;
+        for(it=requested_states.constBegin(); it != requested_states.constEnd(); it++){
+            for(int i=0; i< it.value().size(); i++){
+                msg += " get_state ";
+                QString changed_name = it.value()[i];
+                msg += changed_name.replace(' ', '+');
+                msg += " " + it.key();
+            }
         }
     }
 

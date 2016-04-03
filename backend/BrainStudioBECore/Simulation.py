@@ -118,17 +118,16 @@ class Brain :
     
     def get_node_size(self, name):
         for g in self.groups:
-	    if g['name'] == name:
-		return g['size']
-
+            if g['name'] == name:
+                return g['size']
         return -1
         
     def get_node_first_neuron(self, name):
         for g in self.groups:
-	    if g['name'] == name:
-		return g['size']
-
+            if g['name'] == name:
+                return g['first_neuron']
         return -1
+
     def add_nemo_neuron_type(self, name):
         try:
            neuron_type_id = self.nemo_neuron_types[name] 
@@ -155,10 +154,16 @@ class Brain :
     def get_nemo_synapse_weight(self, indexes):
         return self.net.get_synapse_weight(indexes)
         
-    def get_nemo_neurons_state(self, indexes, state):
+    def get_nemo_sim_neurons_state(self, indexes, state):
+        return self.sim.get_neuron_state(indexes, state)
+
+    def get_nemo_sim_neurons_paramater(self, indexes, para):
+        return self.sim.get_neuron_parameter(indexes, para)
+        
+    def get_nemo_net_neurons_state(self, indexes, state):
         return self.net.get_neuron_state(indexes, state)
 
-    def get_nemo_neurons_paramater(self, indexes, para):
+    def get_nemo_net_neurons_paramater(self, indexes, para):
         return self.net.get_neuron_parameter(indexes, para)
         
     def get_model_type(self, index):
@@ -176,6 +181,9 @@ class Brain :
                 rates += node.get_all_data()
         return [indexes, rates]
 
+    def get_node_states_by_name(self, node_name, state_name):
+        node = self.get_node_by_name(node_name)
+        return node.get_all_neurons_state(state_name)
         
     def get_node_data(self, index):
         group = self.groups[index]

@@ -59,6 +59,10 @@ protected:
     // STIMULATION
     QMap<QString,Stimulus> stimuli;
 
+    // Requests - Requesting states and parameters that will return after a step
+    QMap<QString, QList< QString > > requested_states;
+    QMap<QString, QList< QString > > requested_parameters;
+
 public:
     explicit Simulator(double _dt = 1.0, QObject *parent = 0):
         QObject(parent),dt(_dt){spikesArray=NULL; restartNetwork();}
@@ -75,6 +79,15 @@ public:
         stimuli.clear();
         initialized = false;
         return false;
+    }
+
+    void restart_requesting(){
+        requested_states.clear();
+        requested_parameters.clear();
+    }
+
+    void request_state(QString node_name, QString state_name){
+        requested_states[state_name].append(node_name);
     }
 
     // LOCAL FIELD POTENTIAL
