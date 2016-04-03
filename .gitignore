@@ -27,6 +27,8 @@
 *.out
 *.app
 
+# OSX desktop settings
+.DS_Store
 
 # Python files
 *.pyc
