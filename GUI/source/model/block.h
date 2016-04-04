@@ -15,11 +15,15 @@
 #include <iostream>
 
 #include "textblock.h"
-#include "source/graphs/graphs.h"
 #include "source/helper/firingrate.h"
 #include "source/helper/helperClasses.h"
 #include "source/helper/backendData.h"
 #include "source/helper/stimulus.h"
+#include "source/qcustomplot/qcustomplot.h"
+#include "source/graphs/graphs.h"
+
+#define BLOCK_PLOT_NUMBER 200
+#define BLOCK_PLOT_LENGTH 200
 
 class Block : public QWidget{
     Q_OBJECT
@@ -77,7 +81,10 @@ protected:
     bool highlighted;   // Highlighted in the gui
     int mode;           // Visualization mode
     bool connecting;    // If this block is highlighted for a connection
+
+    QCustomPlot *plot;  //
     BasicGraph *graph;  //
+    QVector<double> Px[BLOCK_PLOT_NUMBER], Py[BLOCK_PLOT_NUMBER];
 
     bool LFPcalculated;
     double LFP;
