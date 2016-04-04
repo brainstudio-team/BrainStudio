@@ -3,7 +3,7 @@
 	<actions>
 	</actions>
 	<nodes>
-		<Izhikevich-NeMo id="Excitatory module" x="203" y="-22" w="287" h="137" c="#396372">
+		<Izhikevich-NeMo id="Excitatory module" x="193" y="-32" w="287" h="137" c="#396372">
 			<version>0.001</version>
 			<SpatiallyEmbedded>0</SpatiallyEmbedded>
 			<a>0.02</a>
@@ -16,7 +16,7 @@
 			<u>b*v</u>
 			<v>-65</v>
 		</Izhikevich-NeMo>
-		<Izhikevich-NeMo id="Excitatory module 2" x="565" y="-19" w="288" h="140" c="#959572">
+		<Izhikevich-NeMo id="Excitatory module 2" x="535" y="-27" w="288" h="140" c="#959572">
 			<version>0.001</version>
 			<SpatiallyEmbedded>0</SpatiallyEmbedded>
 			<a>0.02</a>
@@ -29,7 +29,7 @@
 			<u>b*v</u>
 			<v>-65</v>
 		</Izhikevich-NeMo>
-		<Izhikevich-NeMo id="Inhibitory module" x="202" y="231" w="289" h="145" c="#523889">
+		<Izhikevich-NeMo id="Inhibitory module" x="192" y="221" w="289" h="145" c="#523889">
 			<version>0.001</version>
 			<SpatiallyEmbedded>0</SpatiallyEmbedded>
 			<a>0.02+0.08*RANDF()</a>
@@ -42,7 +42,7 @@
 			<u>b*v</u>
 			<v>-65</v>
 		</Izhikevich-NeMo>
-		<Izhikevich-NeMo id="Inhibitory module 2" x="554" y="237" w="311" h="140" c="#245938">
+		<Izhikevich-NeMo id="Inhibitory module 2" x="524" y="221" w="311" h="140" c="#245938">
 			<version>0.001</version>
 			<SpatiallyEmbedded>0</SpatiallyEmbedded>
 			<a>0.02+0.08*RANDF()</a>
@@ -175,7 +175,7 @@
 			<__probability>0.01</__probability>
 			<delay>5</delay>
 			<plastic>False</plastic>
-			<weight>12*RANDF()</weight>
+			<weight>17*RANDF()</weight>
 		</NeMoSynapticPathway-NeMo>
 		<NeMoSynapticPathway-NeMo id="Excitatory module 2-Inhibitory module">
 			<source>Excitatory module 2</source>
@@ -189,7 +189,7 @@
 			<__probability>0.01</__probability>
 			<delay>5</delay>
 			<plastic>False</plastic>
-			<weight>12*RANDF()</weight>
+			<weight>17*RANDF()</weight>
 		</NeMoSynapticPathway-NeMo>
 	</edges>
 	<textBlocks>
