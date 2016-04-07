@@ -2,8 +2,14 @@
 __version__ = 0.001
 
 from sys import argv
+import sys
 import exceptions
 
+import os
+username = os.getenv('USER')
+sys.path.append('/home/' + username + '/brainstudio/NeMo/install/pythonAPI/lib/python2.7/site-packages')
+
+import nemo
 
 help ="\n                  HOW TO USE BRAINSTUDIO BACKEND\n"
 help+="----------------------------------------------------------------------\n"
