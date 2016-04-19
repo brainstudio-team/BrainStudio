@@ -21,6 +21,7 @@
 #include "source/helper/stimulus.h"
 #include "source/qcustomplot/qcustomplot.h"
 #include "source/graphs/graphs.h"
+#include "source/graphs/phasegraph.h"
 
 #define BLOCK_PLOT_NUMBER 200
 #define BLOCK_PLOT_LENGTH 200
@@ -112,7 +113,7 @@ protected:
 
 public:
     enum{ modeStatesPixels, modeEdit, modeC, modeRasters, modeStatesPlots,
-          modeNetwork};
+          modeStatesPhases, modeNetwork};
 
 public:
     Block(QString _id, QString _type, bool _spiking,

@@ -92,6 +92,8 @@ void ControlsWidget::on_modeStatesRadioButton_clicked(){
         this->setModeStatesPixels();
     else if(ui->statesType->currentText() == "2D plots")
         this->setModeStatesPlots();
+    else if(ui->statesType->currentText() == "Phases")
+        this->setModeStatesPhases();
 }
 void ControlsWidget::on_statesType_currentIndexChanged(const QString &arg1){
     ui->modeStatesRadioButton->setChecked(true);
@@ -154,6 +156,13 @@ void ControlsWidget::setModeStatesPlots(){
         return;
     }
     schema->setModeStatesPlots();
+}
+void ControlsWidget::setModeStatesPhases(){
+    if(schema == NULL){
+        qDebug()<<"ControlsWidget::setModeStatesPhases: Error: schema is NULL!";
+        return;
+    }
+    schema->setModeStatesPhases();
 }
 void ControlsWidget::setModeNetwork(){
     if(schema == NULL){

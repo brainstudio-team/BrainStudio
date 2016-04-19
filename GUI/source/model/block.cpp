@@ -280,6 +280,16 @@ void Block::paintEvent(QPaintEvent * event){
         //graph->draw(&painter);
     }
 
+    else if(mode == modeStatesPhases){
+        //painter.setPen(QPen(Qt::black));
+        QColor c = QColor(colour);
+        c.setAlpha(100);
+        painter.setPen(QPen(c));
+        painter.setBrush(QBrush(c));
+        painter.drawRect(5, 5, width()-10, height()-10);
+    }
+
+
     // Controls
     if(highlighted){
         painter.setPen(QPen(Qt::black));
@@ -345,6 +355,8 @@ void Block::setMode(int value){
                  << " (Returning..)";
         return;
     }
+
+    // Delete previous
     if(plot != NULL){
         plotLayout->removeWidget(plot);
         delete plot;
@@ -367,9 +379,8 @@ void Block::setMode(int value){
         //typeComboBox->setVisible(false);
     }
 
+    // Initialize new visualizations
     if(value == modeStatesPlots){
-        //graph = new CurrentGraph("", state.size(), 0, 200, 5, 5, width()-10,
-        //                         height()-10, Qt::red, Qt::blue, 500, this);
         plot = new QCustomPlot(this);
         plotLayout->addWidget(plot);
         plot->move(5, 5);
@@ -385,8 +396,6 @@ void Block::setMode(int value){
             graph->setVisible(true);
         }
         else{
-            //graph = new Plot2D("", state.size(), 0, 0.5, 5, 5, width()-10,
-            //                   height()-10, Qt::red, Qt::blue, 500, plotFrame);
             plot = new QCustomPlot(this);
             plotLayout->addWidget(plot);
             plot->move(5, 5);
@@ -396,6 +405,12 @@ void Block::setMode(int value){
             plot->setVisible(true);
         }
     }
+    else if(value == modeStatesPhases){
+        graph = new PhaseGraph("", state.size(), 200, 5, 5, width()-10,
+                               height()-10, plotFrame);
+        plotLayout->addWidget(graph);
+        graph->setVisible(true);
+    }
     mode = value;
 }
 
@@ -404,11 +419,11 @@ void Block::updateMe(){
     LFPcalculated = false;
     if(graph != NULL){
         // ZAF: This first condition should not be needed now!
-        if(mode == modeStatesPlots){
+        if(!spiking && mode == modeRasters){
             for(up_i=0; up_i<state.size(); up_i++)
-                graph->add_new_value(up_i, state[up_i]+120);
+                graph->add_new_value(up_i, state[up_i]);
         }
-        else if(!spiking && mode == modeRasters){
+        else if(mode == modeStatesPhases){
             for(up_i=0; up_i<state.size(); up_i++)
                 graph->add_new_value(up_i, state[up_i]);
         }
