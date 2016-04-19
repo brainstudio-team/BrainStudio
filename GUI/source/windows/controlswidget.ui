@@ -98,6 +98,11 @@ background: transparent;
            <string>2D plots</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>Phases</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item row="5" column="0">

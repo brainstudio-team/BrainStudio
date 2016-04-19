@@ -196,6 +196,7 @@ public:
     void setModeC(){mode = Block::modeC; setBlockMode(Block::modeC); update();}
     void setModeRasters(){ mode = Block::modeRasters; setBlockMode(Block::modeRasters); update();}
     void setModeStatesPlots(){mode = Block::modeStatesPlots; setBlockMode(Block::modeStatesPlots); update();}
+    void setModeStatesPhases(){mode = Block::modeStatesPhases; setBlockMode(Block::modeStatesPhases); update();}
     void setModeNetwork(){mode = Block::modeNetwork; setBlockMode(Block::modeNetwork); update();}
     void setBlockMode(int value);
     void setDetails(bool value){ details = value; update(); }
@@ -263,6 +264,7 @@ public:
     bool modeC(){               if(mode == Block::modeC) return true; return false; }
     bool modeRasters(){         if(mode == Block::modeRasters) return true; return false; }
     bool modeStatesPlots(){     if(mode == Block::modeStatesPlots) return true; return false; }
+    bool modeStatesPhases(){    if(mode == Block::modeStatesPhases) return true; return false; }
     bool modeNetwork(){         if(mode == Block::modeNetwork) return true; return false; }
 
 public:

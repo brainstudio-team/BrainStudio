@@ -46,7 +46,8 @@ HEADERS += \
     source/qcustomplot/qcustomplot.h \
     source/analysis/mutualinformation.h \
     source/analysis/synchrony.h \
-    source/analysis/effectiveconnectivitycalculator.h
+    source/analysis/effectiveconnectivitycalculator.h \
+    source/graphs/phasegraph.h
 
 SOURCES += \
     source/main.cpp \
@@ -85,7 +86,8 @@ SOURCES += \
     source/qcustomplot/qcustomplot.cpp \
     source/analysis/mutualinformation.cpp \
     source/analysis/hilbertTransform.cpp \
-    source/analysis/synchrony.cpp
+    source/analysis/synchrony.cpp \
+    source/graphs/phasegraph.cpp
 
 FORMS += \
     source/windows/mainwindow.ui \

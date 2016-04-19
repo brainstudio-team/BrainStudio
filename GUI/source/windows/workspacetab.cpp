@@ -548,7 +548,8 @@ void WorkspaceTab::updateBot(){
     snn->restart_requesting();
 
     // When I need to visualize states, I call this
-    if(schema->modeStatesPixels() || schema->modeStatesPlots()){
+    if(schema->modeStatesPixels() || schema->modeStatesPlots()
+            || schema->modeStatesPhases()){
         for(bl = schema->blocks.begin(); bl != schema->blocks.end(); bl++){
             if(bl.value()->isSpiking()){
                 snn->request_state(bl.key(), "u");
@@ -581,7 +582,8 @@ void WorkspaceTab::updateBot(){
         for(bl = schema->blocks.begin(); bl != schema->blocks.end(); bl++)
             bl.value()->updateMe();
 
-        if(schema->modeStatesPixels() || schema->modeStatesPlots()){
+        if(schema->modeStatesPixels() || schema->modeStatesPlots()
+                || schema->modeStatesPhases()){
             // Update the blocks
             for(bl = schema->blocks.begin(); bl != schema->blocks.end(); bl++){
                 for(int i=bl.value()->getFirstNeuronIdx();

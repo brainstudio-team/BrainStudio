@@ -40,10 +40,11 @@ public:
     bool modeNetwork() const;
 
     void setModeStatesPixels();
+    void setModeStatesPlots();
+    void setModeStatesPhases();
     void setModeEdit();
     void setModeC();
     void setModeRasters();
-    void setModeStatesPlots();
     void setModeNetwork();
     bool setSchemaMode(const int &index);
 
