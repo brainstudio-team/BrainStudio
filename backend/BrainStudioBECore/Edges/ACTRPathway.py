@@ -37,7 +37,5 @@ class BrainStudioBEClass(WeightedPathway) :
         if inputs.has_key('actr_commands'):
             args['actr_commands'] = inputs['actr_commands']
 
-        print "AAA", inputs, args
-
         self.target.set_data(args)
 
