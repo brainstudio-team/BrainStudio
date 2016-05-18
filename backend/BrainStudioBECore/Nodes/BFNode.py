@@ -55,16 +55,17 @@ class BrainStudioBEClass(Node):
         self.size = self.safely_get(node, 'neurons', 'int') 
         self.inputs = np.zeros(self.size)
         self.outputs = np.zeros(self.size)
+        self.th = np.zeros(self.size)
         #self.update_time = self.safely_get(node, 'update_time', 'integer')
 
-        self.freq_mean = self.safely_get(node, 'freq_mean', 'float')
+        # Integration is in ms, but frequencies are in Hz
+        self.dt = 0.001
+
+        self.freq_mean = 2*np.pi*self.dt*self.safely_get(node, 'freq_mean', 'float')
         self.freq_std = self.safely_get(node, 'freq_std', 'float')
         self.omega = self.freq_mean + self.freq_std*rn.randn(self.size)
 
         self.time_since_last_sync = np.inf
-
-        # Integration is in ms, but frequencies are in Hz
-        self.dt = 0.001
 
         self.counter = 0
         

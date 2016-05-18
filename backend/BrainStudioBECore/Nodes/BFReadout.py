@@ -59,7 +59,7 @@ class BrainStudioBEClass(Node) :
             else:
                 print "BFReadout had event, but there was no readout above threshold."
 
-        return 1.0*(self.outputs > self.threshold)
+        return 1.0*(self.outputs > self.output_threshold)
         
 
     def set_data(self, args):
@@ -119,7 +119,7 @@ class BrainStudioBEClass(Node) :
         self.alpha = self.safely_get(node, 'alpha', 'float')
         self.learning_rate = self.safely_get(node, 'learning_rate', 'float')
 
-        self.weights = 0.8*rn.randn(self.outputs, self.inputs)
+        self.weights = 0.8*rn.randn(self.nb_readouts, self.size)
         self.learn_next = False
         self.event_next = False
         self.max_idx = np.nan
