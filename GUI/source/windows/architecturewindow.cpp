@@ -233,7 +233,8 @@ void ArchitectureWindow::paintEvent(QPaintEvent * event){
             /*else if(mode == Block::modeEdit){
                 painter.drawText(bl.value()->x()-15, bl.value()->y()+15, bl.key());
             }*/
-            else if(mode == Block::modeC || mode == Block::modeRasters){
+            else if(mode == Block::modeC || mode == Block::modeRasters
+                                                 || mode == Block::modeDefault){
                 painter.drawText(bl.value()->x()+5, bl.value()->y()-20,
                                  bl.key() +" (" +
                                  bl.value()->getType() + ")");
@@ -801,7 +802,7 @@ void ArchitectureWindow::addBlock(Block *block){
 // Name, type, X, Y, width, height, colour
 bool ArchitectureWindow::addBlock(QString _name, QString _type,
                                   int _x, int _y, int _w, int _h, QString _col,
-                                  int _neuronsNo){
+                                  QString _vis, int _neuronsNo){
     bool spiking = false;
     if(!BackendData::node_model.contains(_type)){
         qDebug() << "ArchitectureWindow::addNodes: "
@@ -819,7 +820,7 @@ bool ArchitectureWindow::addBlock(QString _name, QString _type,
     }
 
     Block *block = new Block(_name, _type, spiking, _x, _y, _w, _h,
-                             _col, _neuronsNo, ui->frame);
+                             _col, _vis, _neuronsNo, ui->frame);
     addBlock(block);
     return true;
 }
@@ -890,6 +891,7 @@ void ArchitectureWindow::paste(){
                            blocks[name]->width(),
                            blocks[name]->height(),
                            blocks[name]->getColour(),
+                           blocks[name]->getVisualization(),
                            blocks[name]->getNeuronsSize());
             blocks[name+"1"]->setAllParams(blocks[name]->getAllParams());
             blocks[name+"1"]->setAllStates(blocks[name]->getAllStates());
@@ -927,6 +929,7 @@ void ArchitectureWindow::paste(){
                            blocks[name]->width(),
                            blocks[name]->height(),
                            blocks[name]->getColour(),
+                           blocks[name]->getVisualization(),
                            blocks[name]->getNeuronsSize());
             blocks[name+"1"]->setAllParams(blocks[name]->getAllParams());
             blocks[name+"1"]->setAllStates(blocks[name]->getAllStates());

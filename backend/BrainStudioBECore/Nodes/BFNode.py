@@ -75,7 +75,7 @@ class BrainStudioBEClass(Node):
     def update(self):
         super(BrainStudioBEClass,self).update()
 
-        self.outputs = self.omega*self.counter*0.001*2*np.pi
+        self.th = self.omega*self.counter*0.001*2*np.pi
         self.counter += 1
 
         self.time_since_last_sync += 1

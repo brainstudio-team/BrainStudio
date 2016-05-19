@@ -351,6 +351,7 @@ void WorkspaceTab::setMode(const int &_mode){
     switch(_mode){
     case Block::modeStatesPixels:  schema->setModeStatesPlots(); break;
     case Block::modeEdit:          schema->setModeEdit(); break;
+    case Block::modeDefault:       schema->setModeDefault(); break;
     case Block::modeC:             schema->setModeC(); break;
     case Block::modeRasters:       schema->setModeRasters(); break;
     case Block::modeStatesPlots:   schema->setModeStatesPlots(); break;
@@ -582,7 +583,25 @@ void WorkspaceTab::updateBot(){
         for(bl = schema->blocks.begin(); bl != schema->blocks.end(); bl++)
             bl.value()->updateMe();
 
-        if(schema->modeStatesPixels() || schema->modeStatesPlots()
+        if(schema->modeDefault()){  // ZAF CHINA TODO: Check if enough, if not, generalize!
+            schema->update_f_rates(snn->getSpikesArray(), snn->getSpikes());
+
+            // If spiking update raster if rate-based update rates!
+            for(bl = schema->blocks.begin(); bl != schema->blocks.end(); bl++){
+                if(bl.value()->isSpiking()){
+                    bl.value()->updateRaster();
+                }
+                else{
+                    for(int i=bl.value()->getFirstNeuronIdx();
+                                         i<bl.value()->getLastNeuronIdx(); i++){
+                        bl.value()->setNeuronMemPot(
+                                            i - bl.value()->getFirstNeuronIdx(),
+                                            snn->getNeuronState(i));
+                    }
+                }
+            }
+        }
+        else if(schema->modeStatesPixels() || schema->modeStatesPlots()
                 || schema->modeStatesPhases()){
             // Update the blocks
             for(bl = schema->blocks.begin(); bl != schema->blocks.end(); bl++){

@@ -193,6 +193,7 @@ public:
     // Widget stuff
     void setModeStatesPixels(){mode = Block::modeStatesPixels; setBlockMode(Block::modeStatesPixels); update();}
     void setModeEdit(){    mode = Block::modeEdit; setBlockMode(Block::modeEdit); update();}
+    void setModeDefault(){ mode = Block::modeDefault; setBlockMode(Block::modeDefault); update();}
     void setModeC(){mode = Block::modeC; setBlockMode(Block::modeC); update();}
     void setModeRasters(){ mode = Block::modeRasters; setBlockMode(Block::modeRasters); update();}
     void setModeStatesPlots(){mode = Block::modeStatesPlots; setBlockMode(Block::modeStatesPlots); update();}
@@ -211,7 +212,7 @@ public:
 
     void addBlock(Block *block);
     bool addBlock(QString _name, QString _type, int _x, int _y,
-                  int _w, int _h, QString _col, int _neuronsNo);
+                  int _w, int _h, QString _col, QString _vis, int _neuronsNo);
 
     void addConnection(Connection temp){
         connections.append(temp);
@@ -261,6 +262,7 @@ public:
 
     bool modeStatesPixels(){    if(mode == Block::modeStatesPixels) return true; return false; }
     bool modeEdit(){            if(mode == Block::modeEdit) return true; return false; }
+    bool modeDefault(){         if(mode == Block::modeDefault) return true; return false; }
     bool modeC(){               if(mode == Block::modeC) return true; return false; }
     bool modeRasters(){         if(mode == Block::modeRasters) return true; return false; }
     bool modeStatesPlots(){     if(mode == Block::modeStatesPlots) return true; return false; }

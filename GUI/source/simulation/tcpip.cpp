@@ -80,6 +80,11 @@ void TCPIP_Sim::handleMessage(){
             while(idx >= 0){
                 QString node_name = list.at(idx+1);
                 QString state_name = list.at(idx+2);
+
+                // TODO: Deal with any state or parameter!
+                // This might require to send a signal to the rest of the
+                // simulator instead of using neuronsState here.
+
                 int node_start = list.at(idx+3).split('-')[0].toInt();
                 int node_end = list.at(idx+3).split('-')[1].toInt();
                 QStringList list_states = list.at(idx+4).split(",");

@@ -14,7 +14,8 @@ void ArchitectureWindow::drawConnections(QPainter &painter){ // SOS: it draws ov
     edges_stack_rec.clear();
 
     // If 'firing rates' or 'raster plots' mode - Firing rate connections:
-    if(false && (mode == Block::modeC || mode == Block::modeRasters)){
+    if(false && (mode == Block::modeC || mode == Block::modeRasters
+                                               || mode == Block::modeDefault )){  // ZAF CHINA TODO: This is never used
         //painter.setPen(QPen(Qt::gray, LINE_THICKNESS, Qt::SolidLine));
         for(BlockIter bl = blocks.begin(); bl != blocks.end(); bl++){
             for(int j=0; j<bl.value()->getConnectionNo(); j++){

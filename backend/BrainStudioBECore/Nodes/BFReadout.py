@@ -43,7 +43,7 @@ class BrainStudioBEClass(Node) :
 
         
     def get_all_data(self):
-        return self.size*[self.outputs]
+        return list(self.outputs)
 
         
     def get_data(self, args):

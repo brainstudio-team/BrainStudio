@@ -435,6 +435,7 @@ void NewBlockWindow::createBlock(bool locations){
                              ui->widthSlider->value() + 10,
                              ui->heightSlider->value() + 10,
                              ui->colourLineEdit->text(),
+                             "Default",
                              this->getNeurons(),
                              this->schema);
 

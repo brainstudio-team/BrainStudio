@@ -43,6 +43,7 @@ bool ControlsWidget::updateConnections(){
 bool ControlsWidget::modeStatesPixels() const { return (ui->modeStatesRadioButton->isChecked() &&
                                                         ui->statesType->currentText() == "Pixels");  }
 bool ControlsWidget::modeEdit()         const { return ui->modeEditRadioButton->isChecked(); }
+bool ControlsWidget::modeDefault()      const { return ui->modeDefaultRadioButton->isChecked(); }
 bool ControlsWidget::modeC()            const { return ui->modeCRadioButton->isChecked(); }
 bool ControlsWidget::modeRasters()      const { return ui->modeRasterRadioButton->isChecked(); }
 bool ControlsWidget::modeStatesPlots()  const { return (ui->modeStatesRadioButton->isChecked() &&
@@ -102,6 +103,9 @@ void ControlsWidget::on_statesType_currentIndexChanged(const QString &arg1){
 void ControlsWidget::on_modeEditRadioButton_clicked(){
     this->setModeEdit();
 }
+void ControlsWidget::on_modeDefaultRadioButton_clicked(){
+    this->setModeDefault();
+}
 void ControlsWidget::on_modeCRadioButton_clicked(){
     this->setModeC();
 }
@@ -132,6 +136,18 @@ void ControlsWidget::setModeEdit(){
         return;
     }
     schema->setModeEdit();
+}
+void ControlsWidget::setModeDefault(){
+    if(schema == NULL){
+        qDebug() << "ControlsWidget::setModeDefault: Error: schema is NULL!";
+        return;
+    }
+    // Make initializations for all other modes: // ZAF TODO: Is this needed??
+    QMap<QString,Block*>::iterator it;
+    for(it=schema->blocks.begin(); it!=schema->blocks.end(); it++)
+        it.value()->setSpikeArray(NULL, -1);
+    //
+    schema->setModeDefault();
 }
 void ControlsWidget::setModeC(){
     if(schema == NULL){

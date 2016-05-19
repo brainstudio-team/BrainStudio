@@ -34,6 +34,7 @@ public:
 
     bool modeStatesPixels() const;
     bool modeEdit() const;
+    bool modeDefault() const;
     bool modeC() const;
     bool modeRasters() const;
     bool modeStatesPlots() const;
@@ -43,6 +44,7 @@ public:
     void setModeStatesPlots();
     void setModeStatesPhases();
     void setModeEdit();
+    void setModeDefault();
     void setModeC();
     void setModeRasters();
     void setModeNetwork();
@@ -60,6 +62,7 @@ private slots:
     void on_modeStatesRadioButton_clicked();
     void on_statesType_currentIndexChanged(const QString &arg1);
     void on_modeEditRadioButton_clicked();
+    void on_modeDefaultRadioButton_clicked();
     void on_modeCRadioButton_clicked();
     void on_modeRasterRadioButton_clicked();
     void on_modeNetworkRadioButton_clicked();

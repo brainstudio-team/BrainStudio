@@ -1,7 +1,7 @@
 #include "block.h"
 
 Block::Block(QString _id, QString _type, bool _spiking,
-             int _x, int _y, int _w, int _h, QString _col,
+             int _x, int _y, int _w, int _h, QString _col, QString _vis,
              int _size, QWidget *parent ): QWidget(parent), old_id(_id),
              stimulus(0, _size), highlighted(false), mode(modeEdit),
              initial_x(_x), initial_y(_y), WINDOW_X(0), WINDOW_Y(0),
@@ -30,6 +30,7 @@ Block::Block(QString _id, QString _type, bool _spiking,
     LFP = 0;
     LFPcalculated = false;
     colour = _col;
+    visualization = _vis;
     firstNeuronIdx = lastNeuronIdx = 0;
 
     if(!this->isVisible())
@@ -153,6 +154,15 @@ Block::~Block(){
     //this->setMode(-1); <-- This should be wrong since graph is a child qwidget
 }
 
+void Block::defaultVisualization(QPainter *painter){
+    painter->setPen(QPen(Qt::black));
+    if(this->spiking)
+        painter->setBrush(QBrush(QColor("#ffffbb")));
+    else
+        painter->setBrush(QBrush(QColor("#bbffbb")));
+    painter->drawRect(5, 5, width()-10, height()-10);
+}
+
 void Block::paintEvent(QPaintEvent * event){
     QPainter painter(this);
 
@@ -218,6 +228,24 @@ void Block::paintEvent(QPaintEvent * event){
         }
 
     }
+    else if(mode == modeDefault){
+        if(this->visualization == "Default"){
+            this->defaultVisualization(&painter);
+        }
+        else{
+            painter.setPen(QPen(Qt::black));
+            if(this->visualization == "StatesCurves"){
+                painter.setBrush(QBrush(QColor("#bbffbb")));
+            }
+            else if(this->visualization == "StatesPhases"){
+                painter.setBrush(QBrush(QColor("#bbffbb")));
+            }
+            else if(this->visualization == "RasterPlot"){
+                painter.setBrush(QBrush(QColor("#ffffbb")));
+            }
+            painter.drawRect(5, 5, width()-10, height()-10);
+        }
+    }
     else if(mode == modeC){
         // nn = real part of the sqrt of the number of neurons
         if(state.size()>0){
@@ -265,12 +293,7 @@ void Block::paintEvent(QPaintEvent * event){
         painter.drawRect(5, 5, width()-10, height()-10);
     }
     else if(mode == modeRasters){
-        painter.setPen(QPen(Qt::black));
-        if(this->spiking)
-            painter.setBrush(QBrush(QColor("#ffffbb")));
-        else
-            painter.setBrush(QBrush(QColor("#bbffbb")));
-        painter.drawRect(5, 5, width()-10, height()-10);
+        this->defaultVisualization(&painter);
     }
     else if(mode == modeStatesPlots){ // Current plots
         painter.setPen(QPen(Qt::black));
@@ -349,6 +372,23 @@ QList<float> Block::getWindowedFiringRate(){
     return firingRateBlock.getLastValues();
 }
 
+void Block::setDefaultVisualization(){
+    if(this->spiking){
+        graph = new RasterPlot("", state.size(), Qt::black, plotFrame);
+        plotLayout->addWidget(graph);
+        graph->setVisible(true);
+    }
+    else{
+        plot = new QCustomPlot(this);
+        plotLayout->addWidget(plot);
+        plot->move(5, 5);
+        plot->resize(this->width()-10, this->height()-10);
+        plot->xAxis->setRange(0,BLOCK_PLOT_LENGTH);
+        plot->yAxis->setRange(-80,30);
+        plot->setVisible(true);
+    }
+}
+
 void Block::setMode(int value){
     if(value == mode){
         qDebug() << "Block::setMode: The mode already " << value
@@ -380,7 +420,35 @@ void Block::setMode(int value){
     }
 
     // Initialize new visualizations
-    if(value == modeStatesPlots){
+    if(value == modeDefault){ // ZAF CHINA TODO
+        if(this->visualization == "Default"){
+            this->setDefaultVisualization();
+        }
+        else if(this->visualization == "StatesCurves"){
+            plot = new QCustomPlot(this);
+            plotLayout->addWidget(plot);
+            plot->move(5, 5);
+            plot->xAxis->setRange(0,BLOCK_PLOT_LENGTH);
+            plot->yAxis->setRange(-80,30);
+            plot->resize(this->width()-10, this->height()-10);
+            plot->setVisible(true);
+        }
+        else if(this->visualization == "StatesPhases"){
+            graph = new PhaseGraph("", state.size(), 200, 5, 5, width()-10,
+                                   height()-10, plotFrame);
+            plotLayout->addWidget(graph);
+            graph->setVisible(true);
+        }
+        else if(this->visualization == "RasterPlot"){
+            graph = new RasterPlot("", state.size(), Qt::black, plotFrame);
+            plotLayout->addWidget(graph);
+            graph->setVisible(true);
+        }
+        else{
+            qDebug()<<"Block::"<<this->getId()<<" Visualization not supported!";
+        }
+    }
+    else if(value == modeStatesPlots){
         plot = new QCustomPlot(this);
         plotLayout->addWidget(plot);
         plot->move(5, 5);
@@ -390,20 +458,7 @@ void Block::setMode(int value){
         plot->setVisible(true);
     }
     else if(value == modeRasters){
-        if(this->spiking){
-            graph = new RasterPlot("", state.size(), Qt::black, plotFrame);
-            plotLayout->addWidget(graph);
-            graph->setVisible(true);
-        }
-        else{
-            plot = new QCustomPlot(this);
-            plotLayout->addWidget(plot);
-            plot->move(5, 5);
-            plot->resize(this->width()-10, this->height()-10);
-            plot->xAxis->setRange(0,BLOCK_PLOT_LENGTH);
-            plot->yAxis->setRange(-80,30);
-            plot->setVisible(true);
-        }
+        this->setDefaultVisualization();
     }
     else if(value == modeStatesPhases){
         graph = new PhaseGraph("", state.size(), 200, 5, 5, width()-10,
@@ -427,6 +482,28 @@ void Block::updateMe(){
             for(up_i=0; up_i<state.size(); up_i++)
                 graph->add_new_value(up_i, state[up_i]);
         }
+        else if(mode == modeDefault){
+            if(this->visualization == "Default"){
+                if(!spiking){
+                    for(up_i=0; up_i<state.size(); up_i++)
+                        graph->add_new_value(up_i, state[up_i]);
+                }
+            }
+            else if(this->visualization == "StatesCurves"){
+                for(up_i=0; up_i<state.size(); up_i++)
+                    graph->add_new_value(up_i, state[up_i]);
+            }
+            else if(this->visualization == "StatesPhases"){
+                for(up_i=0; up_i<state.size(); up_i++)
+                    graph->add_new_value(up_i, state[up_i]);
+            }
+            else if(this->visualization == "RasterPlot"){
+                // TODO: Make sure that this is correct! It works but based on
+                // the previous lines doesn't make sence..
+                for(up_i=0; up_i<state.size(); up_i++)
+                    graph->add_new_value(up_i, state[up_i]);
+            }
+        }
     }
     if(plot != NULL){
         while(plot->graphCount() < state.size() || plot->graphCount() < BLOCK_PLOT_NUMBER){
@@ -448,6 +525,7 @@ void Block::updateMe(){
             plot->graph(up_i)->setData(Px[up_i], Py[up_i]);
 
         }
+        plot->rescaleAxes(true);
         plot->replot();
     }
 }

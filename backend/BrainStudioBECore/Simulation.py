@@ -121,11 +121,18 @@ class Brain :
             if g['name'] == name:
                 return g['size']
         return -1
-        
+
+    # ZAF: I changed that to 'first_all_neurons' instead of 'first_neuron'
+    # because I realized that the former returns the index of the first neuron
+    # in the network while the former returns 0! 
+    # For Dave TODO: 
+    #     - Check if this is the case and if yes delete 'first_neuron'
+    #       since it doesn't make sense to exist.
+    #     - Write comments on what each function is doing
     def get_node_first_neuron(self, name):
         for g in self.groups:
             if g['name'] == name:
-                return g['first_neuron']
+                return g['first_all_neurons']
         return -1
 
     def add_nemo_neuron_type(self, name):

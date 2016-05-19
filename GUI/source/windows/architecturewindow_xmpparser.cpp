@@ -179,6 +179,9 @@ QMap<QString, QString> ArchitectureWindow::parseInternalElement(QXmlStreamReader
     if(attributes.value("c").toString() != ""){
         data["my_c"] = attributes.value("c").toString();
     }
+    if(attributes.value("v").toString() != ""){
+        data["my_v"] = attributes.value("v").toString();
+    }
     // -------------------------------------------------------------------------
 
     // Next element...
@@ -241,6 +244,7 @@ void ArchitectureWindow::addNodes(QList< QMap<QString,QString> >& data) {
                       node.take("my_w").toInt()+10,
                       node.take("my_h").toInt()+10,
                       node.take("my_c"),
+                      node.take("my_v"),
                       my_size)){
             qDebug() << "ArchitectureWindow::addNodes: Exiting..";
             return;
@@ -371,7 +375,8 @@ bool ArchitectureWindow::save_brn(const QString filename){
                 << "\" y=\"" << QString::number(bl.value()->getInitialY())
                 << "\" w=\"" << QString::number(bl.value()->width()-10)
                 << "\" h=\"" << QString::number(bl.value()->height()-10)
-                << "\" c=\"" << bl.value()->getColour() << "\">\n";
+                << "\" c=\"" << bl.value()->getColour()
+                << "\" v=\"" << bl.value()->getVisualization() << "\">\n";
             out << "\t\t\t<version>" << bl.value()->getVersion() << "</version>\n";
             //out << "\t\t\t<neurons>" << bl.value()->getNeuronsSize() << "</neurons>\n";
 

@@ -39,7 +39,7 @@ protected:
     QString version;
     int initial_x, initial_y;
     int WINDOW_X, WINDOW_Y;
-    QString colour;
+    QString colour, visualization;
     bool spiking; // SOS: Returns true if the block has spikes!
 
     // -- REST PARAMETERS ------------------------------------------------------
@@ -92,6 +92,7 @@ protected:
 
     // QWIDGET STUFF
     void paintEvent(QPaintEvent * event);
+    void defaultVisualization(QPainter * painter);
     void contextMenuEvent(QContextMenuEvent *event);
     QLineEdit *idLineEdit, *sizeLineEdit;
     //QComboBox *typeComboBox;
@@ -112,13 +113,13 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
 
 public:
-    enum{ modeStatesPixels, modeEdit, modeC, modeRasters, modeStatesPlots,
-          modeStatesPhases, modeNetwork};
+    enum{ modeStatesPixels, modeEdit, modeDefault, modeC, modeRasters,
+          modeStatesPlots, modeStatesPhases, modeNetwork};
 
 public:
     Block(QString _id, QString _type, bool _spiking,
           int _x=0, int _y=0, int _w =100, int _h=50, QString _col="#AAAAAA",
-          int _size = 1, QWidget *parent=0);
+          QString _vis="Default", int _size = 1, QWidget *parent=0);
     ~Block();
 
     FiringRate firingRateBlock;
@@ -166,6 +167,7 @@ public:
     //QString getType() const { return typeComboBox->currentText(); }
     QString getType() const { return type; }
     QString getColour() const { return colour; }
+    QString getVisualization() const { return visualization; }
     float   getState(int indx) const { if(indx<state.size())
                                             return state[indx]; else return 0;
                                           }
@@ -223,6 +225,7 @@ public:
     // SOS: Probably only architecture should call this.
     void setHighlighted(bool value){ highlighted = value; }
     void setMode(int value);
+    void setDefaultVisualization();
     void setConnecting(const bool& value){ connecting = value; }
 
 
