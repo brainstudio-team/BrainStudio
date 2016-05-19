@@ -442,6 +442,10 @@ void ArchitectureWindow::deleteBlockSlot(const QString &id){
                this, SLOT(blockIdChangedSlot(QString,QString)));
     disconnect(temp, SIGNAL(stimulationSignal()),
                this, SLOT(turnOnStimulation()));
+    disconnect(temp, SIGNAL(signal_cut()), this, SLOT(cut()));
+    disconnect(temp, SIGNAL(signal_copy()), this, SLOT(copy()));
+    disconnect(temp, SIGNAL(mouseMove(QMouseEvent*,QPoint)),
+               this,  SLOT(mouseMoveFromPlotSlot(QMouseEvent*,QPoint)));
 
     blocks.remove(id);
     temp->setVisible(false);
@@ -785,6 +789,8 @@ void ArchitectureWindow::addBlock(Block *block){
             this,  SLOT(turnOnStimulation()));
     connect(block, SIGNAL(signal_cut()), this, SLOT(cut()));
     connect(block, SIGNAL(signal_copy()), this, SLOT(copy()));
+    connect(block, SIGNAL(mouseMove(QMouseEvent*,QPoint)),
+            this,  SLOT(mouseMoveFromPlotSlot(QMouseEvent*,QPoint)));
 
     blocks[block->getId()] = block;
     LFPvalue[block->getId()] = 0.0;

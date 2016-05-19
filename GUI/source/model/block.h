@@ -297,6 +297,13 @@ public:
     int centreX() const { return x() + width()/2; }
     int centreY() const { return y() +height()/2; }
 
+protected slots:
+    void mousePressSlot(QMouseEvent *event){ this->mousePressEvent(event); }
+    void mouseMoveSlot(QMouseEvent *event){ emit mouseMove(event, this->pos()); }
+    void mouseDoubleClickSlot(QMouseEvent *event){ this->mouseDoubleClickEvent(event); }
+signals :
+    void mouseMove(QMouseEvent *event, QPoint pos);
+
 private slots:
     void newPlotSlot(){ emit newPlotSignal(this->idLineEdit->text()); }
     void stimulationSlot(){ emit stimulationSignal(); }

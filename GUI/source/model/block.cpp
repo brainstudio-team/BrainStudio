@@ -321,7 +321,6 @@ void Block::paintEvent(QPaintEvent * event){
         painter.drawRect(this->width()-7, this->height()/2, 7, 7);
         painter.drawRect(this->width()/2, this->height()-7, 7, 7);
     }
-
 }
 
 
@@ -380,6 +379,19 @@ void Block::setDefaultVisualization(){
     }
     else{
         plot = new QCustomPlot(this);
+        plot->setMouseTracking(false);
+
+        cutAct = new QAction(QIcon(":/new/prefix1/icons/cut.png"), tr("Cu&t"),this);
+        cutAct->setShortcuts(QKeySequence::Cut);
+        cutAct->setStatusTip(tr("Cut this block to the clipboard"));
+        connect(cutAct, SIGNAL(triggered()), this, SLOT(cut()));
+
+        connect(plot, SIGNAL(mousePress(QMouseEvent*)),
+                this, SLOT(mousePressSlot(QMouseEvent*)));
+        connect(plot, SIGNAL(mouseMove(QMouseEvent*)),
+                this, SLOT(mouseMoveSlot(QMouseEvent*)));
+        connect(plot, SIGNAL(mouseDoubleClick(QMouseEvent*)),
+                this, SLOT(mouseDoubleClickSlot(QMouseEvent*)));
         plotLayout->addWidget(plot);
         plot->move(5, 5);
         plot->resize(this->width()-10, this->height()-10);
@@ -399,6 +411,12 @@ void Block::setMode(int value){
     // Delete previous
     if(plot != NULL){
         plotLayout->removeWidget(plot);
+        disconnect(plot, SIGNAL(mousePress(QMouseEvent*)),
+                   this, SLOT(mousePressSlot(QMouseEvent*)));
+        disconnect(plot, SIGNAL(mouseMove(QMouseEvent*)),
+                   this, SLOT(mouseMoveSlot(QMouseEvent*)));
+        disconnect(plot, SIGNAL(mouseDoubleClick(QMouseEvent*)),
+                   this, SLOT(mouseDoubleClickSlot(QMouseEvent*)));
         delete plot;
         plot = NULL;
     }
@@ -426,6 +444,19 @@ void Block::setMode(int value){
         }
         else if(this->visualization == "StatesCurves"){
             plot = new QCustomPlot(this);
+
+            cutAct = new QAction(QIcon(":/new/prefix1/icons/cut.png"), tr("Cu&t"),this);
+            cutAct->setShortcuts(QKeySequence::Cut);
+            cutAct->setStatusTip(tr("Cut this block to the clipboard"));
+            connect(cutAct, SIGNAL(triggered()), this, SLOT(cut()));
+
+            plot->setMouseTracking(false);
+            connect(plot, SIGNAL(mousePress(QMouseEvent*)),
+                    this, SLOT(mousePressSlot(QMouseEvent*)));
+            connect(plot, SIGNAL(mouseMove(QMouseEvent*)),
+                    this, SLOT(mouseMoveSlot(QMouseEvent*)));
+            connect(plot, SIGNAL(mouseDoubleClick(QMouseEvent*)),
+                    this, SLOT(mouseDoubleClickSlot(QMouseEvent*)));
             plotLayout->addWidget(plot);
             plot->move(5, 5);
             plot->xAxis->setRange(0,BLOCK_PLOT_LENGTH);
@@ -450,6 +481,19 @@ void Block::setMode(int value){
     }
     else if(value == modeStatesPlots){
         plot = new QCustomPlot(this);
+
+        cutAct = new QAction(QIcon(":/new/prefix1/icons/cut.png"), tr("Cu&t"),this);
+        cutAct->setShortcuts(QKeySequence::Cut);
+        cutAct->setStatusTip(tr("Cut this block to the clipboard"));
+        connect(cutAct, SIGNAL(triggered()), this, SLOT(cut()));
+
+        plot->setMouseTracking(false);
+        connect(plot, SIGNAL(mousePress(QMouseEvent*)),
+                this, SLOT(mousePressSlot(QMouseEvent*)));
+        connect(plot, SIGNAL(mouseMove(QMouseEvent*)),
+                this, SLOT(mouseMoveSlot(QMouseEvent*)));
+        connect(plot, SIGNAL(mouseDoubleClick(QMouseEvent*)),
+                this, SLOT(mouseDoubleClickSlot(QMouseEvent*)));
         plotLayout->addWidget(plot);
         plot->move(5, 5);
         plot->xAxis->setRange(0,BLOCK_PLOT_LENGTH);

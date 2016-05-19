@@ -311,6 +311,11 @@ public slots:
     void deleteBlockSlot(const QString &id);
     void deleteAllBlocks();
 
+    void mouseMoveFromPlotSlot(QMouseEvent *event, QPoint pos){
+        QMouseEvent a(QEvent::MouseMove, event->pos() + pos, Qt::NoButton,
+                                 event->buttons(), event->modifiers());
+        this->mouseMoveEvent(&a);
+    }
 
 public slots:
     bool setHighlighted(QString id); // SOS: returns the source of a connection!
