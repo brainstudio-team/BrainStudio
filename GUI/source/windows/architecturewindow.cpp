@@ -8,6 +8,7 @@ ArchitectureWindow::ArchitectureWindow(QWidget *parent): QWidget(parent),
 
     //this->setCursor(QCursor(Qt::CrossCursor));
     stimWidget = NULL;
+    rightPanel = NULL;
     A = NULL;
     mi = NULL;
     sync = NULL;
@@ -309,6 +310,15 @@ bool ArchitectureWindow::setHighlighted(QString id){
                     bl.value()->setHighlighted(false);
             id = "";
         }
+
+        // Put a right panel next to this block
+        if(rightPanel != NULL)
+            delete rightPanel;
+        rightPanel = new RightPanel(A, blocks[id], this);
+        rightPanel->show();
+        rightPanel->move(blocks[id]->x()+blocks[id]->width()+10,
+                         blocks[id]->y()+blocks[id]->height()-95);
+        // -----------
 
         highlighted = id;
     }

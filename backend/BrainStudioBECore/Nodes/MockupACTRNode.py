@@ -10,8 +10,10 @@ class BrainStudioBEClass(Node) :
     
     def __init__(self) :
         super(BrainStudioBEClass,self).__init__()
-        self.fields.append(['neurons', 'Neurons','integer', '1', ''])
         self.configurations['MockupACTRNode'] = ([], [], [], []) 
+        self.fields.append(['neurons', 'Neurons','integer', '1', ''])
+        self.fields.append(['sync', 'SYNC ACT-R command','integer', '0', '1'])
+        self.fields.append(['learn', 'LEARN ACT-R command','integer', '0', '1'])
         self.input_field = 'neurons'
         self.output_field = 'neurons'
         self.units_field = 'neurons'
@@ -27,30 +29,23 @@ class BrainStudioBEClass(Node) :
         return list(self.outputs)
         
     def get_data(self, args):
-
-        # first_neuron = args['first_neuron']
-        # last = args['last']
-        # outputs = self.outputs[first_neuron: last+1]            
-        # return outputs
-
-        # This thing should come from the real ACT-R
         outDict = {'actr_commands': []}
-        if self.counter in self.sync_times:
+        if self.sync > 0 :
+            self.sync = 0
             print "========= EMIT SYNC ======================="
             outDict['actr_commands'].append('sync')
             
-        if self.counter == self.learn_time:
+        if self.learn > 0 :
+            self.learn = 0
             print "========= EMIT LEARN ======================="
             outDict['actr_commands'].append('learn')
-
-        if self.event_button_pressed:
-            print "========= EMIT EVENT ======================="
-            outDict['actr_commands'].append('event')
-
-
         return outDict
         
     def set_data(self, args):
+        if 'sync' in args :
+            self.sync = args['sync']
+        elif 'learn' in args :
+            self.learn = args['learn']
         # This thing should come from the real ACT-R
         pass
 
@@ -60,19 +55,14 @@ class BrainStudioBEClass(Node) :
         self.size = self.safely_get(node, 'neurons', 'int') 
         self.inputs = np.zeros(self.size)
         self.outputs = np.zeros(self.size)
-        self.counter = 0
-        self.sync_times = [100, 300]
-        self.learn_time = 200
-        self.event_button_pressed = False  # This should be set by a button in the GUI
-        #self.update_time = self.safely_get(node, 'update_time', 'integer')
+
+        self.sync = self.safely_get(node, 'sync', 'int')
+        self.learn = self.safely_get(node, 'learn', 'int')
         
         return self.size
             
     def update(self):
         super(BrainStudioBEClass,self).update()
-
-        self.counter += 1
-
 
         # Wait for actual ACT-R stuff 
         

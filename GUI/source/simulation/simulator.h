@@ -55,13 +55,19 @@ protected:
     size_t spikes;
     int synapticModel;
 
-
     // STIMULATION
     QMap<QString,Stimulus> stimuli;
 
     // Requests - Requesting states and parameters that will return after a step
     QMap<QString, QList< QString > > requested_states;
     QMap<QString, QList< QString > > requested_parameters;
+
+
+    // ACTIONS
+protected:
+    QList<QString> action_buffer;
+public:
+    void add_action(const QString &action){ action_buffer.append(action); }
 
 public:
     explicit Simulator(double _dt = 1.0, QObject *parent = 0):

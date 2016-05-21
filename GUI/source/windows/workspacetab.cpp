@@ -318,9 +318,16 @@ bool WorkspaceTab::checkForAction(){
         return false;
     }
 
-
     if(temp.type == "adjust"){
-        // TODO: Finish it...
+        // SOS: This is working but I commented it out because the BE can deal
+        //      with the actions which are pre-defined in the brain file..
+        /*
+        QString chname = temp.node;
+        snn->add_action("{\"type\":\"adjust\",\"node\":\"" +
+                        chname.replace(' ', '+') +
+                        "\",\"parameter\":\"" + temp.parameter +
+                        "\",\"value\":" + QString::number(temp.new_value) + "}");
+        */
     }
 
     else if(temp.type == "stimulate"){

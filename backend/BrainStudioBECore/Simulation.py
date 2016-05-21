@@ -326,11 +326,16 @@ class Brain :
 
 
     # TODO: Finish this method for general actions!
+    # ZAF: I think it's actually finished..!
+    # <stimulate t="350" node="0" current="100" frequency="90"\>
+    # <adjust t="650" node="New block 2" parameter="sync" value="1"\>
+    # <stop t="1000"\> 
     def add_action(self, action) :
         action_type = action.tag
 
         try:
-            data = self.instantiatable_actions[action_type]
+            data = self.instantiatable_actions[action_type] # ee?? what's that?
+        
             action_object = {'type' : action_type }
             for at in action.attrib :
                 action_object[at] = action.attrib[at]
@@ -341,6 +346,11 @@ class Brain :
             raise BSException(where, what)
 
         self.actions.append(action_object)
+
+    def add_action_dict(self, action) :
+        self.actions.append(action)
+        
+
 
             
     def update_nemo(self, I_stim_extra=[]):
@@ -423,8 +433,22 @@ class Brain :
                     return []
                 if action['type'] == 'stimulate' :
                     print "not done yet"
-                if action['type'] == 'adjust' :
-                    print "not done yet"
+                if action['type'] == 'adjust' : # <adjust t="650" node="Block 0" parameter="sigma" value="7.0"/>
+                    # Try to find the group
+                    for group in self.groups:
+                        node = group['node']
+
+                        # TODO: deal with NeMo nodes!        
+                        if node.get_architecture() != 'NeMo' and group['name'] == action['node']:
+                            #first = group['first_all_neurons']
+                            #last = first + group['size'] - 1
+
+                            args = dict()
+                            args[action['parameter']] = action['value']
+                            args['first_neuron'] = 0
+                            args['last'] =  group['size'] - 1 # TODO: do we need the -1??
+
+                            node.set_data(args)
                 # Delete it
                 self.actions.pop(i)
 

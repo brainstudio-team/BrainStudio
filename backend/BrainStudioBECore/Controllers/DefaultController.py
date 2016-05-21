@@ -188,7 +188,7 @@ class BrainStudioBEClass(Controller) :
                                     connection.sendall("give me") # more..
                             # ------------------------------------------------------
 
-                            # Format: step <number> spikes <indices> speed <int_in_ms> stim <indices> <current>
+                            # Format: step <number> spikes <indices> speed <int_in_ms> stim <indices> <current> action <JSON>
                             if data[:4] == "step" and not paused:
                                 command = data.split()
 
@@ -225,6 +225,13 @@ class BrainStudioBEClass(Controller) :
                                         I_stim += [ (indx, stim_current) for indx in range(stim_a, stim_b) ]
                                         idx += 3
 
+                                    # See if the GUI is sending any stimulation
+                                    while len(command) >= (idx+1) and command[idx] == 'action':
+                                        action =  json.loads(command[idx+1].replace('+', ' '))
+                                        action['t'] = timestep
+                                        sim.add_action_dict(action)
+                                        idx += 2
+
                                     print "Timestep:", timestep
 
                                     # Simulation here ..........
@@ -239,6 +246,7 @@ class BrainStudioBEClass(Controller) :
                                         reply['where'] = errorin
                                         reply['what'] = e.get_what()
                                         connection.sendall("error " + json.dumps(reply) )
+
                                         break
                                     # ..........................
 

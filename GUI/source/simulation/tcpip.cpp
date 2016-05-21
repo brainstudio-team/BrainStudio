@@ -213,6 +213,10 @@ void TCPIP_Sim::step(const int &speed){
         }
     }
 
+    while(!action_buffer.isEmpty()){
+        msg += " action " + action_buffer.takeFirst();
+    }
+
     tcpSocket->write(msg.toUtf8());
 }
 

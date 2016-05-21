@@ -21,6 +21,7 @@ HEADERS += \
     source/windows/aboutwindow.h \
     source/windows/stimulationwidget.h \
     source/windows/propertiesdialog.h \
+    source/windows/rightpanel.h \
     source/graphs/graphs.h \
     source/graphs/currentgraph.h \
     source/graphs/rasterplot.h \
@@ -69,6 +70,7 @@ SOURCES += \
     source/windows/aboutwindow.cpp \
     source/windows/stimulationwidget.cpp \
     source/windows/propertiesdialog.cpp \
+    source/windows/rightpanel.cpp \
     source/graphs/graphs.cpp \
     source/graphs/currentgraph.cpp \
     source/graphs/rasterplot.cpp \
@@ -103,7 +105,8 @@ FORMS += \
     source/windows/pythonwidget.ui \
     source/windows/stimulationwidget.ui \
     source/windows/aboutwindow.ui \
-    source/windows/propertiesdialog.ui
+    source/windows/propertiesdialog.ui \
+    source/windows/rightpanel.ui
 
 RESOURCES += source/icons.qrc
 

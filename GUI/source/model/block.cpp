@@ -380,12 +380,6 @@ void Block::setDefaultVisualization(){
     else{
         plot = new QCustomPlot(this);
         plot->setMouseTracking(false);
-
-        cutAct = new QAction(QIcon(":/new/prefix1/icons/cut.png"), tr("Cu&t"),this);
-        cutAct->setShortcuts(QKeySequence::Cut);
-        cutAct->setStatusTip(tr("Cut this block to the clipboard"));
-        connect(cutAct, SIGNAL(triggered()), this, SLOT(cut()));
-
         connect(plot, SIGNAL(mousePress(QMouseEvent*)),
                 this, SLOT(mousePressSlot(QMouseEvent*)));
         connect(plot, SIGNAL(mouseMove(QMouseEvent*)),
@@ -444,12 +438,6 @@ void Block::setMode(int value){
         }
         else if(this->visualization == "StatesCurves"){
             plot = new QCustomPlot(this);
-
-            cutAct = new QAction(QIcon(":/new/prefix1/icons/cut.png"), tr("Cu&t"),this);
-            cutAct->setShortcuts(QKeySequence::Cut);
-            cutAct->setStatusTip(tr("Cut this block to the clipboard"));
-            connect(cutAct, SIGNAL(triggered()), this, SLOT(cut()));
-
             plot->setMouseTracking(false);
             connect(plot, SIGNAL(mousePress(QMouseEvent*)),
                     this, SLOT(mousePressSlot(QMouseEvent*)));
@@ -481,12 +469,6 @@ void Block::setMode(int value){
     }
     else if(value == modeStatesPlots){
         plot = new QCustomPlot(this);
-
-        cutAct = new QAction(QIcon(":/new/prefix1/icons/cut.png"), tr("Cu&t"),this);
-        cutAct->setShortcuts(QKeySequence::Cut);
-        cutAct->setStatusTip(tr("Cut this block to the clipboard"));
-        connect(cutAct, SIGNAL(triggered()), this, SLOT(cut()));
-
         plot->setMouseTracking(false);
         connect(plot, SIGNAL(mousePress(QMouseEvent*)),
                 this, SLOT(mousePressSlot(QMouseEvent*)));

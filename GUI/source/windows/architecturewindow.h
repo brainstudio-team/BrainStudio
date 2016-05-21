@@ -16,6 +16,7 @@
 #include <qstringlist.h>
 
 #include "source/windows/stimulationwidget.h"
+#include "source/windows/rightpanel.h"
 #include "source/simulation/simulator.h"
 
 #include "source/model/block.h"
@@ -26,6 +27,7 @@
 #include "source/analysis/effectiveconnectivitycalculator.h"
 
 class StimulationWidget;
+class RightPanel;
 
 class Controls{
 public:
@@ -93,6 +95,7 @@ private:
 
 protected:
     StimulationWidget *stimWidget;
+    RightPanel *rightPanel;
     Simulator *A;
 
     MutualInformation *mi;
