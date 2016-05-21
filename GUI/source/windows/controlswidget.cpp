@@ -117,6 +117,7 @@ void ControlsWidget::on_modeNetworkRadioButton_clicked(){
 }
 void ControlsWidget::on_speedSlider_valueChanged(int value){
     ui->speedLabel->setText("Speed (" + QString::number(value) + "ms)");
+    schema->setSpeed(value);
     emit setTimeSpeed(value);
 }
 

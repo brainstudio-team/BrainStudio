@@ -95,6 +95,7 @@ class BrainStudioBEClass(Controller) :
                 self.exp_start = time()
                 while not self.sim.stopped :
                     self.spikes = self.sim.run()
+                    sleep(self.sim.speed/1000.0)
                 print "End. Duration:", time() - self.exp_start
             except BSException as e:
                 errorin = 'Error in ' + e.get_where()
