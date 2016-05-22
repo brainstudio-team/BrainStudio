@@ -10,8 +10,11 @@ class BrainStudioBEClass(Node):
 
     def __init__(self):
         super(BrainStudioBEClass,self).__init__()
-        self.configurations['BFNode'] = ([], [], [], []) 
+        self.configurations['SBFNode'] = ([], [], [], []) 
         self.fields.append(['neurons', 'Neurons','integer', '1', ''])
+        self.fields.append(['base_k', 'Base K','float', '0.04', ''])
+        self.fields.append(['peak_k', 'Peak K','float', '2.0', ''])
+        self.fields.append(['decay_k', 'Decay K (ms)','float', '5.0', ''])
         self.fields.append(['freq_mean', 'Frequency mean (Hz)','float', '10.0', ''])
         self.fields.append(['freq_std', 'Frequency std (Hz)','float', '2.0', ''])
         self.input_field = 'neurons'
@@ -54,7 +57,7 @@ class BrainStudioBEClass(Node):
         super(BrainStudioBEClass,self).initialize(brain, node, args)
         self.size = self.safely_get(node, 'neurons', 'int') 
         self.inputs = np.zeros(self.size)
-        self.th = np.zeros(self.size)
+        self.th = 2*np.pi*rn.rand(self.size)
         #self.update_time = self.safely_get(node, 'update_time', 'integer')
 
         # Integration is in ms, but frequencies are in Hz
@@ -64,8 +67,11 @@ class BrainStudioBEClass(Node):
         self.freq_std = self.safely_get(node, 'freq_std', 'float')
         self.omega = self.freq_mean + self.freq_std*rn.randn(self.size)
 
-        self.time_since_last_sync = np.inf
+        self.base_k = self.safely_get(node, 'base_k', 'float')
+        self.peak_k = self.safely_get(node, 'peak_k', 'float')
+        self.decay_k = self.safely_get(node, 'decay_k', 'float')
 
+        self.time_since_last_sync = np.inf
         self.counter = 0
         
         return self.size
@@ -74,8 +80,13 @@ class BrainStudioBEClass(Node):
     def update(self):
         super(BrainStudioBEClass,self).update()
 
-        self.th = self.omega*self.counter*self.dt*2*np.pi
-        self.counter += 1
+        K = self.base_k + self.peak_k*np.exp(-self.time_since_last_sync/self.decay_k)
+        d_th = np.zeros(self.size)
+        # Kuramoto dynamic equation solved with Euler method
+        for i in range(self.size):
+            d_th[i] = self.omega[i] + (1.0/self.size) * K * np.sum(np.sin(self.th - self.th[i]))
 
+        self.th = self.th + 2*np.pi*self.dt*d_th
+        self.counter += 1
         self.time_since_last_sync += 1
 
