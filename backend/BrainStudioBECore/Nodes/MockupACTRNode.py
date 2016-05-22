@@ -29,23 +29,29 @@ class BrainStudioBEClass(Node) :
         return list(self.outputs)
         
     def get_data(self, args):
+        print "get_data()", self.sync, self.learn
         outDict = {'actr_commands': []}
         if self.sync > 0 :
-            self.sync = 0
+            self.transfering = False
             print "========= EMIT SYNC ======================="
             outDict['actr_commands'].append('sync')
             
         if self.learn > 0 :
-            self.learn = 0
+            self.transfering = False
             print "========= EMIT LEARN ======================="
             outDict['actr_commands'].append('learn')
         return outDict
         
     def set_data(self, args):
+        print "set_data()", args
         if 'sync' in args :
             self.sync = args['sync']
+            if self.sync > 0 :
+                self.transfering = True
         elif 'learn' in args :
             self.learn = args['learn']
+            if self.learn > 0 :
+                self.transfering = True
         # This thing should come from the real ACT-R
         pass
 
@@ -59,9 +65,25 @@ class BrainStudioBEClass(Node) :
         self.sync = self.safely_get(node, 'sync', 'int')
         self.learn = self.safely_get(node, 'learn', 'int')
         
+        # ZAF: This is not a 100% correct solution because the transfer between 
+        # synapses occurs along with the update. So one 'target' node can be
+        # processed before this and one after this!
+        # As a result, the new events do not always pass to the target nodes!
+        # TODO: Create a different function that processes synaptic transfers
+        #       and a different one for the update of the node equations
+        #       i.e. keep the update() almost as it is and create an
+        #       update_connections() one.
+        self.transfering = False
+        
         return self.size
             
     def update(self):
+        print "update()", self.sync, self.learn
+        if not self.transfering and self.sync > 0 :
+            self.sync = 0
+        if not self.transfering and self.learn > 0 :
+            self.learn = 0
+
         super(BrainStudioBEClass,self).update()
 
         # Wait for actual ACT-R stuff 

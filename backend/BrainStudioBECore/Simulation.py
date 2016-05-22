@@ -238,15 +238,15 @@ class Brain :
         print "actions:", len(my_actions)
 
         for node in nodes :
-            #print node.tag;
+            print node.tag;
             self.add_node(node)
 
         for edge in edges :
-            #print edge.tag;
+            print edge.tag;
             self.add_edge(edge)
 
         for action in my_actions :
-            #print action.tag;
+            print action.tag;
             self.add_action(action)
         
         if self.has_nemo_neurons:

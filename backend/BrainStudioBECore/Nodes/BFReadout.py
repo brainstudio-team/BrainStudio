@@ -119,7 +119,8 @@ class BrainStudioBEClass(Node) :
         self.alpha = self.safely_get(node, 'alpha', 'float')
         self.learning_rate = self.safely_get(node, 'learning_rate', 'float')
 
-        self.weights = 0.8*rn.randn(self.nb_readouts, self.size)
+        #self.weights = 0.8*rn.randn(self.nb_readouts, self.size)
+        self.weights = 0.1*rn.randn(self.nb_readouts, self.size)
         self.learn_next = False
         self.event_next = False
         self.max_idx = np.nan
@@ -133,5 +134,6 @@ class BrainStudioBEClass(Node) :
         super(BrainStudioBEClass,self).update()
 
         activities = 1.0*(np.cos(self.inputs) > self.alpha)
-        self.outputs = 1.0*(self.weights.dot(activities) > self.activity_threshold)
+        #self.outputs = 1.0*(self.weights.dot(activities) > self.activity_threshold)
+        self.outputs = self.weights.dot(activities)
 
