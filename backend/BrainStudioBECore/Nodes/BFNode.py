@@ -44,7 +44,7 @@ class BrainStudioBEClass(Node):
 
         if args.has_key('actr_commands'): 
             if 'sync' in args['actr_commands']:
-                print "========= SBF SYNC ======================="
+                print "========== BF SYNC ======================="
                 self.time_since_last_sync = 0
                 self.th = np.zeros(self.size)
                 self.counter = 0

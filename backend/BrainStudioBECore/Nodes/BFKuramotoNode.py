@@ -49,8 +49,7 @@ class BrainStudioBEClass(Node):
             if 'sync' in args['actr_commands']:
                 print "========= SBF SYNC ======================="
                 self.time_since_last_sync = 0
-                self.th = np.zeros(self.size)
-                self.counter = 0
+                #self.th = np.zeros(self.size)
 
         
     def initialize(self, brain, node, args):
@@ -72,7 +71,6 @@ class BrainStudioBEClass(Node):
         self.decay_k = self.safely_get(node, 'decay_k', 'float')
 
         self.time_since_last_sync = np.inf
-        self.counter = 0
         
         return self.size
             
@@ -87,6 +85,5 @@ class BrainStudioBEClass(Node):
             d_th[i] = self.omega[i] + (1.0/self.size) * K * np.sum(np.sin(self.th - self.th[i]))
 
         self.th = self.th + 2*np.pi*self.dt*d_th
-        self.counter += 1
         self.time_since_last_sync += 1
 
