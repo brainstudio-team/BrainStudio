@@ -229,7 +229,7 @@ class BrainStudioBEClass(Node) :
         if self.eval_for_each  == False:
             neuron_args = self.evaluate_formulas(formulas, node, self.attributes, dict(), dict())
             for n in range(self.size): 
-                try:   
+		try:   
                     brain.add_nemo_neuron(self.neuron_type_id, neuron_args[0], neuron_args[1], 1);
                 except exceptions.BaseException as e:
                     what = 'Error in NeMo adding neuron parameter/state:' + e.args[0]

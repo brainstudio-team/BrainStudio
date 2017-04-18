@@ -1,9 +1,8 @@
 __version__ = 0.001
 __abstract__ = False;
 
-
 import socket
-
+import io
 from sys import stderr
 
 # Import the brainself
@@ -239,6 +238,8 @@ class BrainStudioBEClass(Controller) :
                                     try:
                                         spikes = sim.run(I_stim=I_stim)
                                         rates = sim.get_rates()
+					visuals = sim.get_visuals()
+					    
                                     except BSException as e:
                                         errorin = 'Error in ' + e.get_where()
                                         print errorin

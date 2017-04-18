@@ -191,6 +191,19 @@ class Brain :
                 rates += node.get_all_data()
         return [indexes, rates]
 
+    def get_visuals(self):
+        indexes = []
+        visuals = list()
+        for group in self.groups:
+            node = group['node']
+            if node.get_architecture() == 'Visual':
+                first =  group['first_all_neurons'] 
+                visual_type = node.get_visual_type()
+		buffer_size = node.get_buffer_size()
+		visual_buffer = node.get_visual_buffer()
+        	visuals.append([first, visual_type, buffer_size, visual_buffer])
+	return visuals
+
     def get_node_states_by_name(self, node_name, state_name):
         node = self.get_node_by_name(node_name)
         return node.get_all_neurons_state(state_name)
