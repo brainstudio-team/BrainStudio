@@ -93,6 +93,9 @@ class BrainStudioObject() :
         
     def get_architecture(self):
         return self.architecture;
+
+    def get_help(self, object_type = ''):
+        return "No help available.";
         
     def get_version(self):
         return __version__

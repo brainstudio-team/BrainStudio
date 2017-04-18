@@ -37,15 +37,16 @@ class Brain :
                 node_object.configure_static()
                 configurations = node_object.get_configurations() 
                 for con in configurations: 
-                    node_name = con+'-'+ node_object.get_architecture()
-                    self.instantiatable_nodes[node_name] = \
+                    node_type = con+'-'+ node_object.get_architecture()
+                    self.instantiatable_nodes[node_type] = \
                         (node, configurations[con], \
                         node_object.get_fields(), node_object.get_version(),\
                         node_object.get_architecture(), \
-                        node_object.get_model_type(node_object.get_architecture()),\
-                        node_object.get_input_field(node_object.get_architecture()),  \
-                        node_object.get_output_field(node_object.get_architecture()), \
-                        node_object.get_units_field())
+                        node_object.get_model_type(node_type),\
+                        node_object.get_input_field(node_type),  \
+                        node_object.get_output_field(node_type), \
+                        node_object.get_units_field(), \
+			node_object.get_help(node_type))
                     
                 del node_object
 
@@ -57,11 +58,13 @@ class Brain :
                 edge_object.configure_static()
                 configurations = edge_object.get_configurations() 
                 for con in configurations: 
-                    self.instantiatable_edges[con+'-'+edge_object.get_architecture()] = \
+                    edge_type = con+'-'+edge_object.get_architecture()
+                    self.instantiatable_edges[edge_type] = \
                     (edge, configurations[con], \
                     edge_object.get_fields(), edge_object.get_version(), \
                     edge_object.get_architecture(), \
-                    edge_object.get_input_model(), edge_object.get_output_model())
+                    edge_object.get_input_model(), edge_object.get_output_model(), \
+		    edge_object.get_help(edge_type))
                     
                 del edge_object
 

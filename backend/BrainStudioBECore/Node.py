@@ -18,13 +18,13 @@ class Node(ProcessUnit) :
     def get_version(self):
         return __version__
         
-    def get_model_type(self, architecture = ''):
+    def get_model_type(self, object_type = ''):
         return self. model_type
         
-    def get_input_field(self, architecture = ''):
+    def get_input_field(self, object_type = ''):
         return self.input_field
 
-    def get_output_field(self, architecture = ''):
+    def get_output_field(self, object_type = ''):
         return self.output_field
    
     def get_units_field(self):

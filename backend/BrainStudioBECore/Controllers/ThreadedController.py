@@ -740,6 +740,7 @@ class BrainStudioBEClass(Controller) :
                             inputfield = my_nodes[node][6]
                             outputfield = my_nodes[node][7]
                             unitsfield = my_nodes[node][8]
+			    help = my_nodes[node][9]
                             reply[node] = dict()
                             reply[node]['fields'] = fields
                             reply[node]['params'] = params
@@ -751,6 +752,7 @@ class BrainStudioBEClass(Controller) :
                             reply[node]['output_field'] = outputfield
                             reply[node]['units_field'] = unitsfield
                             reply[node]['version'] = version
+			    reply[node]['help'] = help
                             
                         self.block_for_local.release()
                         
@@ -769,6 +771,7 @@ class BrainStudioBEClass(Controller) :
                             version = my_edges[edge][3]
                             inputmodel = my_edges[edge][5]
                             outputmodel = my_edges[edge][6]
+			    help = my_edges[edge][7]
                             reply[edge] = dict()
                             reply[edge]['fields'] = fields
                             reply[edge]['params'] = params
@@ -778,6 +781,7 @@ class BrainStudioBEClass(Controller) :
                             reply[edge]['input_model'] = inputmodel
                             reply[edge]['output_model'] = outputmodel
                             reply[edge]['version'] = version
+                            reply[edge]['help'] = help
                         
                         self.block_for_local.release()
                         

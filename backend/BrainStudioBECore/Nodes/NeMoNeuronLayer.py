@@ -25,6 +25,7 @@ class BrainStudioBEClass(Node) :
         self.fields.append(['neurons', 'Neurons','integer', '1', ''])
         self.fields.append(['eval_for_each', 'Evaluate formula for each neuron', 'bool', 'False'])
 
+	self.help = dict()
         
         self.start_neuron = -1
         self.size = -1
@@ -51,8 +52,10 @@ class BrainStudioBEClass(Node) :
             
                 isParameter = False
                 isStateName = False
+		isHelp = False
                 parameters = []
                 states = []
+                help = ''
                 default_parameters = dict()
                 default_states = []
                 paramRegex = re.compile('\[params:(?P<name>[A-Za-z]+)\]')
@@ -64,6 +67,7 @@ class BrainStudioBEClass(Node) :
                     
                     # First check if the line is empty, commented or has a
                     # section title (i.e. square brackets)
+		    print l
                     if l == '' or l[0] == '#':
                         continue
                     elif paramRegex.match(l):
@@ -76,15 +80,20 @@ class BrainStudioBEClass(Node) :
                             default_parameters[paramSetName] = []
                         isParameter= True
                         isStateName = False
+			isHelp = False
                     elif l == '[state_names]':
                         isStateName = True
                         isParameter = False
-
-                    # If it isn't, then parse as normal text
+                        isHelp = False
+		    elif l == '[help]':
+                        isStateName = False
+                        isParameter = False
+                        isHelp = True
+		    # If it isn't, then parse as normal text
                     else:
-                        left = l[0:l.rfind('=')]
+                        left = l[0:l.find('=')]
                         left = left.strip()
-                        right =  l[l.rfind('=')+1:len(l)]
+                        right =  l[l.find('=')+1:len(l)]
                         right = right.strip()
                         
                         if isParameter:
@@ -93,26 +102,36 @@ class BrainStudioBEClass(Node) :
                                 parameters.append(left)
                         elif isStateName:
                             states.append(left)   
-                            default_states.append(right)           
+                            default_states.append(right)
+                        elif isHelp:
+                            help = help + right + '\n\n'           
+
+		if len(help) == 0:
+			help = "No NeMo " + neuron_type + " node help available."
 
                 self.configurations[neuron_type] = (parameters, states, default_parameters, default_states)
+ 		self.help[neuron_type] = help
     
     def get_version(self):
         return __version__
+
+    def get_help(self, object_type = ''):
+        neuron_type = object_type[0:-5]
+        return self.help[neuron_type]
         
-    def get_model_type(self, architecture = ''):
-        if architecture == 'Kuramoto-NeMo':
+    def get_model_type(self, object_type = ''):
+        if object_type == 'Kuramoto-NeMo':
             return 'rate'
         else:
             return self.model_type
         
-    def get_input_field(self, architecture = ''):
-        if architecture == 'Poisson-NeMo' or architecture == 'Input-NeMo':
+    def get_input_field(self, object_type = ''):
+        if object_type == 'Poisson-NeMo' or object_type == 'Input-NeMo':
             return ""
         else:
             return self.input_field
 
-    def get_output_field(self, architecture = ''):
+    def get_output_field(self, object_type = ''):
         return self.output_field
 
         
