@@ -3,7 +3,7 @@ TARGET = BrainStudio
 
 QT += core widgets gui network xml printsupport #opengl
 
-CONFIG += c++11
+CONFIG += c++14
 
 HEADERS += \
     source/windows/mainwindow.h \
